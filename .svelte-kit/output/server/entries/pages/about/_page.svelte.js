@@ -1,5 +1,13 @@
-import { i as head, r as ensure_array_like, t as attr_class, y as escape_html } from "../../../chunks/server.js";
-import { t as InteractiveAscii } from "../../../chunks/InteractiveAscii.js";
+import "../../../chunks/index-server.js";
+import { i as head, r as ensure_array_like, t as attr_class, v as attr, y as escape_html } from "../../../chunks/server.js";
+//#region src/lib/InteractiveAscii.svelte
+function InteractiveAscii($$renderer, $$props) {
+	$$renderer.component(($$renderer) => {
+		let { src, alt = "", characters = " .:-=+*#%@", color = "#ff0080", background = "transparent", cellSize = 7, cursorRadius = 150, zoom = 1.06, noiseInterval = 100, opacity = .95 } = $$props;
+		$$renderer.push(`<div class="ascii-container svelte-xe11po"><canvas${attr("aria-label", alt)} class="svelte-xe11po"></canvas> <div class="ascii-vignette svelte-xe11po"></div></div>`);
+	});
+}
+//#endregion
 //#region src/routes/about/+page.svelte
 function _page($$renderer) {
 	const attributes = [
