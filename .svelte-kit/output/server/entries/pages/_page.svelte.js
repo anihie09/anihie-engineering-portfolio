@@ -1,0 +1,16 @@
+import { i as head } from "../../chunks/server.js";
+import { t as InteractiveAscii } from "../../chunks/InteractiveAscii.js";
+//#region src/routes/+page.svelte
+function _page($$renderer) {
+	head("1uha8ag", $$renderer, ($$renderer) => {
+		$$renderer.title(($$renderer) => {
+			$$renderer.push(`<title>ANIHIE — Mechanical Engineering</title>`);
+		});
+		$$renderer.push(`<meta name="description" content="ANIHIE — Mechanical Engineering Portfolio" class="svelte-1uha8ag"/>`);
+	});
+	$$renderer.push(`<div class="home svelte-1uha8ag"><div class="background svelte-1uha8ag"></div> <div class="background-shade svelte-1uha8ag"></div> `);
+	InteractiveAscii($$renderer, { src: "/home-background.png" });
+	$$renderer.push(`<!----> <div class="interface svelte-1uha8ag"><nav class="navigation svelte-1uha8ag" aria-label="Main navigation"><a href="/about" class="svelte-1uha8ag"><span class="nav-index svelte-1uha8ag">01</span> <span class="arrow svelte-1uha8ag">></span> <span class="label svelte-1uha8ag">ABOUT</span> <span class="nav-line svelte-1uha8ag"></span></a> <a href="/projects" class="svelte-1uha8ag"><span class="nav-index svelte-1uha8ag">02</span> <span class="arrow svelte-1uha8ag">></span> <span class="label svelte-1uha8ag">PROJECTS</span> <span class="nav-line svelte-1uha8ag"></span></a> <a href="/contact" class="svelte-1uha8ag"><span class="nav-index svelte-1uha8ag">03</span> <span class="arrow svelte-1uha8ag">></span> <span class="label svelte-1uha8ag">CONTACT</span> <span class="nav-line svelte-1uha8ag"></span></a></nav> <div class="navigation-data svelte-1uha8ag"><div class="data-title svelte-1uha8ag">DIRECTORY</div> <div class="data-rule svelte-1uha8ag"></div> <div class="data-row svelte-1uha8ag"><span class="svelte-1uha8ag">SYS</span> <span class="svelte-1uha8ag">ACTIVE</span></div> <div class="data-row svelte-1uha8ag"><span class="svelte-1uha8ag">MODE</span> <span class="svelte-1uha8ag">01</span></div> <div class="data-row svelte-1uha8ag"><span class="svelte-1uha8ag">LINK</span> <span class="svelte-1uha8ag">ONLINE</span></div></div> <div class="center-marker svelte-1uha8ag"><div class="marker-horizontal svelte-1uha8ag"></div> <div class="marker-vertical svelte-1uha8ag"></div> <div class="marker-ring outer svelte-1uha8ag"></div> <div class="marker-ring inner svelte-1uha8ag"></div> <div class="marker-dot svelte-1uha8ag"></div></div></div></div>`);
+}
+//#endregion
+export { _page as default };

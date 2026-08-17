@@ -1,0 +1,18 @@
+{
+	"/": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/about": [
+		"src/routes/+layout.ts"
+	],
+	"/contact": [
+		"src/routes/+layout.ts"
+	],
+	"/projects": [
+		"src/routes/+layout.ts"
+	],
+	"/skills": [
+		"src/routes/+layout.ts"
+	]
+}

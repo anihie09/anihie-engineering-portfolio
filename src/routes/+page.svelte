@@ -16,11 +16,10 @@
 
 	<div class="background-shade"></div>
 
-	<InteractiveAscii />
+	<InteractiveAscii src="/home-background.png" />
 
 	<div class="interface">
 		<!-- RIGHT-SIDE NAVIGATION -->
-
 		<nav
 			class="navigation"
 			aria-label="Main navigation"
@@ -805,26 +804,10 @@
 
 		.navigation {
 			right: 9%;
-			top: 43%;
-
-			width: 150px;
-
-			gap: 14px;
 		}
 
 		.navigation-data {
 			right: 9%;
-			top: 29%;
-
-			width: 150px;
-		}
-
-		.navigation a {
-			font-size: 10px;
-		}
-
-		.navigation-data {
-			padding: 8px;
 		}
 	}
 </style>
