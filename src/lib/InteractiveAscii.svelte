@@ -4,694 +4,944 @@
 	interface Props {
 		src: string;
 		alt?: string;
-		characters?: string;
-		color?: string;
-		background?: string;
+
+		/* Distance between halftone particles */
 		cellSize?: number;
+
+		/* Radius around the mouse affected by movement */
 		cursorRadius?: number;
-		zoom?: number;
-		noiseInterval?: number;
+
+		/* Base opacity of the halftone field */
 		opacity?: number;
+
+		/* Maximum directional displacement */
+		maxBend?: number;
+
+		/* How quickly the effect follows the mouse */
+		smoothing?: number;
+
+		/* Physical size of each dot */
+		dotScale?: number;
+
+		/* Minimum brightness used when drawing dark pixels */
+		darkFloor?: number;
+
+		/* Strength of mouse-speed response */
+		velocityStrength?: number;
 	}
 
 	let {
 		src,
 		alt = '',
-		characters = ' .:-=+*#%@',
-		color = '#ff0080',
-		background = 'transparent',
-		cellSize = 7,
-		cursorRadius = 150,
-		zoom = 1.06,
-		noiseInterval = 100,
-		opacity = 0.95
+
+		cellSize = 6,
+
+		cursorRadius = 230,
+
+		opacity = 0.34,
+
+		maxBend = 38,
+
+		smoothing = 0.12,
+
+		dotScale = 0.34,
+
+		darkFloor = 48,
+
+		velocityStrength = 1
 	}: Props = $props();
 
 	let canvas: HTMLCanvasElement;
 	let container: HTMLDivElement;
 
-	let image:
-		HTMLImageElement | null = null;
+	let ctx: CanvasRenderingContext2D | null = null;
 
-	let ctx:
-		CanvasRenderingContext2D | null = null;
+	let sourceCanvas: HTMLCanvasElement | null = null;
+	let sourceCtx: CanvasRenderingContext2D | null = null;
 
-	let sourceCanvas:
-		HTMLCanvasElement | null = null;
-
-	let sourceCtx:
-		CanvasRenderingContext2D | null = null;
+	let sourceImage: HTMLImageElement | null = null;
 
 	let animationFrame = 0;
+
+	let width = 0;
+	let height = 0;
+
+	let dpr = 1;
+
+	/* =====================================================
+	   POINTER
+	   ===================================================== */
 
 	let targetX = 0;
 	let targetY = 0;
 
-	let currentX = 0;
-	let currentY = 0;
+	let mouseX = 0;
+	let mouseY = 0;
 
-	let previousX = 0;
-	let previousY = 0;
+	let previousMouseX = 0;
+	let previousMouseY = 0;
+
+	let directionX = 0;
+	let directionY = 0;
 
 	let velocity = 0;
 
-	let noiseTimer = 0;
+	let pointerActive = false;
 
-	let dpr = 1;
+	let initializedPointer = false;
 
-	onMount(() => {
-		const resize = () => {
-			if (!canvas || !container) {
-				return;
-			}
+	/* =====================================================
+	   RESIZE
+	   ===================================================== */
 
-			const rect =
-				container.getBoundingClientRect();
+	const resize = () => {
+		if (!canvas || !container) {
+			return;
+		}
 
-			dpr =
-				Math.min(
-					window.devicePixelRatio || 1,
-					2
-				);
+		const rect =
+			container.getBoundingClientRect();
 
-			canvas.width =
-				rect.width * dpr;
+		width =
+			rect.width;
 
-			canvas.height =
-				rect.height * dpr;
+		height =
+			rect.height;
 
-			canvas.style.width =
-				`${rect.width}px`;
+		dpr =
+			Math.min(
+				window.devicePixelRatio || 1,
+				2
+			);
 
-			canvas.style.height =
-				`${rect.height}px`;
+		canvas.width =
+			Math.max(
+				1,
+				Math.floor(
+					width * dpr
+				)
+			);
 
-			ctx =
-				canvas.getContext(
-					'2d'
-				);
+		canvas.height =
+			Math.max(
+				1,
+				Math.floor(
+					height * dpr
+				)
+			);
 
-			if (ctx) {
-				ctx.setTransform(
-					dpr,
-					0,
-					0,
-					dpr,
-					0,
-					0
-				);
-			}
-		};
+		canvas.style.width =
+			`${width}px`;
 
-		const mouseMove =
-			(event: PointerEvent) => {
-				const rect =
-					container.getBoundingClientRect();
+		canvas.style.height =
+			`${height}px`;
 
-				targetX =
-					event.clientX -
-					rect.left;
+		ctx =
+			canvas.getContext(
+				'2d'
+			);
 
-				targetY =
-					event.clientY -
-					rect.top;
-			};
+		if (ctx) {
+			ctx.setTransform(
+				dpr,
+				0,
+				0,
+				dpr,
+				0,
+				0
+			);
 
-		const initializeImage =
+			ctx.imageSmoothingEnabled =
+				true;
+		}
+	};
+
+	/* =====================================================
+	   POINTER EVENTS
+	   ===================================================== */
+
+	const handlePointerMove = (
+		event: PointerEvent
+	) => {
+		targetX =
+			event.clientX;
+
+		targetY =
+			event.clientY;
+
+		if (!initializedPointer) {
+			mouseX =
+				targetX;
+
+			mouseY =
+				targetY;
+
+			previousMouseX =
+				targetX;
+
+			previousMouseY =
+				targetY;
+
+			initializedPointer =
+				true;
+		}
+
+		pointerActive =
+			true;
+	};
+
+	const handlePointerLeave = () => {
+		pointerActive =
+			false;
+	};
+
+	/* =====================================================
+	   LOAD IMAGE
+	   ===================================================== */
+
+	const initializeImage = () => {
+		sourceImage =
+			new Image();
+
+		sourceImage.decoding =
+			'async';
+
+		sourceImage.src =
+			src;
+
+		sourceImage.onload =
 			() => {
-				image =
-					new Image();
-
-				image.src = src;
-
-				image.onload = () => {
-					sourceCanvas =
-						document.createElement(
-							'canvas'
-						);
-
-					const maxWidth =
-						900;
-
-					const scale =
-						Math.min(
-							1,
-							maxWidth /
-								image!.naturalWidth
-						);
-
-					sourceCanvas.width =
-						Math.max(
-							1,
-							Math.floor(
-								image!.naturalWidth *
-									scale
-							)
-						);
-
-					sourceCanvas.height =
-						Math.max(
-							1,
-							Math.floor(
-								image!.naturalHeight *
-									scale
-							)
-						);
-
-					sourceCtx =
-						sourceCanvas.getContext(
-							'2d',
-							{
-								willReadFrequently:
-									true
-							}
-						);
-
-					sourceCtx?.drawImage(
-						image!,
-						0,
-						0,
-						sourceCanvas.width,
-						sourceCanvas.height
-					);
-
-					resize();
-				};
-			};
-
-		const render =
-			(timestamp: number) => {
-				if (
-					!canvas ||
-					!ctx ||
-					!sourceCanvas ||
-					!sourceCtx ||
-					!image
-				) {
-					animationFrame =
-						requestAnimationFrame(
-							render
-						);
-
+				if (!sourceImage) {
 					return;
 				}
 
-				const rect =
-					container.getBoundingClientRect();
-
-				const width =
-					rect.width;
-
-				const height =
-					rect.height;
-
-				/* =========================================
-				   SMOOTH POINTER
-				   ========================================= */
-
-				currentX +=
-					(targetX - currentX) *
-					0.105;
-
-				currentY +=
-					(targetY - currentY) *
-					0.105;
-
-				const dx =
-					currentX -
-					previousX;
-
-				const dy =
-					currentY -
-					previousY;
-
-				const movement =
-					Math.sqrt(
-						dx * dx +
-							dy * dy
+				sourceCanvas =
+					document.createElement(
+						'canvas'
 					);
 
-				velocity +=
-					(
-						Math.min(
-							movement / 18,
-							1
-						) -
-						velocity
-					) *
-					0.16;
+				/*
+				 * A reduced source canvas is enough for
+				 * sampling colors and is much faster than
+				 * repeatedly reading the full-resolution image.
+				 */
 
-				previousX =
-					currentX;
+				const maximumWidth =
+					1400;
 
-				previousY =
-					currentY;
+				const scale =
+					Math.min(
+						1,
+						maximumWidth /
+							sourceImage.naturalWidth
+					);
 
-				/* =========================================
-				   PERSISTENT IDLE MOVEMENT
+				sourceCanvas.width =
+					Math.max(
+						1,
+						Math.round(
+							sourceImage.naturalWidth *
+								scale
+						)
+					);
 
-				   The reference has a living/static quality
-				   instead of becoming perfectly frozen.
-				   ========================================= */
+				sourceCanvas.height =
+					Math.max(
+						1,
+						Math.round(
+							sourceImage.naturalHeight *
+								scale
+						)
+					);
 
-				const idleX =
-					Math.sin(
-						timestamp * 0.00055
-					) * 1.8;
+				sourceCtx =
+					sourceCanvas.getContext(
+						'2d',
+						{
+							willReadFrequently:
+								true
+						}
+					);
 
-				const idleY =
-					Math.cos(
-						timestamp * 0.00042
-					) * 1.8;
+				if (!sourceCtx) {
+					return;
+				}
 
-				const strength =
-					0.3 +
-					velocity * 0.7;
-
-				/* =========================================
-				   CLEAR
-				   ========================================= */
-
-				ctx.clearRect(
+				sourceCtx.drawImage(
+					sourceImage,
 					0,
 					0,
-					width,
-					height
+					sourceCanvas.width,
+					sourceCanvas.height
 				);
 
-				if (
-					background !==
-					'transparent'
-				) {
-					ctx.fillStyle =
-						background;
+				resize();
+			};
+	};
 
-					ctx.fillRect(
-						0,
-						0,
-						width,
-						height
-					);
-				}
+	/* =====================================================
+	   CSS BACKGROUND-SIZE: COVER GEOMETRY
+	   ===================================================== */
 
-				/* =========================================
-				   SOURCE IMAGE GEOMETRY
-				   ========================================= */
+	const getImageGeometry = () => {
+		if (!sourceCanvas) {
+			return null;
+		}
 
-				const imageAspect =
-					sourceCanvas.width /
-					sourceCanvas.height;
+		const sourceWidth =
+			sourceCanvas.width;
 
-				const containerAspect =
-					width / height;
+		const sourceHeight =
+			sourceCanvas.height;
 
-				let drawWidth =
+		const imageAspect =
+			sourceWidth /
+			sourceHeight;
+
+		const viewportAspect =
+			width /
+			Math.max(
+				height,
+				1
+			);
+
+		let drawWidth =
+			width;
+
+		let drawHeight =
+			height;
+
+		if (
+			imageAspect >
+			viewportAspect
+		) {
+			drawHeight =
+				height;
+
+			drawWidth =
+				height *
+				imageAspect;
+		} else {
+			drawWidth =
+				width;
+
+			drawHeight =
+				width /
+				imageAspect;
+		}
+
+		const offsetX =
+			(
+				width -
+				drawWidth
+			) /
+			2;
+
+		const offsetY =
+			(
+				height -
+				drawHeight
+			) /
+			2;
+
+		return {
+			sourceWidth,
+			sourceHeight,
+			drawWidth,
+			drawHeight,
+			offsetX,
+			offsetY
+		};
+	};
+
+	type ImageGeometry =
+		NonNullable<
+			ReturnType<
+				typeof getImageGeometry
+			>
+		>;
+
+	/* =====================================================
+	   SAMPLE IMAGE
+	   ===================================================== */
+
+	const sampleColor = (
+		x: number,
+		y: number,
+		geometry: ImageGeometry
+	) => {
+		if (!sourceCtx) {
+			return null;
+		}
+
+		const normalizedX =
+			(
+				x -
+				geometry.offsetX
+			) /
+			geometry.drawWidth;
+
+		const normalizedY =
+			(
+				y -
+				geometry.offsetY
+			) /
+			geometry.drawHeight;
+
+		const sampleX =
+			Math.floor(
+				normalizedX *
+					geometry.sourceWidth
+			);
+
+		const sampleY =
+			Math.floor(
+				normalizedY *
+					geometry.sourceHeight
+			);
+
+		if (
+			sampleX < 0 ||
+			sampleY < 0 ||
+			sampleX >=
+				geometry.sourceWidth ||
+			sampleY >=
+				geometry.sourceHeight
+		) {
+			return null;
+		}
+
+		const data =
+			sourceCtx.getImageData(
+				sampleX,
+				sampleY,
+				1,
+				1
+			).data;
+
+		return {
+			r: data[0],
+			g: data[1],
+			b: data[2],
+			a: data[3]
+		};
+	};
+
+	/* =====================================================
+	   KEEP DARK PIXELS VISIBLE
+	   ===================================================== */
+
+	const getVisibleColor = (
+		r: number,
+		g: number,
+		b: number
+	) => {
+		/*
+		 * IMPORTANT:
+		 *
+		 * We preserve the hue of the photograph but impose
+		 * a small brightness floor.
+		 *
+		 * Without this, a black pixel produces a black
+		 * halftone on top of a black part of the photograph,
+		 * making the particle mathematically present but
+		 * visually invisible.
+		 */
+
+		const brightest =
+			Math.max(
+				r,
+				g,
+				b
+			);
+
+		if (
+			brightest >=
+			darkFloor
+		) {
+			return {
+				r,
+				g,
+				b
+			};
+		}
+
+		/*
+		 * Pure/near black has essentially no hue to preserve.
+		 * Lift it toward a neutral gray.
+		 */
+
+		if (brightest < 4) {
+			return {
+				r: darkFloor,
+				g: darkFloor,
+				b: darkFloor
+			};
+		}
+
+		const multiplier =
+			darkFloor /
+			brightest;
+
+		return {
+			r:
+				Math.min(
+					255,
+					Math.round(
+						r *
+							multiplier
+					)
+				),
+
+			g:
+				Math.min(
+					255,
+					Math.round(
+						g *
+							multiplier
+					)
+				),
+
+			b:
+				Math.min(
+					255,
+					Math.round(
+						b *
+							multiplier
+					)
+				)
+		};
+	};
+
+	/* =====================================================
+	   UPDATE MOUSE PHYSICS
+	   ===================================================== */
+
+	const updatePointer = () => {
+		if (!initializedPointer) {
+			return;
+		}
+
+		/*
+		 * Smoothly follow the real mouse.
+		 */
+
+		mouseX +=
+			(
+				targetX -
+				mouseX
+			) *
+			smoothing;
+
+		mouseY +=
+			(
+				targetY -
+				mouseY
+			) *
+			smoothing;
+
+		const dx =
+			mouseX -
+			previousMouseX;
+
+		const dy =
+			mouseY -
+			previousMouseY;
+
+		const movement =
+			Math.sqrt(
+				dx * dx +
+					dy * dy
+			);
+
+		if (movement > 0.001) {
+			directionX =
+				dx /
+				movement;
+
+			directionY =
+				dy /
+				movement;
+		}
+
+		/*
+		 * Fast mouse movement = stronger bend.
+		 */
+
+		const desiredVelocity =
+			pointerActive
+				? Math.min(
+						movement /
+							7,
+						1
+					)
+				: 0;
+
+		velocity +=
+			(
+				desiredVelocity -
+				velocity
+			) *
+			0.2;
+
+		previousMouseX =
+			mouseX;
+
+		previousMouseY =
+			mouseY;
+	};
+
+	/* =====================================================
+	   RENDER
+	   ===================================================== */
+
+	const render = (
+		timestamp: number
+	) => {
+		if (
+			!ctx ||
+			!sourceCanvas ||
+			!sourceCtx
+		) {
+			animationFrame =
+				requestAnimationFrame(
+					render
+				);
+
+			return;
+		}
+
+		updatePointer();
+
+		ctx.clearRect(
+			0,
+			0,
+			width,
+			height
+		);
+
+		const geometry =
+			getImageGeometry();
+
+		if (!geometry) {
+			animationFrame =
+				requestAnimationFrame(
+					render
+				);
+
+			return;
+		}
+
+		const size =
+			Math.max(
+				3,
+				cellSize
+			);
+
+		/*
+		 * =================================================
+		 * UNIFORM HALFTONE FIELD
+		 * =================================================
+		 *
+		 * Every coordinate in this grid gets a particle.
+		 *
+		 * There is NO brightness condition here.
+		 *
+		 * Dark pixels, light pixels, black pixels and colored
+		 * pixels all participate.
+		 */
+
+		for (
+			let y =
+				size * 0.5;
+			y <
+				height;
+			y +=
+				size
+		) {
+			for (
+				let x =
+					size * 0.5;
+				x <
 					width;
-
-				let drawHeight =
-					height;
-
-				if (
-					imageAspect >
-					containerAspect
-				) {
-					drawHeight =
-						height;
-
-					drawWidth =
-						height *
-						imageAspect;
-				} else {
-					drawWidth =
-						width;
-
-					drawHeight =
-						width /
-						imageAspect;
-				}
-
-				const baseX =
-					(width - drawWidth) /
-					2;
-
-				const baseY =
-					(height - drawHeight) /
-					2;
-
-				/* =========================================
-				   SOURCE PIXEL DATA
-				   ========================================= */
-
-				const sourceWidth =
-					sourceCanvas.width;
-
-				const sourceHeight =
-					sourceCanvas.height;
-
-				const pixels =
-					sourceCtx.getImageData(
-						0,
-						0,
-						sourceWidth,
-						sourceHeight
-					).data;
-
-				/* =========================================
-				   ASCII CELL SIZE
-				   ========================================= */
-
-				const size =
-					Math.max(
-						4,
-						cellSize
+				x +=
+					size
+			) {
+				const pixel =
+					sampleColor(
+						x,
+						y,
+						geometry
 					);
 
-				/* =========================================
-				   CURSOR FIELD
-				   ========================================= */
+				if (!pixel) {
+					continue;
+				}
 
-				for (
-					let y = 0;
-					y < height;
-					y += size
+				/*
+				 * Do not use brightness to skip particles.
+				 */
+
+				const visibleColor =
+					getVisibleColor(
+						pixel.r,
+						pixel.g,
+						pixel.b
+					);
+
+				let finalX =
+					x;
+
+				let finalY =
+					y;
+
+				let influence =
+					0;
+
+				/*
+				 * =================================================
+				 * MOUSE DEFORMATION
+				 * =================================================
+				 */
+
+				if (
+					pointerActive &&
+					initializedPointer
 				) {
-					for (
-						let x = 0;
-						x < width;
-						x += size
+					const dx =
+						x -
+						mouseX;
+
+					const dy =
+						y -
+						mouseY;
+
+					const distance =
+						Math.sqrt(
+							dx * dx +
+								dy * dy
+						);
+
+					if (
+						distance <
+						cursorRadius
 					) {
-						const sampleX =
-							Math.floor(
-								(
-									x -
-									baseX
-								) /
-								drawWidth *
-								sourceWidth
-							);
+						influence =
+							1 -
+							distance /
+								cursorRadius;
 
-						const sampleY =
-							Math.floor(
-								(
-									y -
-									baseY
-								) /
-								drawHeight *
-								sourceHeight
-							);
+						/*
+						 * Smoothstep creates a soft edge instead
+						 * of an obvious circular cutoff.
+						 */
 
-						if (
-							sampleX < 0 ||
-							sampleY < 0 ||
-							sampleX >=
-								sourceWidth ||
-							sampleY >=
-								sourceHeight
-						) {
-							continue;
-						}
-
-						const index =
+						influence =
+							influence *
+							influence *
 							(
-								sampleY *
-									sourceWidth +
-								sampleX
-							) * 4;
-
-						const red =
-							pixels[index];
-
-						const green =
-							pixels[index + 1];
-
-						const blue =
-							pixels[index + 2];
-
-						const alpha =
-							pixels[index + 3];
-
-						if (
-							alpha < 20
-						) {
-							continue;
-						}
-
-						/* =================================
-						   LUMINANCE
-						   ================================= */
-
-						const luminance =
-							(
-								0.2126 *
-									red +
-								0.7152 *
-									green +
-								0.0722 *
-									blue
-							) / 255;
-
-						/* =================================
-						   CURSOR DISTANCE
-						   ================================= */
-
-						const distance =
-							Math.sqrt(
-								(
-									x -
-									currentX
-								) ** 2 +
-								(
-									y -
-									currentY
-								) ** 2
-							);
-
-						const field =
-							Math.max(
-								0,
-								1 -
-									distance /
-										cursorRadius
+								3 -
+									2 *
+										influence
 							);
 
 						/*
-						 * The cursor creates a local zoom field.
+						 * Cursor heading.
+						 *
+						 * All particles inside the radius bend
+						 * toward the direction the mouse travels.
 						 */
-						const localZoom =
-							1 +
-							(
-								zoom -
-								1
-							) *
-							field *
-							(
-								0.72 +
-								strength *
-									0.35
-							);
 
-						/* =================================
-						   ASCII CHARACTER
-						   ================================= */
+						const speedAmount =
+							0.3 +
+							velocity *
+								0.7 *
+								velocityStrength;
 
-						const noise =
+						const directionalBend =
+							maxBend *
+							influence *
+							speedAmount;
+
+						finalX +=
+							directionX *
+							directionalBend;
+
+						finalY +=
+							directionY *
+							directionalBend;
+
+						/*
+						 * Add a curved wake perpendicular to the
+						 * direction of travel.
+						 */
+
+						const perpendicularX =
+							-directionY;
+
+						const perpendicularY =
+							directionX;
+
+						const wave =
 							Math.sin(
-								(
-									x * 12.9898 +
-									y * 78.233 +
-									noiseTimer
-								) *
-								0.017
+								distance *
+									0.055 -
+									timestamp *
+										0.004
+							) *
+							4 *
+							influence *
+							(
+								0.25 +
+									velocity
 							);
 
-						const brightness =
+						finalX +=
+							perpendicularX *
+							wave;
+
+						finalY +=
+							perpendicularY *
+							wave;
+
+						/*
+						 * A tiny radial deformation makes the
+						 * surface look flexible rather than like
+						 * the dots are simply sliding sideways.
+						 */
+
+						const safeDistance =
 							Math.max(
-								0,
-								Math.min(
-									1,
-									luminance +
-										field *
-											0.18 +
-										noise *
-											0.025
-								)
+								distance,
+								1
 							);
 
-						const characterIndex =
-							Math.min(
-								characters.length -
-									1,
-								Math.max(
-									0,
-									Math.floor(
-										brightness *
-											(
-												characters.length -
-												1
-											)
-									)
-								)
-							);
-
-						const character =
-							characters[
-								characterIndex
-							];
-
-						if (
-							character ===
-							' '
-						) {
-							continue;
-						}
-
-						/* =================================
-						   LOCALIZED POSITION DISTORTION
-						   ================================= */
-
-						const offsetX =
+						const radial =
+							5 *
+							influence *
 							(
-								x -
-								currentX
-							) *
-							0.022 *
-							field;
-
-						const offsetY =
-							(
-								y -
-								currentY
-							) *
-							0.022 *
-							field;
-
-						const finalX =
-							x +
-							offsetX +
-							dx *
-								0.8 *
-								field +
-							idleX *
-								field;
-
-						const finalY =
-							y +
-							offsetY +
-							dy *
-								0.8 *
-								field +
-							idleY *
-								field;
-
-						/* =================================
-						   DRAW
-						   ================================= */
-
-						const localOpacity =
-							Math.min(
-								1,
-								0.32 +
-									luminance *
-										0.68 +
-									field *
-										0.35
+								0.2 +
+									velocity *
+										0.8
 							);
 
-						ctx.globalAlpha =
-							localOpacity *
-							opacity;
+						finalX +=
+							(
+								dx /
+									safeDistance
+							) *
+							radial;
 
-						ctx.fillStyle =
-							color;
-
-						ctx.font =
-							`${size}px monospace`;
-
-						ctx.textBaseline =
-							'top';
-
-						ctx.fillText(
-							character,
-							finalX,
-							finalY
-						);
+						finalY +=
+							(
+								dy /
+									safeDistance
+							) *
+							radial;
 					}
 				}
 
-				ctx.globalAlpha = 1;
+				/*
+				 * =================================================
+				 * PARTICLE SIZE
+				 * =================================================
+				 *
+				 * The size is intentionally NOT based on image
+				 * brightness.
+				 *
+				 * This guarantees the same halftone structure
+				 * exists over dark and bright areas.
+				 */
 
-				/* =========================================
-				   CURSOR GLOW
-				   ========================================= */
+				const hoverScale =
+					1 +
+					influence *
+						0.18;
 
-				const glow =
-					ctx.createRadialGradient(
-						currentX,
-						currentY,
-						0,
-						currentX,
-						currentY,
-						cursorRadius
+				const radius =
+					Math.max(
+						0.45,
+						size *
+							dotScale *
+							0.5 *
+							hoverScale
 					);
 
-				glow.addColorStop(
-					0,
-					'rgba(255,0,128,0.16)'
-				);
+				/*
+				 * =================================================
+				 * PARTICLE OPACITY
+				 * =================================================
+				 *
+				 * Also independent from source brightness.
+				 */
 
-				glow.addColorStop(
-					0.38,
-					'rgba(255,0,128,0.06)'
-				);
+				const particleOpacity =
+					Math.min(
+						0.52,
+						opacity *
+							(
+								1 +
+									influence *
+										0.22
+							)
+					);
 
-				glow.addColorStop(
-					1,
-					'rgba(255,0,128,0)'
-				);
+				ctx.globalAlpha =
+					particleOpacity;
 
 				ctx.fillStyle =
-					glow;
+					`rgb(${visibleColor.r}, ${visibleColor.g}, ${visibleColor.b})`;
 
-				ctx.fillRect(
+				ctx.beginPath();
+
+				ctx.arc(
+					finalX,
+					finalY,
+					radius,
 					0,
-					0,
-					width,
-					height
+					Math.PI *
+						2
 				);
 
-				/* =========================================
-				   NOISE INTERVAL
-				   ========================================= */
+				ctx.fill();
+			}
+		}
 
-				if (
-					timestamp -
-						noiseTimer >
-					noiseInterval
-				) {
-					noiseTimer =
-						timestamp;
-				}
+		ctx.globalAlpha =
+			1;
 
-				animationFrame =
-					requestAnimationFrame(
-						render
-					);
-			};
+		animationFrame =
+			requestAnimationFrame(
+				render
+			);
+	};
+
+	/* =====================================================
+	   MOUNT
+	   ===================================================== */
+
+	onMount(() => {
+		resize();
+
+		initializeImage();
 
 		window.addEventListener(
 			'resize',
 			resize
 		);
 
-		container.addEventListener(
+		window.addEventListener(
 			'pointermove',
-			mouseMove,
+			handlePointerMove,
 			{
 				passive: true
 			}
 		);
 
-		initializeImage();
+		window.addEventListener(
+			'pointerleave',
+			handlePointerLeave
+		);
 
 		animationFrame =
 			requestAnimationFrame(
@@ -704,9 +954,14 @@
 				resize
 			);
 
-			container.removeEventListener(
+			window.removeEventListener(
 				'pointermove',
-				mouseMove
+				handlePointerMove
+			);
+
+			window.removeEventListener(
+				'pointerleave',
+				handlePointerLeave
 			);
 
 			cancelAnimationFrame(
@@ -717,28 +972,30 @@
 </script>
 
 <div
-	class="ascii-container"
+	class="halftone-container"
 	bind:this={container}
+	aria-hidden={alt ? undefined : 'true'}
 >
 	<canvas
 		bind:this={canvas}
 		aria-label={alt}
 	></canvas>
-
-	<div class="ascii-vignette"></div>
 </div>
 
 <style>
-	.ascii-container {
-		position: relative;
+	.halftone-container {
+		position: absolute;
+
+		inset: 0;
 
 		width: 100%;
 		height: 100%;
 
 		overflow: hidden;
 
-		background:
-			#000;
+		pointer-events: none;
+
+		background: transparent;
 	}
 
 	canvas {
@@ -746,33 +1003,11 @@
 
 		inset: 0;
 
+		display: block;
+
 		width: 100%;
 		height: 100%;
 
-		display: block;
-	}
-
-	.ascii-vignette {
-		position: absolute;
-
-		inset: 0;
-
 		pointer-events: none;
-
-		background:
-			radial-gradient(
-				circle at center,
-				transparent 55%,
-				rgba(
-					0,
-					0,
-					0,
-					0.42
-				)
-				100%
-			);
-
-		mix-blend-mode:
-			multiply;
 	}
 </style>

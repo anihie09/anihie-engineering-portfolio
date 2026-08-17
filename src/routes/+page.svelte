@@ -1,3 +1,7 @@
+<script lang="ts">
+	import InteractiveAscii from '$lib/InteractiveAscii.svelte';
+</script>
+
 <svelte:head>
 	<title>ANIHIE — Mechanical Engineering</title>
 
@@ -8,24 +12,42 @@
 </svelte:head>
 
 <div class="home">
-	<!-- =====================================================
-	     PHOTOGRAPHIC BACKGROUND
-	     ===================================================== -->
+	<!-- ORIGINAL PHOTO -->
 
 	<div class="background"></div>
 
 	<div class="background-shade"></div>
 
-	<!-- =====================================================
-	     HUD INTERFACE
-	     ===================================================== -->
+	<!--
+		UNIFORM INTERACTIVE HALFTONE
+
+		The photo stays underneath this layer.
+
+		Every part of the viewport has halftones.
+		The mouse only DEFORMS the existing field.
+	-->
+
+	<InteractiveAscii
+		src="/home-background.png"
+		cellSize={6}
+		cursorRadius={230}
+		opacity={0.34}
+		maxBend={38}
+		smoothing={0.12}
+		dotScale={0.34}
+		darkFloor={48}
+		velocityStrength={1}
+	/>
+
+	<!-- HUD -->
 
 	<div class="interface">
-		<!-- =================================================
-		     OUTER FRAME
-		     ================================================= -->
+		<!-- OUTER FRAME -->
 
-		<div class="hud-frame" aria-hidden="true">
+		<div
+			class="hud-frame"
+			aria-hidden="true"
+		>
 			<div class="frame-top"></div>
 			<div class="frame-bottom"></div>
 			<div class="frame-left"></div>
@@ -45,9 +67,7 @@
 			<div class="bottom-marker marker-six"></div>
 		</div>
 
-		<!-- =================================================
-		     TOP RIGHT SYSTEM STATUS
-		     ================================================= -->
+		<!-- TOP RIGHT STATUS -->
 
 		<div
 			class="system-status"
@@ -73,9 +93,7 @@
 			</div>
 		</div>
 
-		<!-- =================================================
-		     LEFT TARGET
-		     ================================================= -->
+		<!-- LEFT TARGET -->
 
 		<div
 			class="target left-target"
@@ -91,9 +109,7 @@
 			<div class="target-dot"></div>
 		</div>
 
-		<!-- =================================================
-		     RIGHT TARGET
-		     ================================================= -->
+		<!-- RIGHT TARGET -->
 
 		<div
 			class="target right-target"
@@ -109,9 +125,7 @@
 			<div class="target-dot"></div>
 		</div>
 
-		<!-- =================================================
-		     RIGHT SIDE NAVIGATION
-		     ================================================= -->
+		<!-- NAVIGATION -->
 
 		<nav
 			class="navigation"
@@ -166,9 +180,7 @@
 			</a>
 		</nav>
 
-		<!-- =================================================
-		     DIRECTORY DATA
-		     ================================================= -->
+		<!-- DIRECTORY -->
 
 		<div class="navigation-data">
 			<div class="data-title">
@@ -193,9 +205,7 @@
 			</div>
 		</div>
 
-		<!-- =================================================
-		     CENTER TECHNICAL MARK
-		     ================================================= -->
+		<!-- CENTER MARKER -->
 
 		<div
 			class="center-marker"
@@ -210,9 +220,7 @@
 			<div class="marker-dot"></div>
 		</div>
 
-		<!-- =================================================
-		     BOTTOM LEFT DATA
-		     ================================================= -->
+		<!-- BOTTOM LEFT -->
 
 		<div class="bottom-left-data">
 			<div class="bottom-data-title">
@@ -234,9 +242,7 @@
 			</div>
 		</div>
 
-		<!-- =================================================
-		     BOTTOM CENTER DATA
-		     ================================================= -->
+		<!-- BOTTOM CENTER -->
 
 		<div class="bottom-center-data">
 			<div class="bottom-center-line"></div>
@@ -246,9 +252,7 @@
 			</div>
 		</div>
 
-		<!-- =================================================
-		     BOTTOM RIGHT STATUS
-		     ================================================= -->
+		<!-- BOTTOM RIGHT -->
 
 		<div class="bottom-right-data">
 			<div class="bottom-status-title">
@@ -269,9 +273,7 @@
 			</div>
 		</div>
 
-		<!-- =================================================
-		     SIDE DOTS
-		     ================================================= -->
+		<!-- SIDE DOTS -->
 
 		<div
 			class="side-dots left-dots"
@@ -299,7 +301,7 @@
 
 <style>
 	/* =====================================================
-	   SHARED HUD COLOR
+	   COLORS
 	   ===================================================== */
 
 	:global(:root) {
@@ -308,7 +310,6 @@
 		--hud-pink-soft: rgba(255, 0, 128, 0.68);
 		--hud-pink-muted: rgba(255, 0, 128, 0.42);
 		--hud-pink-faint: rgba(255, 0, 128, 0.2);
-		--hud-pink-very-faint: rgba(255, 0, 128, 0.1);
 	}
 
 	/* =====================================================
@@ -352,7 +353,7 @@
 	}
 
 	/* =====================================================
-	   ORIGINAL PHOTOGRAPH
+	   ORIGINAL PHOTO
 	   ===================================================== */
 
 	.background {
@@ -378,6 +379,11 @@
 			#000;
 	}
 
+	/*
+	 * Very subtle darkening only.
+	 * The original photograph remains clearly visible.
+	 */
+
 	.background-shade {
 		position: absolute;
 
@@ -390,15 +396,30 @@
 		background:
 			linear-gradient(
 				90deg,
-				rgba(0, 0, 0, 0)
-					0%,
-				rgba(0, 0, 0, 0)
-					54%,
-				rgba(0, 0, 0, 0.06)
-					70%,
-				rgba(0, 0, 0, 0.2)
-					100%
+				transparent 0%,
+				transparent 52%,
+				rgba(0, 0, 0, 0.03) 70%,
+				rgba(0, 0, 0, 0.12) 100%
 			);
+	}
+
+	/* =====================================================
+	   HALFTONE
+	   ===================================================== */
+
+	:global(.halftone-container) {
+		position: absolute;
+
+		inset: 0;
+
+		z-index: 2;
+
+		width: 100%;
+		height: 100%;
+
+		pointer-events: none;
+
+		overflow: hidden;
 	}
 
 	/* =====================================================
@@ -420,7 +441,7 @@
 	}
 
 	/* =====================================================
-	   HUD FRAME
+	   FRAME
 	   ===================================================== */
 
 	.hud-frame {
@@ -595,7 +616,7 @@
 	}
 
 	/* =====================================================
-	   TOP / BOTTOM MARKERS
+	   FRAME MARKERS
 	   ===================================================== */
 
 	.top-marker,
@@ -647,7 +668,7 @@
 	}
 
 	/* =====================================================
-	   TOP RIGHT SYSTEM STATUS
+	   SYSTEM STATUS
 	   ===================================================== */
 
 	.system-status {
@@ -661,12 +682,10 @@
 		display: grid;
 
 		grid-template-columns:
-			auto
-			1fr;
+			auto 1fr;
 
 		grid-template-rows:
-			auto
-			auto;
+			auto auto;
 
 		column-gap: 10px;
 
@@ -698,44 +717,34 @@
 		align-self:
 			center;
 
-		font-size:
-			7px;
+		font-size: 7px;
 
 		letter-spacing:
 			0.16em;
 	}
 
 	.status-bars {
-		display:
-			flex;
+		display: flex;
 
-		align-items:
-			center;
+		align-items: center;
 
-		gap:
-			4px;
+		gap: 4px;
 	}
 
 	.status-bars span {
-		display:
-			block;
+		display: block;
 
-		width:
-			7px;
-
-		height:
-			5px;
+		width: 7px;
+		height: 5px;
 
 		background:
 			var(--hud-pink);
 	}
 
 	.status-text {
-		margin-top:
-			4px;
+		margin-top: 4px;
 
-		font-size:
-			6px;
+		font-size: 6px;
 
 		letter-spacing:
 			0.08em;
@@ -776,57 +785,41 @@
 	}
 
 	.target-cross {
-		position:
-			absolute;
+		position: absolute;
 
 		background:
 			var(--hud-pink-muted);
 	}
 
 	.target-cross.horizontal {
-		left:
-			0;
+		left: 0;
+		right: 0;
 
-		right:
-			0;
+		top: 50%;
 
-		top:
-			50%;
-
-		height:
-			1px;
+		height: 1px;
 	}
 
 	.target-cross.vertical {
-		top:
-			0;
+		top: 0;
+		bottom: 0;
 
-		bottom:
-			0;
+		left: 50%;
 
-		left:
-			50%;
-
-		width:
-			1px;
+		width: 1px;
 	}
 
 	.target-ring {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			50%;
-
-		top:
-			50%;
+		left: 50%;
+		top: 50%;
 
 		border:
 			1px solid
 			var(--hud-pink-muted);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 
 		transform:
 			translate(
@@ -836,43 +829,29 @@
 	}
 
 	.ring-large {
-		width:
-			82px;
-
-		height:
-			82px;
+		width: 82px;
+		height: 82px;
 	}
 
 	.ring-small {
-		width:
-			42px;
-
-		height:
-			42px;
+		width: 42px;
+		height: 42px;
 	}
 
 	.target-center {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			50%;
+		left: 50%;
+		top: 50%;
 
-		top:
-			50%;
-
-		width:
-			8px;
-
-		height:
-			8px;
+		width: 8px;
+		height: 8px;
 
 		border:
 			1px solid
 			var(--hud-pink);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 
 		transform:
 			translate(
@@ -882,23 +861,15 @@
 	}
 
 	.target-dot {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			50%;
+		left: 50%;
+		top: 50%;
 
-		top:
-			50%;
+		width: 2px;
+		height: 2px;
 
-		width:
-			2px;
-
-		height:
-			2px;
-
-		border-radius:
-			50%;
+		border-radius: 50%;
 
 		background:
 			var(--hud-pink);
@@ -911,59 +882,43 @@
 	}
 
 	/* =====================================================
-	   RIGHT NAVIGATION
+	   NAVIGATION
 	   ===================================================== */
 
 	.navigation {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		right:
-			8.7%;
+		right: 8.7%;
+		top: 41%;
 
-		top:
-			41%;
+		display: flex;
 
-		display:
-			flex;
+		flex-direction: column;
 
-		flex-direction:
-			column;
+		align-items: flex-start;
 
-		align-items:
-			flex-start;
+		gap: 18px;
 
-		gap:
-			18px;
+		width: 220px;
 
-		width:
-			220px;
-
-		pointer-events:
-			auto;
+		pointer-events: none;
 	}
 
 	.navigation a {
-		position:
-			relative;
+		position: relative;
 
-		display:
-			grid;
+		display: grid;
 
 		grid-template-columns:
 			30px 22px auto;
 
-		align-items:
-			center;
+		align-items: center;
 
-		width:
-			100%;
+		width: 100%;
 
-		min-height:
-			26px;
+		min-height: 26px;
 
 		color:
 			var(--hud-pink);
@@ -980,49 +935,33 @@
 				15px
 			);
 
-		font-weight:
-			600;
+		font-weight: 600;
 
 		letter-spacing:
 			0.09em;
 
-		text-decoration:
-			none;
+		text-decoration: none;
 
 		text-shadow:
 			0 0 6px
-			rgba(
-				255,
-				0,
-				128,
-				0.22
-			),
+			rgba(255, 0, 128, 0.22),
 			0 2px 5px
-			rgba(
-				0,
-				0,
-				0,
-				0.85
-			);
+			rgba(0, 0, 0, 0.85);
 
-		cursor:
-			pointer;
+		cursor: pointer;
+
+		pointer-events: auto;
 
 		transition:
-			color
-			120ms
-			ease,
-			text-shadow
-			120ms
-			ease;
+			color 120ms ease,
+			text-shadow 120ms ease;
 	}
 
 	.nav-index {
 		color:
 			var(--hud-pink-soft);
 
-		font-size:
-			7px;
+		font-size: 7px;
 
 		letter-spacing:
 			0.12em;
@@ -1032,64 +971,44 @@
 		color:
 			var(--hud-pink);
 
-		width:
-			0;
+		width: 0;
 
-		overflow:
-			hidden;
+		overflow: hidden;
 
-		opacity:
-			0;
+		opacity: 0;
 
 		transform:
 			translateX(-7px);
 
 		transition:
-			width
-			140ms
-			ease,
-			opacity
-			100ms
-			linear,
-			transform
-			140ms
-			ease;
+			width 140ms ease,
+			opacity 100ms linear,
+			transform 140ms ease;
 	}
 
 	.label {
 		color:
 			var(--hud-pink);
 
-		white-space:
-			nowrap;
+		white-space: nowrap;
 	}
 
 	.nav-line {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			0;
+		left: 0;
+		bottom: -7px;
 
-		bottom:
-			-7px;
-
-		width:
-			0;
-
-		height:
-			1px;
+		width: 0;
+		height: 1px;
 
 		background:
 			var(--hud-pink);
 
-		opacity:
-			0.65;
+		opacity: 0.65;
 
 		transition:
-			width
-			180ms
-			ease;
+			width 180ms ease;
 	}
 
 	.navigation a:hover,
@@ -1097,24 +1016,13 @@
 		color:
 			var(--hud-pink-bright);
 
-		outline:
-			none;
+		outline: none;
 
 		text-shadow:
 			0 0 8px
-			rgba(
-				255,
-				0,
-				128,
-				0.75
-			),
+			rgba(255, 0, 128, 0.75),
 			0 0 16px
-			rgba(
-				255,
-				0,
-				128,
-				0.25
-			);
+			rgba(255, 0, 128, 0.25);
 
 		animation:
 			nav-glitch
@@ -1125,11 +1033,9 @@
 
 	.navigation a:hover .arrow,
 	.navigation a:focus-visible .arrow {
-		width:
-			17px;
+		width: 17px;
 
-		opacity:
-			1;
+		opacity: 1;
 
 		transform:
 			translateX(0);
@@ -1137,8 +1043,7 @@
 
 	.navigation a:hover .nav-line,
 	.navigation a:focus-visible .nav-line {
-		width:
-			100%;
+		width: 100%;
 	}
 
 	.navigation a:hover .nav-index,
@@ -1148,24 +1053,18 @@
 	}
 
 	/* =====================================================
-	   RIGHT SIDE DIRECTORY
+	   DIRECTORY
 	   ===================================================== */
 
 	.navigation-data {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		right:
-			8.7%;
+		right: 8.7%;
+		top: 27%;
 
-		top:
-			27%;
-
-		width:
-			220px;
+		width: 220px;
 
 		padding:
 			10px 12px;
@@ -1188,15 +1087,9 @@
 
 		text-shadow:
 			0 0 5px
-			rgba(
-				255,
-				0,
-				128,
-				0.25
-			);
+			rgba(255, 0, 128, 0.25);
 
-		pointer-events:
-			none;
+		pointer-events: none;
 
 		animation:
 			data-idle
@@ -1209,19 +1102,15 @@
 		color:
 			var(--hud-pink);
 
-		font-size:
-			7px;
+		font-size: 7px;
 
 		letter-spacing:
 			0.18em;
 	}
 
 	.data-rule {
-		width:
-			100%;
-
-		height:
-			1px;
+		width: 100%;
+		height: 1px;
 
 		margin:
 			7px 0;
@@ -1229,25 +1118,21 @@
 		background:
 			var(--hud-pink);
 
-		opacity:
-			0.55;
+		opacity: 0.55;
 	}
 
 	.data-row {
-		display:
-			flex;
+		display: flex;
 
 		justify-content:
 			space-between;
 
-		margin-top:
-			4px;
+		margin-top: 4px;
 
 		color:
 			var(--hud-pink);
 
-		font-size:
-			6px;
+		font-size: 6px;
 
 		letter-spacing:
 			0.08em;
@@ -1258,23 +1143,15 @@
 	   ===================================================== */
 
 	.center-marker {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			15;
+		z-index: 15;
 
-		left:
-			49%;
+		left: 49%;
+		top: 55%;
 
-		top:
-			55%;
-
-		width:
-			58px;
-
-		height:
-			58px;
+		width: 58px;
+		height: 58px;
 
 		transform:
 			translate(
@@ -1282,18 +1159,12 @@
 				-50%
 			);
 
-		opacity:
-			0.3;
+		opacity: 0.3;
 
 		filter:
 			drop-shadow(
 				0 0 4px
-				rgba(
-					255,
-					0,
-					128,
-					0.2
-				)
+				rgba(255, 0, 128, 0.2)
 			);
 
 		animation:
@@ -1304,61 +1175,44 @@
 	}
 
 	.marker-horizontal {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			0;
+		left: 0;
+		right: 0;
 
-		right:
-			0;
+		top: 50%;
 
-		top:
-			50%;
-
-		height:
-			1px;
+		height: 1px;
 
 		background:
 			var(--hud-pink);
 	}
 
 	.marker-vertical {
-		position:
-			absolute;
+		position: absolute;
 
-		top:
-			0;
+		top: 0;
+		bottom: 0;
 
-		bottom:
-			0;
+		left: 50%;
 
-		left:
-			50%;
-
-		width:
-			1px;
+		width: 1px;
 
 		background:
 			var(--hud-pink);
 	}
 
 	.marker-ring {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			50%;
-
-		top:
-			50%;
+		left: 50%;
+		top: 50%;
 
 		border:
 			1px solid
 			var(--hud-pink);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 
 		transform:
 			translate(
@@ -1368,42 +1222,28 @@
 	}
 
 	.marker-ring.outer {
-		width:
-			45px;
-
-		height:
-			45px;
+		width: 45px;
+		height: 45px;
 	}
 
 	.marker-ring.inner {
-		width:
-			17px;
-
-		height:
-			17px;
+		width: 17px;
+		height: 17px;
 	}
 
 	.marker-dot {
-		position:
-			absolute;
+		position: absolute;
 
-		left:
-			50%;
+		left: 50%;
+		top: 50%;
 
-		top:
-			50%;
-
-		width:
-			3px;
-
-		height:
-			3px;
+		width: 3px;
+		height: 3px;
 
 		background:
 			var(--hud-pink);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 
 		transform:
 			translate(
@@ -1413,24 +1253,18 @@
 	}
 
 	/* =====================================================
-	   BOTTOM LEFT DATA
+	   BOTTOM LEFT
 	   ===================================================== */
 
 	.bottom-left-data {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		left:
-			3.3%;
+		left: 3.3%;
+		bottom: 22px;
 
-		bottom:
-			22px;
-
-		width:
-			230px;
+		width: 230px;
 
 		color:
 			var(--hud-pink);
@@ -1442,36 +1276,27 @@
 	}
 
 	.bottom-data-title {
-		margin-bottom:
-			6px;
+		margin-bottom: 6px;
 
-		font-size:
-			6px;
+		font-size: 6px;
 
 		letter-spacing:
 			0.18em;
 	}
 
 	.bottom-bars {
-		display:
-			flex;
+		display: flex;
 
-		gap:
-			5px;
+		gap: 5px;
 
-		margin-bottom:
-			5px;
+		margin-bottom: 5px;
 	}
 
 	.bottom-bars span {
-		display:
-			block;
+		display: block;
 
-		width:
-			16px;
-
-		height:
-			5px;
+		width: 16px;
+		height: 5px;
 
 		background:
 			var(--hud-pink-muted);
@@ -1485,8 +1310,7 @@
 	}
 
 	.bottom-data-status {
-		font-size:
-			5px;
+		font-size: 5px;
 
 		letter-spacing:
 			0.15em;
@@ -1500,20 +1324,14 @@
 	   ===================================================== */
 
 	.bottom-center-data {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		left:
-			50%;
+		left: 50%;
+		bottom: 20px;
 
-		bottom:
-			20px;
-
-		width:
-			430px;
+		width: 430px;
 
 		transform:
 			translateX(-50%);
@@ -1526,19 +1344,14 @@
 			Courier,
 			monospace;
 
-		text-align:
-			center;
+		text-align: center;
 	}
 
 	.bottom-center-line {
-		position:
-			relative;
+		position: relative;
 
-		width:
-			100%;
-
-		height:
-			1px;
+		width: 100%;
+		height: 1px;
 
 		background:
 			var(--hud-pink-soft);
@@ -1546,48 +1359,36 @@
 
 	.bottom-center-line::before,
 	.bottom-center-line::after {
-		content:
-			'';
+		content: '';
 
-		position:
-			absolute;
+		position: absolute;
 
-		top:
-			-3px;
+		top: -3px;
 
-		width:
-			7px;
-
-		height:
-			7px;
+		width: 7px;
+		height: 7px;
 
 		border:
 			1px solid
 			var(--hud-pink);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 
-		background:
-			#000;
+		background: #000;
 	}
 
 	.bottom-center-line::before {
-		left:
-			0;
+		left: 0;
 	}
 
 	.bottom-center-line::after {
-		right:
-			0;
+		right: 0;
 	}
 
 	.bottom-center-label {
-		margin-top:
-			7px;
+		margin-top: 7px;
 
-		font-size:
-			5px;
+		font-size: 5px;
 
 		letter-spacing:
 			0.2em;
@@ -1601,20 +1402,14 @@
 	   ===================================================== */
 
 	.bottom-right-data {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		right:
-			7.5%;
+		right: 7.5%;
+		bottom: 22px;
 
-		bottom:
-			22px;
-
-		width:
-			210px;
+		width: 210px;
 
 		color:
 			var(--hud-pink);
@@ -1626,19 +1421,16 @@
 	}
 
 	.bottom-status-title {
-		font-size:
-			6px;
+		font-size: 6px;
 
 		letter-spacing:
 			0.18em;
 	}
 
 	.bottom-status-value {
-		margin-top:
-			4px;
+		margin-top: 4px;
 
-		font-size:
-			5px;
+		font-size: 5px;
 
 		letter-spacing:
 			0.12em;
@@ -1648,22 +1440,16 @@
 	}
 
 	.bottom-status-bars {
-		display:
-			flex;
+		display: flex;
 
-		gap:
-			5px;
+		gap: 5px;
 
-		margin-top:
-			6px;
+		margin-top: 6px;
 	}
 
 	.bottom-status-bars span {
-		width:
-			17px;
-
-		height:
-			4px;
+		width: 17px;
+		height: 4px;
 
 		background:
 			var(--hud-pink-muted);
@@ -1681,125 +1467,81 @@
 	   ===================================================== */
 
 	.side-dots {
-		position:
-			absolute;
+		position: absolute;
 
-		z-index:
-			20;
+		z-index: 20;
 
-		display:
-			flex;
+		display: flex;
 
-		flex-direction:
-			column;
+		flex-direction: column;
 
-		gap:
-			8px;
+		gap: 8px;
 	}
 
 	.left-dots {
-		left:
-			1px;
-
-		top:
-			59%;
+		left: 1px;
+		top: 59%;
 	}
 
 	.right-dots {
-		right:
-			1px;
-
-		top:
-			59%;
+		right: 1px;
+		top: 59%;
 	}
 
 	.side-dots span {
-		display:
-			block;
+		display: block;
 
-		width:
-			7px;
-
-		height:
-			7px;
+		width: 7px;
+		height: 7px;
 
 		border:
 			1px solid
 			var(--hud-pink-muted);
 
-		border-radius:
-			50%;
+		border-radius: 50%;
 	}
 
 	/* =====================================================
-	   GLITCH
+	   ANIMATIONS
 	   ===================================================== */
 
 	@keyframes nav-glitch {
 		0% {
 			transform:
-				translate(
-					0,
-					0
-				);
+				translate(0, 0);
 		}
 
 		20% {
 			transform:
-				translate(
-					-2px,
-					0
-				);
+				translate(-2px, 0);
 
 			text-shadow:
 				2px 0
-				rgba(
-					255,
-					0,
-					128,
-					0.72
-				);
+				rgba(255, 0, 128, 0.72);
 		}
 
 		40% {
 			transform:
-				translate(
-					2px,
-					-1px
-				);
+				translate(2px, -1px);
 
 			text-shadow:
 				-2px 0
-				rgba(
-					255,
-					0,
-					128,
-					0.5
-				);
+				rgba(255, 0, 128, 0.5);
 		}
 
 		60% {
 			transform:
-				translate(
-					-1px,
-					1px
-				);
+				translate(-1px, 1px);
 		}
 
 		80% {
 			transform:
-				translate(
-					1px,
-					0
-				);
+				translate(1px, 0);
 		}
 
 		100% {
 			transform:
-				translate(
-					0,
-					0
-				);
+				translate(0, 0);
 		}
 	}
 
@@ -1807,57 +1549,45 @@
 		0%,
 		84%,
 		100% {
-			opacity:
-				0.72;
+			opacity: 0.72;
 
 			transform:
-				translate(
-					0,
-					0
-				);
+				translate(0, 0);
 		}
 
 		86% {
-			opacity:
-				0.38;
+			opacity: 0.38;
 
 			transform:
 				translateX(-2px);
 		}
 
 		88% {
-			opacity:
-				0.94;
+			opacity: 0.94;
 
 			transform:
 				translateX(2px);
 		}
 
 		90% {
-			opacity:
-				0.55;
+			opacity: 0.55;
 
 			transform:
 				translateX(-1px);
 		}
 
 		92% {
-			opacity:
-				0.72;
+			opacity: 0.72;
 
 			transform:
-				translate(
-					0,
-					0
-				);
+				translate(0, 0);
 		}
 	}
 
 	@keyframes center-idle {
 		0%,
 		100% {
-			opacity:
-				0.16;
+			opacity: 0.16;
 
 			transform:
 				translate(
@@ -1868,8 +1598,7 @@
 		}
 
 		50% {
-			opacity:
-				0.34;
+			opacity: 0.34;
 
 			transform:
 				translate(
@@ -1887,175 +1616,128 @@
 	@media (max-width: 1100px) {
 		.navigation,
 		.navigation-data {
-			right:
-				6%;
+			right: 6%;
 		}
 
 		.bottom-right-data {
-			right:
-				6%;
+			right: 6%;
 		}
 
 		.right-target {
-			right:
-				3%;
+			right: 3%;
 		}
 
 		.left-target {
-			left:
-				3%;
+			left: 3%;
 		}
 	}
 
 	@media (max-width: 800px) {
 		.navigation {
-			right:
-				8%;
+			right: 8%;
+			top: 45%;
 
-			top:
-				45%;
-
-			width:
-				190px;
+			width: 190px;
 		}
 
 		.navigation-data {
-			right:
-				8%;
+			right: 8%;
+			top: 31%;
 
-			top:
-				31%;
-
-			width:
-				190px;
+			width: 190px;
 		}
 
 		.center-marker {
-			left:
-				50%;
+			left: 50%;
 		}
 
 		.target {
-			width:
-				76px;
-
-			height:
-				76px;
+			width: 76px;
+			height: 76px;
 		}
 
 		.ring-large {
-			width:
-				58px;
-
-			height:
-				58px;
+			width: 58px;
+			height: 58px;
 		}
 
 		.ring-small {
-			width:
-				30px;
-
-			height:
-				30px;
+			width: 30px;
+			height: 30px;
 		}
 
 		.system-status {
-			right:
-				7%;
+			right: 7%;
 		}
 
 		.bottom-center-data {
-			width:
-				300px;
+			width: 300px;
 		}
 	}
 
 	@media (max-width: 600px) {
 		.home {
-			min-height:
-				580px;
+			min-height: 580px;
 		}
 
 		.navigation {
-			right:
-				9%;
+			right: 9%;
+			top: 44%;
 
-			top:
-				44%;
+			width: 155px;
 
-			width:
-				155px;
-
-			gap:
-				14px;
+			gap: 14px;
 		}
 
 		.navigation-data {
-			right:
-				9%;
+			right: 9%;
+			top: 29%;
 
-			top:
-				29%;
+			width: 155px;
 
-			width:
-				155px;
-
-			padding:
-				8px;
+			padding: 8px;
 		}
 
 		.navigation a {
-			font-size:
-				10px;
+			font-size: 10px;
 		}
 
 		.target {
-			opacity:
-				0.5;
+			opacity: 0.5;
 		}
 
 		.left-target {
-			left:
-				0.5%;
+			left: 0.5%;
 		}
 
 		.right-target {
-			right:
-				0.5%;
+			right: 0.5%;
 		}
 
 		.system-status {
-			right:
-				8%;
+			right: 8%;
 
-			min-width:
-				115px;
+			min-width: 115px;
 		}
 
 		.bottom-left-data {
-			left:
-				7%;
+			left: 7%;
 
-			width:
-				160px;
+			width: 160px;
 		}
 
 		.bottom-center-data {
-			width:
-				200px;
+			width: 200px;
 		}
 
 		.bottom-right-data {
-			right:
-				8%;
+			right: 8%;
 
-			width:
-				130px;
+			width: 130px;
 		}
 
 		.side-dots {
-			display:
-				none;
+			display: none;
 		}
 	}
 
@@ -2066,13 +1748,11 @@
 	@media (prefers-reduced-motion: reduce) {
 		.navigation-data,
 		.center-marker {
-			animation:
-				none;
+			animation: none;
 		}
 
 		.navigation a {
-			transition:
-				none;
+			transition: none;
 		}
 	}
 </style>
