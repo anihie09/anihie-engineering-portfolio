@@ -2,11 +2,11 @@
 	import InteractiveAscii from '$lib/InteractiveAscii.svelte';
 
 	const attributes = [
-		{ label: '808', fill: 9 },
-		{ label: 'BOUNCE', fill: 8 },
+		{ label: 'COLLABORATION', fill: 9 },
+		{ label: 'FOCUS', fill: 8 },
 		{ label: 'CREATIVITY', fill: 8 },
-		{ label: 'BASS', fill: 7 },
-		{ label: 'MELODY', fill: 5 }
+		{ label: 'PROJECT MANAGEMENT', fill: 7 },
+		{ label: 'OVERTHINKING', fill: 5 }
 	];
 </script>
 
@@ -20,25 +20,19 @@
 </svelte:head>
 
 <div class="about-page">
-
 	<main class="namecard">
-
 		<!-- =================================================
 		     HEADER
 		     ================================================= -->
 
 		<header class="card-header">
-
 			<div class="header-left">
 				<span class="prefix">&gt;</span>
 				<span>ANIHIE_PROFILE</span>
 			</div>
 
 			<div class="system-status">
-
-				<span>
-					SYS / ACTIVE
-				</span>
+				<span>SYS / ACTIVE</span>
 
 				<div
 					class="battery"
@@ -49,41 +43,35 @@
 					<span></span>
 					<span></span>
 				</div>
-
 			</div>
-
 		</header>
 
-
 		<!-- =================================================
-		     PROFILE CONTENT
+		     PROFILE
 		     ================================================= -->
 
 		<section class="profile">
-
 			<!-- =============================================
-			     PORTRAIT / INTERACTIVE ASCII
+			     PORTRAIT
 			     ============================================= -->
 
 			<div class="portrait-column">
-
 				<div class="micro-heading">
 					SUBJECT / 01
 				</div>
 
 				<div class="portrait-frame">
-
 					<InteractiveAscii
 						src="/about-photo.png"
 						alt="ANI profile"
 						characters=" .:-=+*#%@"
 						color="#ff0080"
 						background="#000000"
-						cellSize={6}
-						cursorRadius={145}
-						zoom={1.12}
-						noiseInterval={100}
-						opacity={0.92}
+						cellSize={5}
+						cursorRadius={125}
+						zoom={1.045}
+						noiseInterval={140}
+						opacity={0.78}
 					/>
 
 					<div
@@ -117,7 +105,6 @@
 						<span>33</span>
 						<span>42</span>
 					</div>
-
 				</div>
 
 				<div class="portrait-footer">
@@ -129,18 +116,14 @@
 						01 / ACTIVE
 					</span>
 				</div>
-
 			</div>
-
 
 			<!-- =============================================
 			     INFORMATION
 			     ============================================= -->
 
 			<div class="data-column">
-
-				<section class="identity reactive">
-
+				<section class="identity">
 					<div class="micro-heading">
 						MECHANICAL ENGINEERING
 					</div>
@@ -154,25 +137,20 @@
 					</div>
 
 					<div class="access">
-						<span>
-							ACCESS
-						</span>
+						<span>ACCESS</span>
 
 						<strong>
 							*****
 						</strong>
 					</div>
-
 				</section>
-
 
 				<!-- =========================================
 				     BASIC INFORMATION
 				     ========================================= -->
 
 				<section class="information">
-
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>ID</span>
 
 						<strong>
@@ -180,7 +158,7 @@
 						</strong>
 					</div>
 
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>STATUS</span>
 
 						<strong>
@@ -188,7 +166,7 @@
 						</strong>
 					</div>
 
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>UNIVERSITY</span>
 
 						<strong>
@@ -196,7 +174,7 @@
 						</strong>
 					</div>
 
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>SCHOOL</span>
 
 						<strong>
@@ -204,7 +182,7 @@
 						</strong>
 					</div>
 
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>MAJOR</span>
 
 						<strong>
@@ -212,36 +190,31 @@
 						</strong>
 					</div>
 
-					<div class="info-card reactive">
+					<div class="info-card">
 						<span>LOCATION</span>
 
 						<strong>
 							LOS ANGELES / CA
 						</strong>
 					</div>
-
 				</section>
-
 
 				<!-- =========================================
 				     ATTRIBUTES
 				     ========================================= -->
 
 				<section class="attributes">
-
-					<div class="section-title reactive">
+					<div class="section-title">
 						ATTRIBUTES
 					</div>
 
 					{#each attributes as attribute}
-						<div class="attribute-row reactive">
-
+						<div class="attribute-row">
 							<div class="attribute-name">
 								{attribute.label}
 							</div>
 
 							<div class="meter">
-
 								{#each Array(10) as _, index}
 									<span
 										class:filled={
@@ -250,31 +223,23 @@
 										}
 									></span>
 								{/each}
-
 							</div>
-
 						</div>
 					{/each}
-
 				</section>
-
 			</div>
-
 		</section>
-
 
 		<!-- =================================================
 		     BIO
 		     ================================================= -->
 
-		<section class="bio reactive">
-
+		<section class="bio">
 			<div class="section-title">
 				&gt; BIO
 			</div>
 
 			<div class="bio-content">
-
 				<p>
 					Mechanical engineering student interested
 					in design, prototyping, manufacturing, and
@@ -283,7 +248,6 @@
 				</p>
 
 				<div class="bio-data">
-
 					<div>
 						<span>PROGRAM</span>
 
@@ -307,20 +271,15 @@
 							01 / ONLINE
 						</strong>
 					</div>
-
 				</div>
-
 			</div>
-
 		</section>
-
 
 		<!-- =================================================
 		     FOOTER
 		     ================================================= -->
 
-		<footer class="card-footer reactive">
-
+		<footer class="card-footer">
 			<span>
 				VITERBI / SCHOOL OF ENGINEERING
 			</span>
@@ -336,16 +295,13 @@
 			<span>
 				PROFILE / VERIFIED
 			</span>
-
 		</footer>
-
 	</main>
-
 </div>
 
 <style>
 	/* =====================================================
-	   PAGE
+	   COLORS
 	   ===================================================== */
 
 	.about-page {
@@ -379,21 +335,18 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 
-		-webkit-overflow-scrolling:
-			touch;
+		-webkit-overflow-scrolling: touch;
 
-		overscroll-behavior-y:
-			contain;
+		overscroll-behavior-y: contain;
 
 		background: #000;
 
 		padding:
-			105px
-			7vw
-			130px;
+			100px
+			6vw
+			115px;
 
-		box-sizing:
-			border-box;
+		box-sizing: border-box;
 
 		font-family:
 			'Courier New',
@@ -408,8 +361,7 @@
 				0.86
 			);
 
-		scrollbar-width:
-			thin;
+		scrollbar-width: thin;
 
 		scrollbar-color:
 			var(--soft)
@@ -430,7 +382,7 @@
 	}
 
 	/* =====================================================
-	   MAIN CARD
+	   NAMECARD
 	   ===================================================== */
 
 	.namecard {
@@ -438,8 +390,8 @@
 
 		width:
 			min(
-				1120px,
-				80vw
+				980px,
+				72vw
 			);
 
 		margin:
@@ -450,28 +402,16 @@
 				0,
 				0,
 				0,
-				0.9
+				0.88
 			);
 
 		border:
 			1px solid
 			var(--soft);
 
-		transform:
-			translate3d(
-				calc(
-					var(--cursor-vx, 0px) *
-					-0.012
-				),
-				calc(
-					var(--cursor-vy, 0px) *
-					-0.012
-				),
-				0
-			);
+		transform: none;
 
-		will-change:
-			transform;
+		will-change: auto;
 	}
 
 	.namecard::before {
@@ -487,83 +427,24 @@
 			1px solid
 			var(--faint);
 
-		opacity:
-			calc(
-				0.45 +
-				var(--cursor-intensity, 0.5)
-				* 0.3
-			);
+		opacity: 0.72;
 
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.3
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.3
-				)
-			);
-
-		pointer-events:
-			none;
-
-		animation:
-			frame-glitch
-			5.2s
-			steps(4, end)
-			infinite;
+		pointer-events: none;
 	}
-
-
-	/* =====================================================
-	   SHARED UI REACTION
-	   ===================================================== */
-
-	.reactive {
-		transform:
-			translate3d(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.22
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.22
-				),
-				0
-			);
-
-		filter:
-			brightness(
-				calc(
-					1 +
-					var(--cursor-intensity, 0.5)
-					* 0.07
-				)
-			);
-
-		will-change:
-			transform,
-			filter;
-	}
-
 
 	/* =====================================================
 	   HEADER
 	   ===================================================== */
 
 	.card-header {
-		min-height: 50px;
+		min-height: 46px;
 
 		padding:
-			0 22px;
+			0 18px;
 
 		display: flex;
 
-		align-items:
-			center;
+		align-items: center;
 
 		justify-content:
 			space-between;
@@ -572,7 +453,7 @@
 			1px solid
 			var(--soft);
 
-		font-size: 9px;
+		font-size: 10px;
 
 		letter-spacing:
 			0.08em;
@@ -581,8 +462,7 @@
 	.header-left {
 		display: flex;
 
-		align-items:
-			center;
+		align-items: center;
 
 		gap: 7px;
 	}
@@ -590,25 +470,31 @@
 	.prefix {
 		color:
 			var(--pink);
+
+		font-size: 11px;
 	}
 
 	.system-status {
 		display: flex;
 
-		align-items:
-			center;
+		align-items: center;
 
-		gap: 10px;
+		gap: 9px;
 
 		color:
 			rgba(
 				255,
 				255,
 				255,
-				0.5
+				0.68
 			);
 
-		font-size: 7px;
+		font-size: 9px;
+
+		font-weight: 500;
+
+		letter-spacing:
+			0.05em;
 	}
 
 	.battery {
@@ -624,15 +510,16 @@
 	}
 
 	.battery span {
-		width: 7px;
-		height: 6px;
+		width: 6px;
+
+		height: 5px;
 
 		background:
 			var(--pink);
 
 		animation:
 			battery-idle
-			1.8s
+			2.2s
 			steps(4, end)
 			infinite;
 	}
@@ -652,19 +539,18 @@
 			0.45s;
 	}
 
-
 	/* =====================================================
-	   PROFILE GRID
+	   PROFILE
 	   ===================================================== */
 
 	.profile {
-		display: grid;
+		display:
+			grid;
 
 		grid-template-columns:
-			37%
-			63%;
+			35%
+			65%;
 	}
-
 
 	/* =====================================================
 	   PORTRAIT
@@ -672,7 +558,7 @@
 
 	.portrait-column {
 		padding:
-			22px;
+			18px;
 
 		border-right:
 			1px solid
@@ -681,21 +567,27 @@
 
 	.micro-heading {
 		margin-bottom:
-			11px;
+			8px;
 
 		color:
 			var(--pink);
 
-		font-size: 6px;
+		font-size:
+			8px;
+
+		font-weight:
+			600;
 
 		letter-spacing:
-			0.18em;
+			0.16em;
 	}
 
 	.portrait-frame {
-		position: relative;
+		position:
+			relative;
 
-		width: 86%;
+		width:
+			84%;
 
 		aspect-ratio:
 			4 / 5;
@@ -703,7 +595,8 @@
 		margin:
 			0 auto;
 
-		overflow: hidden;
+		overflow:
+			hidden;
 
 		background:
 			#000;
@@ -713,30 +606,23 @@
 			var(--soft);
 
 		transform:
-			translate3d(
-				calc(
-					var(--cursor-field-x, 0px)
-					* -0.045
-				),
-				calc(
-					var(--cursor-field-y, 0px)
-					* -0.045
-				),
-				0
-			);
+			none;
 
 		will-change:
-			transform;
+			auto;
 	}
 
 	.portrait-frame::before {
 		content: '';
 
-		position: absolute;
+		position:
+			absolute;
 
-		inset: 0;
+		inset:
+			0;
 
-		z-index: 5;
+		z-index:
+			5;
 
 		pointer-events:
 			none;
@@ -747,52 +633,44 @@
 				255,
 				0,
 				128,
-				0.35
-			);
-
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.25
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.25
-				)
+				0.34
 			);
 	}
 
 	.portrait-corner {
-		position: absolute;
+		position:
+			absolute;
 
-		z-index: 10;
+		z-index:
+			10;
 
-		width: 16px;
-		height: 16px;
+		width:
+			14px;
+
+		height:
+			14px;
 
 		border-color:
 			var(--pink);
 
 		filter:
 			drop-shadow(
-				0 0
-				calc(
-					var(--cursor-intensity, 0.5)
-					* 2px
-				)
+				0 0 3px
 				rgba(
 					255,
 					0,
 					128,
-					0.5
+					0.45
 				)
 			);
 	}
 
 	.portrait-corner.tl {
-		left: 7px;
-		top: 7px;
+		left:
+			6px;
+
+		top:
+			6px;
 
 		border-left:
 			1px solid;
@@ -802,8 +680,11 @@
 	}
 
 	.portrait-corner.tr {
-		right: 7px;
-		top: 7px;
+		right:
+			6px;
+
+		top:
+			6px;
 
 		border-right:
 			1px solid;
@@ -813,8 +694,11 @@
 	}
 
 	.portrait-corner.bl {
-		left: 7px;
-		bottom: 7px;
+		left:
+			6px;
+
+		bottom:
+			6px;
 
 		border-left:
 			1px solid;
@@ -824,8 +708,11 @@
 	}
 
 	.portrait-corner.br {
-		right: 7px;
-		bottom: 7px;
+		right:
+			6px;
+
+		bottom:
+			6px;
 
 		border-right:
 			1px solid;
@@ -835,44 +722,54 @@
 	}
 
 	.portrait-data {
-		position: absolute;
+		position:
+			absolute;
 
-		left: 7px;
-		top: 50%;
+		left:
+			6px;
 
-		z-index: 10;
+		top:
+			50%;
+
+		z-index:
+			10;
 
 		transform:
 			translateY(-50%);
 
-		display: flex;
+		display:
+			flex;
 
 		flex-direction:
 			column;
 
-		gap: 20px;
+		gap:
+			14px;
 
 		color:
 			rgba(
 				255,
 				0,
 				128,
-				0.28
+				0.46
 			);
 
-		font-size: 4px;
+		font-size:
+			6px;
 
 		pointer-events:
 			none;
 	}
 
 	.portrait-footer {
-		width: 86%;
+		width:
+			84%;
 
 		margin:
-			9px auto 0;
+			7px auto 0;
 
-		display: flex;
+		display:
+			flex;
 
 		justify-content:
 			space-between;
@@ -880,24 +777,32 @@
 		color:
 			var(--soft);
 
-		font-size: 5px;
+		font-size:
+			7px;
+
+		letter-spacing:
+			0.04em;
 	}
 
-
 	/* =====================================================
-	   INFORMATION
+	   DATA COLUMN
 	   ===================================================== */
 
 	.data-column {
 		padding:
-			34px 36px;
+			25px 28px;
 	}
 
+	/* =====================================================
+	   IDENTITY
+	   ===================================================== */
+
 	.identity {
-		position: relative;
+		position:
+			relative;
 
 		padding-bottom:
-			23px;
+			17px;
 
 		border-bottom:
 			1px solid
@@ -906,13 +811,16 @@
 
 	.identity h1 {
 		margin:
-			0 0 12px;
+			0 0 9px;
 
+		/*
+		 * Keep LE, ANI smaller.
+		 */
 		font-size:
 			clamp(
-				2rem,
-				3vw,
-				3.3rem
+				1.4rem,
+				1.8vw,
+				2rem
 			);
 
 		font-weight:
@@ -922,16 +830,7 @@
 			0.08em;
 
 		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.16
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.16
-				)
-			);
+			none;
 	}
 
 	.student-tag {
@@ -939,7 +838,7 @@
 			inline-block;
 
 		padding:
-			5px 11px;
+			5px 10px;
 
 		background:
 			var(--pink);
@@ -947,41 +846,28 @@
 		color:
 			#000;
 
-		font-size: 7px;
+		font-size:
+			8px;
 
 		font-weight:
 			700;
 
 		letter-spacing:
-			0.17em;
-
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* 0.2
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* 0.2
-				)
-			)
-			scale(
-				calc(
-					1 +
-					var(--cursor-intensity, 0.5)
-					* 0.01
-				)
-			);
+			0.15em;
 	}
 
 	.access {
-		position: absolute;
+		position:
+			absolute;
 
-		right: 0;
-		top: 0;
+		right:
+			0;
 
-		display: flex;
+		top:
+			0;
+
+		display:
+			flex;
 
 		flex-direction:
 			column;
@@ -989,54 +875,51 @@
 		align-items:
 			flex-end;
 
-		gap: 4px;
+		gap:
+			4px;
 
 		color:
 			var(--pink);
 
-		font-size: 7px;
+		font-size:
+			9px;
 
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* 0.28
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* 0.28
-				)
-			);
+		font-weight:
+			600;
+
+		letter-spacing:
+			0.08em;
 	}
 
 	.access strong {
-		font-size: 11px;
+		font-size:
+			11px;
 
 		letter-spacing:
 			0.16em;
 	}
 
-
 	/* =====================================================
-	   INFO GRID
+	   INFORMATION
 	   ===================================================== */
 
 	.information {
-		display: grid;
+		display:
+			grid;
 
 		grid-template-columns:
-			1fr
-			1fr;
+			1fr 1fr;
 
 		margin-top:
-			20px;
+			13px;
 	}
 
 	.info-card {
 		min-height:
-			42px;
+			32px;
 
-		display: flex;
+		display:
+			flex;
 
 		align-items:
 			center;
@@ -1044,10 +927,11 @@
 		justify-content:
 			space-between;
 
-		gap: 12px;
+		gap:
+			10px;
 
 		padding:
-			0 6px;
+			0 4px;
 
 		border-bottom:
 			1px solid
@@ -1056,7 +940,7 @@
 
 	.info-card:nth-child(odd) {
 		margin-right:
-			17px;
+			12px;
 	}
 
 	.info-card span {
@@ -1065,34 +949,58 @@
 				255,
 				255,
 				255,
-				0.46
+				0.72
 			);
 
-		font-size: 7px;
+		/*
+		 * Larger labels.
+		 */
+		font-size:
+			10px;
+
+		font-weight:
+			500;
+
+		letter-spacing:
+			0.05em;
+
+		white-space:
+			nowrap;
 	}
 
 	.info-card strong {
-		font-size: 7px;
+		color:
+			rgba(
+				255,
+				255,
+				255,
+				0.92
+			);
+
+		/*
+		 * Larger values.
+		 */
+		font-size:
+			9px;
 
 		font-weight:
 			400;
 
+		letter-spacing:
+			0.02em;
+
 		text-align:
 			right;
 
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* 0.3
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* 0.3
-				)
-			);
-	}
+		white-space:
+			nowrap;
 
+		overflow:
+			hidden;
+
+		text-overflow:
+			ellipsis;
+	}
 
 	/* =====================================================
 	   ATTRIBUTES
@@ -1100,56 +1008,68 @@
 
 	.attributes {
 		margin-top:
-			26px;
+			18px;
 	}
 
 	.section-title {
 		margin-bottom:
-			16px;
+			12px;
 
 		color:
 			var(--pink);
 
-		font-size: 7px;
+		font-size:
+			10px;
+
+		font-weight:
+			700;
 
 		letter-spacing:
-			0.2em;
+			0.18em;
 	}
 
 	.attribute-row {
-		display: grid;
+		display:
+			grid;
 
 		grid-template-columns:
-			105px 1fr;
+			165px 1fr;
 
 		align-items:
 			center;
 
 		gap:
-			14px;
+			12px;
 
 		margin-bottom:
-			11px;
+			8px;
 	}
 
 	.attribute-name {
-		font-size: 7px;
+		/*
+		 * Larger attribute text.
+		 */
+		font-size:
+			10px;
 
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* 0.22
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* 0.22
-				)
+		font-weight:
+			500;
+
+		letter-spacing:
+			0.035em;
+
+		color:
+			rgba(
+				255,
+				255,
+				255,
+				0.86
 			);
 	}
 
 	.meter {
-		display: grid;
+		display:
+			grid;
 
 		grid-template-columns:
 			repeat(
@@ -1157,23 +1077,13 @@
 				1fr
 			);
 
-		gap: 3px;
-
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.24
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.24
-				)
-			);
+		gap:
+			3px;
 	}
 
 	.meter span {
-		height: 9px;
+		height:
+			8px;
 
 		border:
 			1px solid
@@ -1184,9 +1094,9 @@
 
 		transition:
 			background
-			80ms linear,
+			100ms linear,
 			box-shadow
-			80ms linear;
+			100ms linear;
 	}
 
 	.meter span.filled {
@@ -1197,11 +1107,7 @@
 			var(--pink);
 
 		box-shadow:
-			0 0
-			calc(
-				var(--cursor-intensity, 0.5)
-				* 3px
-			)
+			0 0 3px
 			rgba(
 				255,
 				0,
@@ -1210,14 +1116,13 @@
 			);
 	}
 
-
 	/* =====================================================
 	   BIO
 	   ===================================================== */
 
 	.bio {
 		padding:
-			28px 35px;
+			20px 28px;
 
 		border-top:
 			1px solid
@@ -1229,39 +1134,34 @@
 			grid;
 
 		grid-template-columns:
-			1.1fr
-			0.9fr;
+			1.1fr 0.9fr;
 
 		gap:
-			45px;
+			30px;
 	}
 
 	.bio p {
-		margin: 0;
+		margin:
+			0;
 
-		font-size: 8px;
+		/*
+		 * Larger readable paragraph.
+		 */
+		font-size:
+			10px;
 
 		line-height:
-			1.85;
+			1.7;
+
+		letter-spacing:
+			0.01em;
 
 		color:
 			rgba(
 				255,
 				255,
 				255,
-				0.68
-			);
-
-		transform:
-			translate(
-				calc(
-					var(--cursor-vx, 0px)
-					* -0.15
-				),
-				calc(
-					var(--cursor-vy, 0px)
-					* -0.15
-				)
+				0.78
 			);
 	}
 
@@ -1272,7 +1172,8 @@
 		flex-direction:
 			column;
 
-		gap: 9px;
+		gap:
+			7px;
 	}
 
 	.bio-data > div {
@@ -1282,10 +1183,14 @@
 		justify-content:
 			space-between;
 
-		gap: 12px;
+		align-items:
+			center;
+
+		gap:
+			10px;
 
 		padding-bottom:
-			7px;
+			6px;
 
 		border-bottom:
 			1px solid
@@ -1295,16 +1200,41 @@
 	.bio-data span {
 		color:
 			var(--soft);
+
+		/*
+		 * Larger PROGRAM / INSTITUTION / MODE.
+		 */
+		font-size:
+			8px;
+
+		font-weight:
+			600;
+
+		letter-spacing:
+			0.05em;
 	}
 
 	.bio-data strong {
+		color:
+			rgba(
+				255,
+				255,
+				255,
+				0.9
+			);
+
+		font-size:
+			9px;
+
 		font-weight:
 			400;
+
+		letter-spacing:
+			0.015em;
 
 		text-align:
 			right;
 	}
-
 
 	/* =====================================================
 	   FOOTER
@@ -1312,10 +1242,10 @@
 
 	.card-footer {
 		min-height:
-			48px;
+			40px;
 
 		padding:
-			0 28px;
+			0 22px;
 
 		display:
 			flex;
@@ -1330,7 +1260,11 @@
 			1px solid
 			var(--soft);
 
-		font-size: 5px;
+		font-size:
+			8px;
+
+		letter-spacing:
+			0.04em;
 
 		color:
 			var(--soft);
@@ -1338,88 +1272,52 @@
 
 	.stream {
 		width:
-			140px;
+			120px;
 
 		display:
 			flex;
 
-		gap: 4px;
+		gap:
+			3px;
 	}
 
 	.stream i {
-		flex: 1;
+		flex:
+			1;
 
-		height: 3px;
+		height:
+			3px;
 
 		background:
 			var(--soft);
 
 		animation:
 			stream-idle
-			1.8s
+			2s
 			steps(4, end)
 			infinite;
 	}
 
-
 	/* =====================================================
-	   IDLE ANIMATIONS
+	   ANIMATIONS
 	   ===================================================== */
-
-	@keyframes frame-glitch {
-		0%,
-		86%,
-		100% {
-			opacity: 1;
-
-			transform:
-				translate(
-					0,
-					0
-				);
-		}
-
-		89% {
-			opacity: 0.45;
-
-			transform:
-				translateX(
-					-1px
-				);
-		}
-
-		92% {
-			opacity: 0.9;
-
-			transform:
-				translateX(
-					1px
-				);
-		}
-
-		95% {
-			opacity: 0.65;
-
-			transform:
-				translateY(
-					1px
-				);
-		}
-	}
 
 	@keyframes battery-idle {
 		0%,
 		70%,
 		100% {
-			opacity: 0.7;
+			opacity:
+				0.7;
 		}
 
 		76% {
-			opacity: 0.15;
+			opacity:
+				0.15;
 		}
 
 		82% {
-			opacity: 1;
+			opacity:
+				1;
 		}
 	}
 
@@ -1427,42 +1325,49 @@
 		0%,
 		70%,
 		100% {
-			opacity: 0.4;
+			opacity:
+				0.4;
 		}
 
 		76% {
-			opacity: 0.15;
+			opacity:
+				0.15;
 		}
 
 		82% {
-			opacity: 0.9;
+			opacity:
+				0.9;
 		}
 	}
-
 
 	/* =====================================================
 	   RESPONSIVE
 	   ===================================================== */
 
-	@media (max-width: 900px) {
+	@media (max-width: 1000px) {
 		.namecard {
 			width:
-				88vw;
+				82vw;
 		}
 
 		.profile {
 			grid-template-columns:
-				40%
-				60%;
+				38%
+				62%;
+		}
+
+		.attribute-row {
+			grid-template-columns:
+				140px 1fr;
 		}
 	}
 
-	@media (max-width: 700px) {
+	@media (max-width: 760px) {
 		.about-page {
 			padding:
 				90px
 				4vw
-				110px;
+				100px;
 		}
 
 		.namecard {
@@ -1487,8 +1392,8 @@
 		.portrait-frame {
 			width:
 				min(
-					360px,
-					82%
+					300px,
+					76%
 				);
 		}
 
@@ -1497,14 +1402,18 @@
 				1fr;
 
 			gap:
-				24px;
+				18px;
+		}
+
+		.attribute-row {
+			grid-template-columns:
+				160px 1fr;
 		}
 	}
 
-	@media (max-width: 500px) {
+	@media (max-width: 560px) {
 		.data-column {
 			padding:
-				25px
 				20px;
 		}
 
@@ -1514,13 +1423,66 @@
 		}
 
 		.info-card:nth-child(odd) {
-			margin-right: 0;
+			margin-right:
+				0;
+		}
+
+		.info-card {
+			min-height:
+				32px;
+		}
+
+		.info-card span {
+			font-size:
+				9px;
+		}
+
+		.info-card strong {
+			font-size:
+				8px;
 		}
 
 		.attribute-row {
 			grid-template-columns:
-				80px
-				1fr;
+				145px 1fr;
+		}
+
+		.attribute-name {
+			font-size:
+				9px;
+		}
+
+		.section-title {
+			font-size:
+				9px;
+		}
+
+		.bio p {
+			font-size:
+				9px;
+		}
+
+		.bio-data span {
+			font-size:
+				7px;
+		}
+
+		.bio-data strong {
+			font-size:
+				8px;
+		}
+
+		.card-footer {
+			padding:
+				0 16px;
+
+			font-size:
+				7px;
+		}
+
+		.stream {
+			width:
+				80px;
 		}
 
 		.access {
@@ -1528,22 +1490,18 @@
 				static;
 
 			margin-top:
-				14px;
+				11px;
 
 			align-items:
 				flex-start;
 		}
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.namecard,
-		.reactive,
-		.portrait-frame {
-			transform:
-				none !important;
-		}
+	/* =====================================================
+	   REDUCED MOTION
+	   ===================================================== */
 
-		.namecard::before,
+	@media (prefers-reduced-motion: reduce) {
 		.battery span,
 		.stream i {
 			animation:

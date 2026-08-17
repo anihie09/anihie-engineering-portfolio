@@ -42,6 +42,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | "/about" | "/contact" | "/projects" | "/skills";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/about-photo.png" | "/home-background.png" | "/hud-border.png" | "/images/ani-profile.jpg" | "/namecard.png" | "/robots.txt" | "/signature.png" | string & {};
+		Asset(): "/about-photo.png" | "/home-background.png" | "/hud-border.png" | "/images/ani-profile.jpg" | "/robots.txt" | "/signature.png" | string & {};
 	}
 }
