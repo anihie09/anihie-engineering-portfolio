@@ -10,7 +10,7 @@ return {
 	assets: new Set(["about-photo.png","home-background.png","hud-border.png","images/ani-profile.jpg","namecard.png","robots.txt","signature.png"]),
 	mimeTypes: {".png":"image/png",".jpg":"image/jpeg",".txt":"text/plain"},
 	_: {
-		client: {start:"_app/immutable/entry/start.Bgk0iYtl.js",app:"_app/immutable/entry/app.DLtyedAI.js",imports:["_app/immutable/entry/start.Bgk0iYtl.js","_app/immutable/chunks/CfgKJJ9d.js","_app/immutable/chunks/CAUZrlFL.js","_app/immutable/entry/app.DLtyedAI.js","_app/immutable/chunks/CAUZrlFL.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.x-q_vr8b.js",app:"_app/immutable/entry/app.B0TzqNBI.js",imports:["_app/immutable/entry/start.x-q_vr8b.js","_app/immutable/chunks/or_njV1D.js","_app/immutable/chunks/CAUZrlFL.js","_app/immutable/entry/app.B0TzqNBI.js","_app/immutable/chunks/CAUZrlFL.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js'))

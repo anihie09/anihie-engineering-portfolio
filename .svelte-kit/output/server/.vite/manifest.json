@@ -9,21 +9,6 @@
       "_internal2.js"
     ]
   },
-  "_InteractiveAscii.YoxgfmM8.css": {
-    "file": "_app/immutable/assets/InteractiveAscii.YoxgfmM8.css",
-    "src": "_InteractiveAscii.YoxgfmM8.css"
-  },
-  "_InteractiveAscii.js": {
-    "file": "chunks/InteractiveAscii.js",
-    "name": "InteractiveAscii",
-    "imports": [
-      "_index-server.js",
-      "_server.js"
-    ],
-    "css": [
-      "_app/immutable/assets/InteractiveAscii.YoxgfmM8.css"
-    ]
-  },
   "_client.js": {
     "file": "chunks/client.js",
     "name": "client",
@@ -145,11 +130,10 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_server.js",
-      "_InteractiveAscii.js"
+      "_server.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.DAUpBZx5.css"
+      "_app/immutable/assets/_page.BhJfAgs1.css"
     ]
   },
   "src/routes/about/+page.svelte": {
@@ -158,11 +142,11 @@
     "src": "src/routes/about/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_server.js",
-      "_InteractiveAscii.js"
+      "_index-server.js",
+      "_server.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.YLyB8Y-P.css"
+      "_app/immutable/assets/_page.C34itDD4.css"
     ]
   },
   "src/routes/contact/+page.svelte": {
