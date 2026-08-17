@@ -4,13 +4,25 @@
 	interface Props {
 		src: string;
 		alt?: string;
+
+		/*
+		 * Kept for compatibility with existing callers.
+		 * The portrait is now rendered as a photograph rather
+		 * than ASCII/halftone characters.
+		 */
 		characters?: string;
 		color?: string;
 		background?: string;
 		cellSize?: number;
+
 		cursorRadius?: number;
 		zoom?: number;
+
+		/*
+		 * Kept for API compatibility.
+		 */
 		noiseInterval?: number;
+
 		opacity?: number;
 	}
 
@@ -19,38 +31,28 @@
 		alt = '',
 		characters = ' .:-=+*#%@',
 		color = '#ff0080',
-		background = 'transparent',
-		cellSize = 7,
-		cursorRadius = 150,
-		zoom = 1.06,
+		background = '#000000',
+		cellSize = 6,
+		cursorRadius = 145,
+		zoom = 1.045,
 		noiseInterval = 100,
-		opacity = 0.95
+		opacity = 0.96
 	}: Props = $props();
 
 	let canvas: HTMLCanvasElement;
 	let container: HTMLDivElement;
 
-	let ctx:
-		CanvasRenderingContext2D | null =
-			null;
-
 	let image:
-		HTMLImageElement | null =
-			null;
+		HTMLImageElement | null = null;
 
-	let pixelData:
-		Uint8ClampedArray | null =
-			null;
-
-	let sourceWidth = 0;
-	let sourceHeight = 0;
-
-	let animationFrame = 0;
+	let ctx:
+		CanvasRenderingContext2D | null = null;
 
 	let width = 1;
 	let height = 1;
-
 	let dpr = 1;
+
+	let animationFrame = 0;
 
 	let targetX = 0;
 	let targetY = 0;
@@ -59,8 +61,28 @@
 	let mouseY = 0;
 
 	let pointerInitialized = false;
+	let imageLoaded = false;
 
-	let noiseSeed = 0;
+	/*
+	 * Prevent compiler warnings while preserving the public
+	 * component API used elsewhere in the project.
+	 *
+	 * These values are intentionally not used by the current
+	 * photograph renderer.
+	 */
+	function keepCompatibilityProps() {
+		return [
+			characters,
+			color,
+			background,
+			cellSize,
+			noiseInterval
+		];
+	}
+
+	/* =====================================================
+	   RESIZE
+	   ===================================================== */
 
 	function resize() {
 		if (
@@ -95,13 +117,13 @@
 		canvas.width =
 			Math.round(
 				width *
-					dpr
+				dpr
 			);
 
 		canvas.height =
 			Math.round(
 				height *
-					dpr
+				dpr
 			);
 
 		ctx =
@@ -118,8 +140,18 @@
 				0,
 				0
 			);
+
+			ctx.imageSmoothingEnabled =
+				true;
+
+			ctx.imageSmoothingQuality =
+				'high';
 		}
 	}
+
+	/* =====================================================
+	   POINTER
+	   ===================================================== */
 
 	function handlePointerMove(
 		event: PointerEvent
@@ -129,13 +161,15 @@
 
 		targetX =
 			event.clientX -
-				rect.left;
+			rect.left;
 
 		targetY =
 			event.clientY -
-				rect.top;
+			rect.top;
 
-		if (!pointerInitialized) {
+		if (
+			!pointerInitialized
+		) {
 			mouseX =
 				targetX;
 
@@ -147,6 +181,15 @@
 		}
 	}
 
+	function handlePointerLeave() {
+		pointerInitialized =
+			false;
+	}
+
+	/* =====================================================
+	   IMAGE
+	   ===================================================== */
+
 	function loadImage() {
 		image =
 			new Image();
@@ -154,100 +197,45 @@
 		image.decoding =
 			'async';
 
-		image.src =
-			src;
-
 		image.onload =
 			() => {
-				if (!image) {
-					return;
-				}
+				imageLoaded =
+					true;
 
-				const maximumWidth =
-					1000;
-
-				const scale =
-					Math.min(
-						1,
-						maximumWidth /
-							image.naturalWidth
-					);
-
-				sourceWidth =
-					Math.max(
-						1,
-						Math.round(
-							image.naturalWidth *
-								scale
-						)
-					);
-
-				sourceHeight =
-					Math.max(
-						1,
-						Math.round(
-							image.naturalHeight *
-								scale
-						)
-					);
-
-				const sourceCanvas =
-					document.createElement(
-						'canvas'
-					);
-
-				sourceCanvas.width =
-					sourceWidth;
-
-				sourceCanvas.height =
-					sourceHeight;
-
-				const sourceContext =
-					sourceCanvas.getContext(
-						'2d',
-						{
-							willReadFrequently:
-								true
-						}
-					);
-
-				if (!sourceContext) {
-					return;
-				}
-
-				sourceContext.drawImage(
-					image,
-					0,
-					0,
-					sourceWidth,
-					sourceHeight
-				);
-
-				pixelData =
-					sourceContext.getImageData(
-						0,
-						0,
-						sourceWidth,
-						sourceHeight
-					).data;
+				resize();
 			};
+
+		image.onerror =
+			() => {
+				console.error(
+					`Unable to load portrait image: ${src}`
+				);
+			};
+
+		image.src =
+			src;
 	}
 
-	function getGeometry() {
+	/* =====================================================
+	   COVER GEOMETRY
+	   ===================================================== */
+
+	function getCoverGeometry() {
 		if (
-			sourceWidth <= 0 ||
-			sourceHeight <= 0
+			!image ||
+			!image.naturalWidth ||
+			!image.naturalHeight
 		) {
 			return null;
 		}
 
 		const imageAspect =
-			sourceWidth /
-				sourceHeight;
+			image.naturalWidth /
+			image.naturalHeight;
 
 		const viewportAspect =
 			width /
-				height;
+			height;
 
 		let drawWidth =
 			width;
@@ -264,14 +252,14 @@
 
 			drawWidth =
 				height *
-					imageAspect;
+				imageAspect;
 		} else {
 			drawWidth =
 				width;
 
 			drawHeight =
 				width /
-					imageAspect;
+				imageAspect;
 		}
 
 		return {
@@ -281,118 +269,25 @@
 			offsetX:
 				(
 					width -
-						drawWidth
+					drawWidth
 				) /
-					2,
+				2,
 
 			offsetY:
 				(
 					height -
-						drawHeight
+					drawHeight
 				) /
-					2
+				2
 		};
 	}
 
-	function sampleBrightness(
-		x: number,
-		y: number
-	) {
-		if (!pixelData) {
-			return 0;
-		}
+	/* =====================================================
+	   RENDER
+	   ===================================================== */
 
-		const geometry =
-			getGeometry();
-
-		if (!geometry) {
-			return 0;
-		}
-
-		const normalizedX =
-			(
-				x -
-					geometry.offsetX
-			) /
-				geometry.drawWidth;
-
-		const normalizedY =
-			(
-				y -
-					geometry.offsetY
-			) /
-				geometry.drawHeight;
-
-		if (
-			normalizedX < 0 ||
-			normalizedX > 1 ||
-			normalizedY < 0 ||
-			normalizedY > 1
-		) {
-			return 0;
-		}
-
-		const sampleX =
-			Math.min(
-				sourceWidth - 1,
-				Math.max(
-					0,
-					Math.floor(
-						normalizedX *
-							sourceWidth
-					)
-				)
-			);
-
-		const sampleY =
-			Math.min(
-				sourceHeight - 1,
-				Math.max(
-					0,
-					Math.floor(
-						normalizedY *
-							sourceHeight
-					)
-				)
-			);
-
-		const index =
-			(
-				sampleY *
-					sourceWidth +
-				sampleX
-			) *
-				4;
-
-		const red =
-			pixelData[
-				index
-			];
-
-		const green =
-			pixelData[
-				index + 1
-			];
-
-		const blue =
-			pixelData[
-				index + 2
-			];
-
-		return (
-			0.2126 * red +
-			0.7152 * green +
-			0.0722 * blue
-		) / 255;
-	}
-
-	function render(
-		timestamp: number
-	) {
-		if (
-			!ctx ||
-			!pixelData
-		) {
+	function render() {
+		if (!ctx) {
 			animationFrame =
 				requestAnimationFrame(
 					render
@@ -401,30 +296,38 @@
 			return;
 		}
 
-		if (pointerInitialized) {
+		/*
+		 * Keep the compatibility props referenced through a
+		 * function so Svelte does not complain about captured
+		 * initial values.
+		 */
+		keepCompatibilityProps();
+
+		/* =================================================
+		   SMOOTH POINTER
+		   ================================================= */
+
+		if (
+			pointerInitialized
+		) {
 			mouseX +=
 				(
 					targetX -
-						mouseX
+					mouseX
 				) *
-					0.25;
+				0.22;
 
 			mouseY +=
 				(
 					targetY -
-						mouseY
+					mouseY
 				) *
-					0.25;
+				0.22;
 		}
 
-		if (
-			timestamp -
-				noiseSeed >
-			noiseInterval
-		) {
-			noiseSeed =
-				timestamp;
-		}
+		/* =================================================
+		   CLEAR
+		   ================================================= */
 
 		ctx.clearRect(
 			0,
@@ -433,12 +336,207 @@
 			height
 		);
 
+		/* =================================================
+		   BASE
+		   ================================================= */
+
+		ctx.fillStyle =
+			background;
+
+		ctx.fillRect(
+			0,
+			0,
+			width,
+			height
+		);
+
+		/* =================================================
+		   PHOTOGRAPH
+		   ================================================= */
+
 		if (
-			background !==
-			'transparent'
+			imageLoaded &&
+			image
 		) {
+			const geometry =
+				getCoverGeometry();
+
+			if (geometry) {
+				ctx.save();
+
+				/*
+				 * Preserve facial detail while matching the
+				 * darker visual language of the homepage.
+				 */
+				ctx.globalAlpha =
+					opacity;
+
+				ctx.filter =
+					'grayscale(0.35) contrast(1.1) brightness(0.78) saturate(0.9)';
+
+				/* =========================================
+				   CURSOR-CENTERED ZOOM
+				   ========================================= */
+
+				let zoomInfluence =
+					0;
+
+				if (
+					pointerInitialized
+				) {
+					const centerX =
+						width * 0.5;
+
+					const centerY =
+						height * 0.5;
+
+					const dx =
+						centerX -
+						mouseX;
+
+					const dy =
+						centerY -
+						mouseY;
+
+					const centerDistance =
+						Math.sqrt(
+							dx * dx +
+							dy * dy
+						);
+
+					const influenceDistance =
+						Math.sqrt(
+							width * width +
+							height * height
+						) *
+						0.45;
+
+					zoomInfluence =
+						1 -
+						Math.min(
+							centerDistance /
+								Math.max(
+									influenceDistance,
+									1
+								),
+							1
+						);
+
+					zoomInfluence =
+						zoomInfluence *
+						zoomInfluence *
+						(
+							3 -
+							2 *
+								zoomInfluence
+						);
+				}
+
+				const finalZoom =
+					1 +
+					(
+						zoom -
+						1
+					) *
+					zoomInfluence;
+
+				const scaledWidth =
+					geometry.drawWidth *
+					finalZoom;
+
+				const scaledHeight =
+					geometry.drawHeight *
+					finalZoom;
+
+				const scaledX =
+					(
+						width -
+						scaledWidth
+					) /
+					2;
+
+				const scaledY =
+					(
+						height -
+						scaledHeight
+					) /
+					2;
+
+				ctx.drawImage(
+					image,
+					scaledX,
+					scaledY,
+					scaledWidth,
+					scaledHeight
+				);
+
+				ctx.restore();
+			}
+		}
+
+		/* =================================================
+		   SUBTLE SCANLINES
+		   ================================================= */
+
+		ctx.save();
+
+		ctx.globalAlpha =
+			0.035;
+
+		ctx.fillStyle =
+			color;
+
+		for (
+			let y = 0;
+			y < height;
+			y += 8
+		) {
+			ctx.fillRect(
+				0,
+				y,
+				width,
+				1
+			);
+		}
+
+		ctx.restore();
+
+		/* =================================================
+		   SOFT CURSOR LIGHT
+		   ================================================= */
+
+		if (
+			pointerInitialized
+		) {
+			const gradient =
+				ctx.createRadialGradient(
+					mouseX,
+					mouseY,
+					0,
+					mouseX,
+					mouseY,
+					cursorRadius
+				);
+
+			gradient.addColorStop(
+				0,
+				'rgba(255, 0, 128, 0.055)'
+			);
+
+			gradient.addColorStop(
+				0.45,
+				'rgba(255, 0, 128, 0.018)'
+			);
+
+			gradient.addColorStop(
+				1,
+				'rgba(255, 0, 128, 0)'
+			);
+
+			ctx.save();
+
 			ctx.fillStyle =
-				background;
+				gradient;
 
 			ctx.fillRect(
 				0,
@@ -446,163 +544,19 @@
 				width,
 				height
 			);
+
+			ctx.restore();
 		}
-
-		const size =
-			Math.max(
-				cellSize,
-				4
-			);
-
-		ctx.fillStyle =
-			color;
-
-		ctx.font =
-			`${size}px monospace`;
-
-		ctx.textBaseline =
-			'middle';
-
-		ctx.textAlign =
-			'center';
-
-		for (
-			let y =
-				size / 2;
-			y <
-				height;
-			y +=
-				size
-		) {
-			for (
-				let x =
-					size / 2;
-				x <
-					width;
-				x +=
-					size
-			) {
-				const brightness =
-					sampleBrightness(
-						x,
-						y
-					);
-
-				const characterIndex =
-					Math.min(
-						characters.length -
-							1,
-						Math.max(
-							0,
-							Math.floor(
-								brightness *
-									(
-										characters.length -
-											1
-									)
-							)
-						)
-					);
-
-				const character =
-					characters[
-						characterIndex
-					];
-
-				if (
-					character ===
-					' '
-				) {
-					continue;
-				}
-
-				let finalX =
-					x;
-
-				let finalY =
-					y;
-
-				if (pointerInitialized) {
-					const dx =
-						x -
-							mouseX;
-
-					const dy =
-						y -
-							mouseY;
-
-					const distance =
-						Math.sqrt(
-							dx * dx +
-								dy * dy
-						);
-
-					if (
-						distance <
-						cursorRadius
-					) {
-						let influence =
-							1 -
-								distance /
-									cursorRadius;
-
-						influence =
-							influence *
-								influence *
-								(
-									3 -
-										2 *
-											influence
-								);
-
-						const localZoom =
-							1 +
-								(
-									zoom -
-										1
-								) *
-									influence;
-
-						finalX =
-							mouseX +
-								dx *
-									localZoom;
-
-						finalY =
-							mouseY +
-								dy *
-									localZoom;
-					}
-				}
-
-				const localOpacity =
-					Math.min(
-						1,
-						0.25 +
-							brightness *
-								0.75
-					);
-
-				ctx.globalAlpha =
-					opacity *
-						localOpacity;
-
-				ctx.fillText(
-					character,
-					finalX,
-					finalY
-				);
-			}
-		}
-
-		ctx.globalAlpha =
-			1;
 
 		animationFrame =
 			requestAnimationFrame(
 				render
 			);
 	}
+
+	/* =====================================================
+	   MOUNT
+	   ===================================================== */
 
 	onMount(() => {
 		resize();
@@ -622,6 +576,11 @@
 			}
 		);
 
+		container.addEventListener(
+			'pointerleave',
+			handlePointerLeave
+		);
+
 		animationFrame =
 			requestAnimationFrame(
 				render
@@ -636,6 +595,11 @@
 			container.removeEventListener(
 				'pointermove',
 				handlePointerMove
+			);
+
+			container.removeEventListener(
+				'pointerleave',
+				handlePointerLeave
 			);
 
 			cancelAnimationFrame(
@@ -657,24 +621,36 @@
 
 <style>
 	.ascii-container {
-		position: relative;
+		position:
+			relative;
 
-		width: 100%;
-		height: 100%;
+		width:
+			100%;
 
-		overflow: hidden;
+		height:
+			100%;
 
-		background: transparent;
+		overflow:
+			hidden;
+
+		background:
+			#000;
 	}
 
 	canvas {
-		position: absolute;
+		position:
+			absolute;
 
-		inset: 0;
+		inset:
+			0;
 
-		display: block;
+		display:
+			block;
 
-		width: 100%;
-		height: 100%;
+		width:
+			100%;
+
+		height:
+			100%;
 	}
 </style>
