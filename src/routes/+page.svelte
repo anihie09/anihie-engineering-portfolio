@@ -1,5 +1,5 @@
 <script lang="ts">
-	import InteractiveAscii from '$lib/InteractiveAscii.svelte';
+	import InteractiveBackground from '$lib/InteractiveBackground.svelte';
 </script>
 
 <svelte:head>
@@ -12,34 +12,26 @@
 </svelte:head>
 
 <div class="home">
-	<!-- ORIGINAL PHOTO -->
+	<!-- =====================================================
+	     INTERACTIVE BACKGROUND
+	     ===================================================== -->
 
-	<div class="background"></div>
-
-	<div class="background-shade"></div>
-
-	<!--
-		UNIFORM INTERACTIVE HALFTONE
-
-		The photo stays underneath this layer.
-
-		Every part of the viewport has halftones.
-		The mouse only DEFORMS the existing field.
-	-->
-
-	<InteractiveAscii
+	<InteractiveBackground
 		src="/home-background.png"
 		cellSize={6}
-		cursorRadius={230}
-		opacity={0.34}
-		maxBend={38}
-		smoothing={0.12}
-		dotScale={0.34}
-		darkFloor={48}
-		velocityStrength={1}
+		dotScale={0.42}
+		dotOpacity={0.55}
+		cursorRadius={250}
+		cursorStrength={0.028}
+		positionSmoothing={0.22}
+		velocitySmoothing={0.16}
+		velocityStrength={1.05}
+		darkFloor={0.12}
 	/>
 
-	<!-- HUD -->
+	<!-- =====================================================
+	     HUD INTERFACE
+	     ===================================================== -->
 
 	<div class="interface">
 		<!-- OUTER FRAME -->
@@ -353,76 +345,6 @@
 	}
 
 	/* =====================================================
-	   ORIGINAL PHOTO
-	   ===================================================== */
-
-	.background {
-		position: absolute;
-
-		inset: 0;
-
-		z-index: 0;
-
-		background-image:
-			url('/home-background.png');
-
-		background-repeat:
-			no-repeat;
-
-		background-position:
-			center center;
-
-		background-size:
-			cover;
-
-		background-color:
-			#000;
-	}
-
-	/*
-	 * Very subtle darkening only.
-	 * The original photograph remains clearly visible.
-	 */
-
-	.background-shade {
-		position: absolute;
-
-		inset: 0;
-
-		z-index: 1;
-
-		pointer-events: none;
-
-		background:
-			linear-gradient(
-				90deg,
-				transparent 0%,
-				transparent 52%,
-				rgba(0, 0, 0, 0.03) 70%,
-				rgba(0, 0, 0, 0.12) 100%
-			);
-	}
-
-	/* =====================================================
-	   HALFTONE
-	   ===================================================== */
-
-	:global(.halftone-container) {
-		position: absolute;
-
-		inset: 0;
-
-		z-index: 2;
-
-		width: 100%;
-		height: 100%;
-
-		pointer-events: none;
-
-		overflow: hidden;
-	}
-
-	/* =====================================================
 	   INTERFACE
 	   ===================================================== */
 
@@ -436,8 +358,7 @@
 
 		pointer-events: none;
 
-		color:
-			var(--hud-pink);
+		color: var(--hud-pink);
 	}
 
 	/* =====================================================
@@ -537,8 +458,7 @@
 
 		display: block;
 
-		background:
-			var(--hud-pink);
+		background: var(--hud-pink);
 
 		box-shadow:
 			0 0 6px
@@ -560,11 +480,7 @@
 		left: 2px;
 	}
 
-	.top-left::before {
-		top: 0;
-		left: 0;
-	}
-
+	.top-left::before,
 	.top-left::after {
 		top: 0;
 		left: 0;
@@ -575,11 +491,7 @@
 		right: 2px;
 	}
 
-	.top-right::before {
-		top: 0;
-		right: 0;
-	}
-
+	.top-right::before,
 	.top-right::after {
 		top: 0;
 		right: 0;
@@ -590,11 +502,7 @@
 		left: 2px;
 	}
 
-	.bottom-left::before {
-		bottom: 0;
-		left: 0;
-	}
-
+	.bottom-left::before,
 	.bottom-left::after {
 		bottom: 0;
 		left: 0;
@@ -605,11 +513,7 @@
 		right: 2px;
 	}
 
-	.bottom-right::before {
-		bottom: 0;
-		right: 0;
-	}
-
+	.bottom-right::before,
 	.bottom-right::after {
 		bottom: 0;
 		right: 0;
@@ -714,8 +618,7 @@
 		grid-row:
 			1 / 3;
 
-		align-self:
-			center;
+		align-self: center;
 
 		font-size: 7px;
 
@@ -953,8 +856,10 @@
 		pointer-events: auto;
 
 		transition:
-			color 120ms ease,
-			text-shadow 120ms ease;
+			color
+			120ms ease,
+			text-shadow
+			120ms ease;
 	}
 
 	.nav-index {
@@ -981,9 +886,12 @@
 			translateX(-7px);
 
 		transition:
-			width 140ms ease,
-			opacity 100ms linear,
-			transform 140ms ease;
+			width
+			140ms ease,
+			opacity
+			100ms linear,
+			transform
+			140ms ease;
 	}
 
 	.label {
@@ -1008,7 +916,8 @@
 		opacity: 0.65;
 
 		transition:
-			width 180ms ease;
+			width
+			180ms ease;
 	}
 
 	.navigation a:hover,
@@ -1374,7 +1283,8 @@
 
 		border-radius: 50%;
 
-		background: #000;
+		background:
+			#000;
 	}
 
 	.bottom-center-line::before {
