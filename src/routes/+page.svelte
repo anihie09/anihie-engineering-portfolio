@@ -4,7 +4,6 @@
 
 <svelte:head>
 	<title>ANIHIE — Mechanical Engineering</title>
-
 	<meta
 		name="description"
 		content="ANIHIE — Mechanical Engineering Portfolio"
@@ -22,15 +21,19 @@
 		dotScale={0.42}
 		dotOpacity={0.55}
 		cursorRadius={250}
-		cursorStrength={0.028}
-		positionSmoothing={0.22}
-		velocitySmoothing={0.16}
+		warpStrength={0.018}
+		smoothing={0.62}
 		velocityStrength={1.05}
 		darkFloor={0.12}
+		swirlStrength={0.75}
+		stretchStrength={1.0}
+		radialStrength={0.55}
+		zoomStrength={0.045}
+		zoomRadius={0.9}
 	/>
 
 	<!-- =====================================================
-	     HUD INTERFACE
+	     HUD
 	     ===================================================== -->
 
 	<div class="interface">
@@ -59,7 +62,7 @@
 			<div class="bottom-marker marker-six"></div>
 		</div>
 
-		<!-- TOP RIGHT STATUS -->
+		<!-- SYSTEM STATUS -->
 
 		<div
 			class="system-status"
@@ -358,7 +361,8 @@
 
 		pointer-events: none;
 
-		color: var(--hud-pink);
+		color:
+			var(--hud-pink);
 	}
 
 	/* =====================================================
@@ -458,7 +462,8 @@
 
 		display: block;
 
-		background: var(--hud-pink);
+		background:
+			var(--hud-pink);
 
 		box-shadow:
 			0 0 6px
@@ -856,10 +861,8 @@
 		pointer-events: auto;
 
 		transition:
-			color
-			120ms ease,
-			text-shadow
-			120ms ease;
+			color 120ms ease,
+			text-shadow 120ms ease;
 	}
 
 	.nav-index {
@@ -886,12 +889,9 @@
 			translateX(-7px);
 
 		transition:
-			width
-			140ms ease,
-			opacity
-			100ms linear,
-			transform
-			140ms ease;
+			width 140ms ease,
+			opacity 100ms linear,
+			transform 140ms ease;
 	}
 
 	.label {
@@ -916,8 +916,7 @@
 		opacity: 0.65;
 
 		transition:
-			width
-			180ms ease;
+			width 180ms ease;
 	}
 
 	.navigation a:hover,

@@ -19,6 +19,19 @@
 		swirlStrength?: number;
 		stretchStrength?: number;
 		radialStrength?: number;
+
+		/*
+		 * NEW:
+		 * Amount of zoom/magnification directly underneath
+		 * the mouse cursor.
+		 */
+		zoomStrength?: number;
+
+		/*
+		 * Controls how far the zoom extends around the
+		 * cursor relative to cursorRadius.
+		 */
+		zoomRadius?: number;
 	}
 
 	let {
@@ -38,7 +51,18 @@
 
 		swirlStrength = 0.75,
 		stretchStrength = 1.0,
-		radialStrength = 0.55
+		radialStrength = 0.55,
+
+		/*
+		 * Small default zoom.
+		 *
+		 * 0.035 = subtle
+		 * 0.05  = noticeable
+		 * 0.08  = strong
+		 */
+		zoomStrength = 0.045,
+
+		zoomRadius = 0.9
 	}: Props = $props();
 
 	let canvas: HTMLCanvasElement;
@@ -140,6 +164,12 @@
 		uniform float u_stretchStrength;
 		uniform float u_radialStrength;
 
+		/*
+		 * NEW ZOOM UNIFORMS
+		 */
+		uniform float u_zoomStrength;
+		uniform float u_zoomRadius;
+
 		varying vec2 v_uv;
 
 		/* =================================================
@@ -214,9 +244,9 @@
 			vec2 uv =
 				v_uv;
 
-			/*
-			 * Cursor field.
-			 */
+			/* =============================================
+			   CURSOR FIELD
+			   ============================================= */
 
 			vec2 fromMouse =
 				uv -
@@ -241,6 +271,9 @@
 				distanceFromMouse /
 					normalizedRadius;
 
+			/*
+			 * Main bend influence.
+			 */
 			float influence =
 				1.0 -
 				normalizedDistance;
@@ -250,6 +283,9 @@
 					influence
 				);
 
+			/*
+			 * Softer field surrounding the main interaction.
+			 */
 			float outerInfluence =
 				1.0 -
 				smoothstep(
@@ -258,9 +294,9 @@
 					normalizedDistance
 				);
 
-			/*
-			 * Mouse speed.
-			 */
+			/* =============================================
+			   MOUSE SPEED
+			   ============================================= */
 
 			float speed =
 				clamp(
@@ -275,9 +311,9 @@
 				speed *
 				0.82;
 
-			/*
-			 * Direction.
-			 */
+			/* =============================================
+			   DIRECTION
+			   ============================================= */
 
 			vec2 travelDirection =
 				normalize(
@@ -400,7 +436,7 @@
 				wave;
 
 			/* =============================================
-			   SHARED DISPLACEMENT
+			   BENDING DISPLACEMENT
 			   ============================================= */
 
 			vec2 displacement =
@@ -410,15 +446,95 @@
 				waveFlow;
 
 			/*
-			 * Aspect correction.
+			 * Correct X displacement for widescreen aspect ratio.
 			 */
-
 			displacement.x /=
 				u_viewportAspect;
+
+			/* =============================================
+			   BASE WARPED POSITION
+			   ============================================= */
 
 			vec2 warpedUV =
 				uv +
 				displacement;
+
+			/* =============================================
+			   NEW: MOUSE-CENTERED ZOOM
+			   ============================================= */
+
+			/*
+			 * The zoom is centered directly on the cursor.
+			 *
+			 * This is NOT a global transform.
+			 *
+			 * Points farther from the cursor are affected less.
+			 */
+
+			float zoomDistance =
+				distanceFromMouse /
+					max(
+						normalizedRadius *
+						u_zoomRadius,
+						0.0001
+					);
+
+			/*
+			 * Smooth radial zoom field.
+			 */
+			float zoomInfluence =
+				1.0 -
+				smoothstep(
+					0.0,
+					1.0,
+					zoomDistance
+				);
+
+			/*
+			 * Smoother falloff.
+			 */
+			zoomInfluence =
+				zoomInfluence *
+				zoomInfluence *
+				(
+					3.0 -
+					2.0 *
+					zoomInfluence
+				);
+
+			/*
+			 * Positive zoom means:
+			 *
+			 * content underneath cursor becomes magnified.
+			 *
+			 * This is achieved by moving sampling coordinates
+			 * closer to the cursor.
+			 */
+
+			float localZoom =
+				1.0 +
+				u_zoomStrength *
+				zoomInfluence;
+
+			vec2 zoomedUV =
+				u_mouse +
+				(
+					warpedUV -
+					u_mouse
+				) /
+				localZoom;
+
+			/*
+			 * Blend the zoom into the existing warp.
+			 *
+			 * The bending remains completely intact.
+			 */
+			warpedUV =
+				mix(
+					warpedUV,
+					zoomedUV,
+					zoomInfluence
+				);
 
 			/* =============================================
 			   ACTUAL IMAGE
@@ -447,8 +563,10 @@
 			   ============================================= */
 
 			/*
-			 * The halftone uses the exact same warped
+			 * The halftone uses the SAME zoomed + warped
 			 * coordinate as the photograph.
+			 *
+			 * So the zoom magnifies the halftones too.
 			 */
 
 			vec2 warpedPixel =
@@ -515,6 +633,10 @@
 					)
 				);
 
+			/*
+			 * Keep halftones visible in dark regions.
+			 */
+
 			if (
 				brightest <
 				u_darkFloor
@@ -553,10 +675,19 @@
 				influence *
 				0.8;
 
+			/*
+			 * Slight boost at zoom center.
+			 */
+			float zoomBoost =
+				1.0 +
+				zoomInfluence *
+				0.15;
+
 			float finalDotOpacity =
 				dotMask *
 				u_dotOpacity *
-				interactionBoost;
+				interactionBoost *
+				zoomBoost;
 
 			finalDotOpacity =
 				clamp(
@@ -822,6 +953,10 @@
 			return;
 		}
 
+		/*
+		 * Smooth mouse tracking.
+		 */
+
 		mouseX +=
 			(
 				targetX -
@@ -849,6 +984,10 @@
 				dx * dx +
 				dy * dy
 			);
+
+		/*
+		 * Smooth direction.
+		 */
 
 		if (
 			movement >
@@ -901,6 +1040,10 @@
 			}
 		}
 
+		/*
+		 * Speed.
+		 */
+
 		const targetSpeed =
 			pointerActive
 				? Math.min(
@@ -931,7 +1074,7 @@
 	}
 
 	/* =====================================================
-	   INITIALIZE WEBGL
+	   WEBGL
 	   ===================================================== */
 
 	function initializeWebGL() {
@@ -1253,12 +1396,30 @@
 			radialStrength
 		);
 
+		/*
+		 * NEW ZOOM UNIFORMS
+		 */
+
+		gl.uniform1f(
+			getUniform(
+				'u_zoomStrength'
+			),
+			zoomStrength
+		);
+
+		gl.uniform1f(
+			getUniform(
+				'u_zoomRadius'
+			),
+			zoomRadius
+		);
+
 		gl.uniform1f(
 			getUniform(
 				'u_imageAspect'
 			),
 			image.naturalWidth /
-				image.naturalHeight
+			image.naturalHeight
 		);
 
 		gl.uniform1f(
