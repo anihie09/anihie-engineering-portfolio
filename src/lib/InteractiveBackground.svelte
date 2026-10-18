@@ -4,34 +4,36 @@
 	interface Props {
 		src: string;
 
+		/* Halftone */
 		cellSize?: number;
 		dotScale?: number;
 		dotOpacity?: number;
-
-		cursorRadius?: number;
-
-		warpStrength?: number;
-		smoothing?: number;
-		velocityStrength?: number;
-
 		darkFloor?: number;
 
+		/* Main cursor interaction */
+		cursorRadius?: number;
+		cursorStrength?: number;
+
+		/* Pointer smoothing */
+		positionSmoothing?: number;
+		velocitySmoothing?: number;
+		velocityStrength?: number;
+
+		/* Directional response */
+		trailStrength?: number;
+		radialStrength?: number;
 		swirlStrength?: number;
 		stretchStrength?: number;
-		radialStrength?: number;
 
-		/*
-		 * NEW:
-		 * Amount of zoom/magnification directly underneath
-		 * the mouse cursor.
-		 */
+		/* Zoom */
 		zoomStrength?: number;
+		zoomRadius?: number;
 
 		/*
-		 * Controls how far the zoom extends around the
-		 * cursor relative to cursorRadius.
+		 * Backwards-compatible names from the older version.
 		 */
-		zoomRadius?: number;
+		warpStrength?: number;
+		smoothing?: number;
 	}
 
 	let {
@@ -40,46 +42,49 @@
 		cellSize = 6,
 		dotScale = 0.42,
 		dotOpacity = 0.55,
-
-		cursorRadius = 250,
-
-		warpStrength = 0.018,
-		smoothing = 0.62,
-		velocityStrength = 1.05,
-
 		darkFloor = 0.12,
 
+		cursorRadius = 250,
+		cursorStrength = 0.028,
+
+		positionSmoothing = 0.22,
+		velocitySmoothing = 0.16,
+		velocityStrength = 0.75,
+
+		trailStrength = 0.008,
+		radialStrength = 0.35,
 		swirlStrength = 0.75,
 		stretchStrength = 1.0,
-		radialStrength = 0.55,
 
-		/*
-		 * Small default zoom.
-		 *
-		 * 0.035 = subtle
-		 * 0.05  = noticeable
-		 * 0.08  = strong
-		 */
 		zoomStrength = 0.045,
+		zoomRadius = 0.9,
 
-		zoomRadius = 0.9
+		warpStrength = undefined,
+		smoothing = undefined
 	}: Props = $props();
 
+	/*
+	 * Reactive compatibility helpers.
+	 *
+	 * These are functions rather than constants so Svelte 5
+	 * does not warn about capturing the initial prop value.
+	 */
+	function getCursorStrength() {
+		return warpStrength ?? cursorStrength;
+	}
+
+	function getPositionSmoothing() {
+		return smoothing ?? positionSmoothing;
+	}
+
 	let canvas: HTMLCanvasElement;
+	let fallbackImage: HTMLImageElement;
 
 	let gl: WebGLRenderingContext | null = null;
-
-	let program:
-		WebGLProgram | null = null;
-
-	let positionBuffer:
-		WebGLBuffer | null = null;
-
-	let texture:
-		WebGLTexture | null = null;
-
-	let image:
-		HTMLImageElement | null = null;
+	let program: WebGLProgram | null = null;
+	let positionBuffer: WebGLBuffer | null = null;
+	let texture: WebGLTexture | null = null;
+	let image: HTMLImageElement | null = null;
 
 	let animationFrame = 0;
 
@@ -87,8 +92,10 @@
 	let height = 1;
 	let pixelRatio = 1;
 
+	let imageReady = $state(false);
+
 	/* =====================================================
-	   POINTER
+	   POINTER STATE
 	   ===================================================== */
 
 	let targetX = 0;
@@ -97,11 +104,14 @@
 	let mouseX = 0;
 	let mouseY = 0;
 
-	let previousMouseX = 0;
-	let previousMouseY = 0;
+	let previousX = 0;
+	let previousY = 0;
 
-	let directionX = 1;
-	let directionY = 0;
+	let velocityX = 0;
+	let velocityY = 0;
+
+	let smoothVelocityX = 0;
+	let smoothVelocityY = 0;
 
 	let mouseSpeed = 0;
 
@@ -109,7 +119,41 @@
 	let pointerActive = false;
 
 	/* =====================================================
-	   VERTEX SHADER
+	   CACHED UNIFORMS
+	   ===================================================== */
+
+	let uniforms:
+		| {
+				texture: WebGLUniformLocation | null;
+				resolution: WebGLUniformLocation | null;
+				mouse: WebGLUniformLocation | null;
+				velocity: WebGLUniformLocation | null;
+
+				radius: WebGLUniformLocation | null;
+				cursorStrength: WebGLUniformLocation | null;
+
+				velocityStrength: WebGLUniformLocation | null;
+				trailStrength: WebGLUniformLocation | null;
+				radialStrength: WebGLUniformLocation | null;
+
+				swirlStrength: WebGLUniformLocation | null;
+				stretchStrength: WebGLUniformLocation | null;
+
+				zoomStrength: WebGLUniformLocation | null;
+				zoomRadius: WebGLUniformLocation | null;
+
+				cellSize: WebGLUniformLocation | null;
+				dotScale: WebGLUniformLocation | null;
+				dotOpacity: WebGLUniformLocation | null;
+				darkFloor: WebGLUniformLocation | null;
+
+				imageAspect: WebGLUniformLocation | null;
+				viewportAspect: WebGLUniformLocation | null;
+		  }
+		| null = null;
+
+	/* =====================================================
+	   SHADERS
 	   ===================================================== */
 
 	const vertexShaderSource = `
@@ -119,8 +163,7 @@
 
 		void main() {
 			v_uv =
-				a_position *
-				0.5 +
+				a_position * 0.5 +
 				0.5;
 
 			gl_Position =
@@ -132,53 +175,43 @@
 		}
 	`;
 
-	/* =====================================================
-	   FRAGMENT SHADER
-	   ===================================================== */
-
 	const fragmentShaderSource = `
-		precision highp float;
+		precision mediump float;
 
 		uniform sampler2D u_texture;
 
 		uniform vec2 u_resolution;
 		uniform vec2 u_mouse;
-		uniform vec2 u_direction;
+		uniform vec2 u_velocity;
 
-		uniform float u_speed;
 		uniform float u_radius;
+		uniform float u_cursorStrength;
 
-		uniform float u_warpStrength;
 		uniform float u_velocityStrength;
+		uniform float u_trailStrength;
+		uniform float u_radialStrength;
+
+		uniform float u_swirlStrength;
+		uniform float u_stretchStrength;
+
+		uniform float u_zoomStrength;
+		uniform float u_zoomRadius;
 
 		uniform float u_cellSize;
 		uniform float u_dotScale;
 		uniform float u_dotOpacity;
-
 		uniform float u_darkFloor;
 
 		uniform float u_imageAspect;
 		uniform float u_viewportAspect;
 
-		uniform float u_swirlStrength;
-		uniform float u_stretchStrength;
-		uniform float u_radialStrength;
-
-		/*
-		 * NEW ZOOM UNIFORMS
-		 */
-		uniform float u_zoomStrength;
-		uniform float u_zoomRadius;
-
 		varying vec2 v_uv;
 
 		/* =================================================
-		   COVER UV
+		   COVER IMAGE
 		   ================================================= */
 
-		vec2 coverUV(
-			vec2 uv
-		) {
+		vec2 coverUV(vec2 uv) {
 			if (
 				u_imageAspect >
 				u_viewportAspect
@@ -189,21 +222,18 @@
 
 				uv.x =
 					(
-						uv.x -
-						0.5
+						uv.x - 0.5
 					) *
 					scale +
 					0.5;
-			}
-			else {
+			} else {
 				float scale =
 					u_imageAspect /
 					u_viewportAspect;
 
 				uv.y =
 					(
-						uv.y -
-						0.5
+						uv.y - 0.5
 					) *
 					scale +
 					0.5;
@@ -213,52 +243,48 @@
 		}
 
 		/* =================================================
-		   SMOOTH FIELD
+		   SMOOTH FIELDS
 		   ================================================= */
 
-		float smoothField(
-			float value
-		) {
-			value =
+		float smootherstep(float x) {
+			x =
 				clamp(
-					value,
+					x,
 					0.0,
 					1.0
 				);
 
 			return
-				value *
-				value *
+				x * x * x *
 				(
-					3.0 -
-					2.0 *
-					value
+					x *
+					(
+						x * 6.0 -
+						15.0
+					) +
+					10.0
 				);
 		}
 
-		/* =================================================
-		   MAIN
-		   ================================================= */
-
 		void main() {
-			vec2 uv =
-				v_uv;
+			vec2 uv = v_uv;
 
 			/* =============================================
 			   CURSOR FIELD
 			   ============================================= */
 
-			vec2 fromMouse =
+			vec2 delta =
 				uv -
 				u_mouse;
 
-			fromMouse.x *=
+			/*
+			 * Aspect correction.
+			 */
+			delta.x *=
 				u_viewportAspect;
 
-			float distanceFromMouse =
-				length(
-					fromMouse
-				);
+			float distanceToCursor =
+				length(delta);
 
 			float normalizedRadius =
 				max(
@@ -268,108 +294,100 @@
 				);
 
 			float normalizedDistance =
-				distanceFromMouse /
-					normalizedRadius;
+				distanceToCursor /
+				normalizedRadius;
 
 			/*
-			 * Main bend influence.
+			 * Main soft field.
 			 */
 			float influence =
-				1.0 -
-				normalizedDistance;
-
-			influence =
-				smoothField(
-					influence
+				smootherstep(
+					1.0 -
+					normalizedDistance
 				);
 
 			/*
-			 * Softer field surrounding the main interaction.
+			 * Larger soft field for motion trailing.
 			 */
 			float outerInfluence =
 				1.0 -
 				smoothstep(
 					0.0,
-					1.6,
+					1.5,
 					normalizedDistance
 				);
 
 			/* =============================================
-			   MOUSE SPEED
+			   VELOCITY
 			   ============================================= */
+
+			vec2 velocity =
+				u_velocity;
 
 			float speed =
-				clamp(
-					u_speed *
-					u_velocityStrength,
-					0.0,
-					1.5
-				);
+				length(velocity);
 
-			float dynamicStrength =
-				0.18 +
-				speed *
-				0.82;
+			speed =
+				clamp(
+					speed *
+						u_velocityStrength,
+					0.0,
+					1.0
+				);
 
 			/* =============================================
-			   DIRECTION
+			   DIRECTIONS
 			   ============================================= */
 
-			vec2 travelDirection =
-				normalize(
-					u_direction +
-					vec2(
-						0.00001
-					)
-				);
+			vec2 radialDirection =
+				distanceToCursor >
+				0.0001
+					? normalize(delta)
+					: vec2(0.0);
+
+			vec2 movementDirection =
+				speed >
+				0.0001
+					? normalize(velocity)
+					: vec2(0.0);
 
 			vec2 perpendicularDirection =
 				vec2(
-					-travelDirection.y,
-					travelDirection.x
+					-movementDirection.y,
+					movementDirection.x
 				);
 
-			vec2 radialDirection =
-				distanceFromMouse >
-				0.0001
-					? normalize(
-						fromMouse
-					)
-					: vec2(
-						0.0
-					);
+			/* =============================================
+			   RADIAL BEND
+			   ============================================= */
+
+			float radialAmount =
+				u_cursorStrength *
+				u_radialStrength *
+				influence *
+				(
+					0.65 +
+					speed *
+					0.35
+				);
+
+			vec2 radialFlow =
+				radialDirection *
+				radialAmount;
 
 			/* =============================================
 			   DIRECTIONAL FLOW
 			   ============================================= */
 
 			float directionalAmount =
-				u_warpStrength *
+				u_cursorStrength *
 				u_stretchStrength *
 				influence *
-				dynamicStrength;
+				speed;
 
 			vec2 directionalFlow =
-				travelDirection *
+				movementDirection *
 				directionalAmount;
-
-			/* =============================================
-			   RADIAL FLOW
-			   ============================================= */
-
-			float radialAmount =
-				u_warpStrength *
-				u_radialStrength *
-				influence *
-				(
-					0.35 +
-					speed *
-					0.65
-				);
-
-			vec2 radialFlow =
-				radialDirection *
-				radialAmount;
 
 			/* =============================================
 			   SWIRL
@@ -378,110 +396,69 @@
 			float alignment =
 				dot(
 					radialDirection,
-					travelDirection
+					movementDirection
 				);
 
-			float swirlProfile =
+			float sideInfluence =
 				1.0 -
-				abs(
-					alignment
-				);
+				abs(alignment);
 
 			float swirlAmount =
-				u_warpStrength *
+				u_cursorStrength *
 				u_swirlStrength *
 				influence *
-				(
-					0.15 +
-					speed *
-					0.85
-				) *
-				swirlProfile;
-
-			float crossValue =
-				travelDirection.x *
-					radialDirection.y -
-				travelDirection.y *
-					radialDirection.x;
-
-			float sideSign =
-				crossValue >= 0.0
-					? 1.0
-					: -1.0;
+				speed *
+				sideInfluence;
 
 			vec2 swirlFlow =
 				perpendicularDirection *
-				sideSign *
 				swirlAmount;
 
 			/* =============================================
-			   SOFT WAVE
+			   TRAIL
 			   ============================================= */
 
-			float wave =
-				sin(
-					normalizedDistance *
-					7.0
-				) *
-				0.0025 *
-				outerInfluence *
-				(
-					0.15 +
-					speed *
-					0.85
-				);
-
-			vec2 waveFlow =
-				perpendicularDirection *
-				wave;
+			vec2 trailFlow =
+				movementDirection *
+				u_trailStrength *
+				speed *
+				outerInfluence;
 
 			/* =============================================
-			   BENDING DISPLACEMENT
+			   COMBINED WARP
 			   ============================================= */
 
 			vec2 displacement =
-				directionalFlow +
 				radialFlow +
+				directionalFlow +
 				swirlFlow +
-				waveFlow;
+				trailFlow;
 
 			/*
-			 * Correct X displacement for widescreen aspect ratio.
+			 * Correct X displacement for widescreen layouts.
 			 */
 			displacement.x /=
-				u_viewportAspect;
-
-			/* =============================================
-			   BASE WARPED POSITION
-			   ============================================= */
+				max(
+					u_viewportAspect,
+					0.0001
+				);
 
 			vec2 warpedUV =
 				uv +
 				displacement;
 
 			/* =============================================
-			   NEW: MOUSE-CENTERED ZOOM
+			   MOUSE ZOOM
 			   ============================================= */
 
-			/*
-			 * The zoom is centered directly on the cursor.
-			 *
-			 * This is NOT a global transform.
-			 *
-			 * Points farther from the cursor are affected less.
-			 */
-
 			float zoomDistance =
-				distanceFromMouse /
-					max(
-						normalizedRadius *
-						u_zoomRadius,
-						0.0001
-					);
+				distanceToCursor /
+				max(
+					normalizedRadius *
+					u_zoomRadius,
+					0.0001
+				);
 
-			/*
-			 * Smooth radial zoom field.
-			 */
 			float zoomInfluence =
 				1.0 -
 				smoothstep(
@@ -490,33 +467,20 @@
 					zoomDistance
 				);
 
-			/*
-			 * Smoother falloff.
-			 */
 			zoomInfluence =
-				zoomInfluence *
-				zoomInfluence *
-				(
-					3.0 -
-					2.0 *
+				smootherstep(
 					zoomInfluence
 				);
-
-			/*
-			 * Positive zoom means:
-			 *
-			 * content underneath cursor becomes magnified.
-			 *
-			 * This is achieved by moving sampling coordinates
-			 * closer to the cursor.
-			 */
 
 			float localZoom =
 				1.0 +
 				u_zoomStrength *
 				zoomInfluence;
 
-			vec2 zoomedUV =
+			/*
+			 * Pull sampling toward the cursor.
+			 */
+			warpedUV =
 				u_mouse +
 				(
 					warpedUV -
@@ -524,20 +488,8 @@
 				) /
 				localZoom;
 
-			/*
-			 * Blend the zoom into the existing warp.
-			 *
-			 * The bending remains completely intact.
-			 */
-			warpedUV =
-				mix(
-					warpedUV,
-					zoomedUV,
-					zoomInfluence
-				);
-
 			/* =============================================
-			   ACTUAL IMAGE
+			   IMAGE
 			   ============================================= */
 
 			vec2 imageUV =
@@ -548,8 +500,8 @@
 			imageUV =
 				clamp(
 					imageUV,
-					vec2(0.001),
-					vec2(0.999)
+					0.001,
+					0.999
 				);
 
 			vec4 imageColor =
@@ -563,48 +515,41 @@
 			   ============================================= */
 
 			/*
-			 * The halftone uses the SAME zoomed + warped
-			 * coordinate as the photograph.
-			 *
-			 * So the zoom magnifies the halftones too.
+			 * Same warped coordinate means the image and
+			 * halftone stay physically connected.
 			 */
-
-			vec2 warpedPixel =
+			vec2 warpedPixels =
 				warpedUV *
 				u_resolution;
 
 			vec2 cell =
 				floor(
-					warpedPixel /
+					warpedPixels /
 					u_cellSize
 				);
 
 			vec2 cellCenter =
 				(
-					cell +
-					0.5
+					cell + 0.5
 				) *
 				u_cellSize;
 
-			vec2 localPosition =
+			vec2 local =
 				(
-					warpedPixel -
+					warpedPixels -
 					cellCenter
 				) /
 				(
-					u_cellSize *
-					0.5
+					u_cellSize * 0.5
 				);
 
-			float cellDistance =
-				length(
-					localPosition
-				);
+			float dotDistance =
+				length(local);
 
 			float dotRadius =
 				clamp(
 					u_dotScale,
-					0.10,
+					0.06,
 					0.9
 				);
 
@@ -612,9 +557,8 @@
 				1.0 -
 				smoothstep(
 					dotRadius,
-					dotRadius +
-					0.05,
-					cellDistance
+					dotRadius + 0.05,
+					dotDistance
 				);
 
 			/* =============================================
@@ -634,9 +578,9 @@
 				);
 
 			/*
-			 * Keep halftones visible in dark regions.
+			 * Prevent completely dark areas from losing
+			 * the halftone structure.
 			 */
-
 			if (
 				brightest <
 				u_darkFloor
@@ -649,8 +593,7 @@
 						vec3(
 							u_darkFloor
 						);
-				}
-				else {
+				} else {
 					float multiplier =
 						u_darkFloor /
 						brightest;
@@ -659,29 +602,24 @@
 						min(
 							dotColor *
 							multiplier,
-							vec3(
-								1.0
-							)
+							vec3(1.0)
 						);
 				}
 			}
 
 			/* =============================================
-			   DOT VISIBILITY
+			   DOT OPACITY
 			   ============================================= */
 
 			float interactionBoost =
 				1.0 +
 				influence *
-				0.8;
+				0.55;
 
-			/*
-			 * Slight boost at zoom center.
-			 */
 			float zoomBoost =
 				1.0 +
 				zoomInfluence *
-				0.15;
+				0.12;
 
 			float finalDotOpacity =
 				dotMask *
@@ -693,11 +631,11 @@
 				clamp(
 					finalDotOpacity,
 					0.0,
-					0.85
+					0.8
 				);
 
 			/* =============================================
-			   FINAL IMAGE
+			   COMPOSITE
 			   ============================================= */
 
 			vec3 finalColor =
@@ -825,7 +763,7 @@
 			)
 		) {
 			console.error(
-				'Program linking failed:',
+				'Program link failed:',
 				context.getProgramInfoLog(
 					linkedProgram
 				)
@@ -839,6 +777,134 @@
 		}
 
 		return linkedProgram;
+	}
+
+	function cacheUniforms() {
+		if (
+			!gl ||
+			!program
+		) {
+			return;
+		}
+
+		/*
+		 * Cache every uniform exactly once.
+		 */
+		uniforms = {
+			texture:
+				gl.getUniformLocation(
+					program,
+					'u_texture'
+				),
+
+			resolution:
+				gl.getUniformLocation(
+					program,
+					'u_resolution'
+				),
+
+			mouse:
+				gl.getUniformLocation(
+					program,
+					'u_mouse'
+				),
+
+			velocity:
+				gl.getUniformLocation(
+					program,
+					'u_velocity'
+				),
+
+			radius:
+				gl.getUniformLocation(
+					program,
+					'u_radius'
+				),
+
+			cursorStrength:
+				gl.getUniformLocation(
+					program,
+					'u_cursorStrength'
+				),
+
+			velocityStrength:
+				gl.getUniformLocation(
+					program,
+					'u_velocityStrength'
+				),
+
+			trailStrength:
+				gl.getUniformLocation(
+					program,
+					'u_trailStrength'
+				),
+
+			radialStrength:
+				gl.getUniformLocation(
+					program,
+					'u_radialStrength'
+				),
+
+			swirlStrength:
+				gl.getUniformLocation(
+					program,
+					'u_swirlStrength'
+				),
+
+			stretchStrength:
+				gl.getUniformLocation(
+					program,
+					'u_stretchStrength'
+				),
+
+			zoomStrength:
+				gl.getUniformLocation(
+					program,
+					'u_zoomStrength'
+				),
+
+			zoomRadius:
+				gl.getUniformLocation(
+					program,
+					'u_zoomRadius'
+				),
+
+			cellSize:
+				gl.getUniformLocation(
+					program,
+					'u_cellSize'
+				),
+
+			dotScale:
+				gl.getUniformLocation(
+					program,
+					'u_dotScale'
+				),
+
+			dotOpacity:
+				gl.getUniformLocation(
+					program,
+					'u_dotOpacity'
+				),
+
+			darkFloor:
+				gl.getUniformLocation(
+					program,
+					'u_darkFloor'
+				),
+
+			imageAspect:
+				gl.getUniformLocation(
+					program,
+					'u_imageAspect'
+				),
+
+			viewportAspect:
+				gl.getUniformLocation(
+					program,
+					'u_viewportAspect'
+				)
+		};
 	}
 
 	/* =====================================================
@@ -875,7 +941,7 @@
 				2
 			);
 
-		canvas.width =
+		const renderWidth =
 			Math.max(
 				1,
 				Math.round(
@@ -884,7 +950,7 @@
 				)
 			);
 
-		canvas.height =
+		const renderHeight =
 			Math.max(
 				1,
 				Math.round(
@@ -893,12 +959,36 @@
 				)
 			);
 
+		if (
+			canvas.width !==
+			renderWidth
+		) {
+			canvas.width =
+				renderWidth;
+		}
+
+		if (
+			canvas.height !==
+			renderHeight
+		) {
+			canvas.height =
+				renderHeight;
+		}
+
 		gl.viewport(
 			0,
 			0,
-			canvas.width,
-			canvas.height
+			renderWidth,
+			renderHeight
 		);
+
+		if (fallbackImage) {
+			fallbackImage.style.width =
+				'100%';
+
+			fallbackImage.style.height =
+				'100%';
+		}
 	}
 
 	/* =====================================================
@@ -923,11 +1013,11 @@
 			mouseY =
 				targetY;
 
-			previousMouseX =
-				mouseX;
+			previousX =
+				targetX;
 
-			previousMouseY =
-				mouseY;
+			previousY =
+				targetY;
 
 			pointerInitialized =
 				true;
@@ -943,7 +1033,7 @@
 	}
 
 	/* =====================================================
-	   MOUSE PHYSICS
+	   POINTER PHYSICS
 	   ===================================================== */
 
 	function updatePointer() {
@@ -953,111 +1043,98 @@
 			return;
 		}
 
-		/*
-		 * Smooth mouse tracking.
-		 */
+		const positionBlend =
+			getPositionSmoothing();
 
+		/*
+		 * Smooth mouse position.
+		 */
 		mouseX +=
 			(
 				targetX -
 				mouseX
 			) *
-			smoothing;
+			positionBlend;
 
 		mouseY +=
 			(
 				targetY -
 				mouseY
 			) *
-			smoothing;
+			positionBlend;
 
-		const dx =
+		/*
+		 * Raw movement.
+		 */
+		const rawVelocityX =
 			mouseX -
-			previousMouseX;
+			previousX;
 
-		const dy =
+		const rawVelocityY =
 			mouseY -
-			previousMouseY;
+			previousY;
 
-		const movement =
+		/*
+		 * Smooth movement vector.
+		 */
+		smoothVelocityX +=
+			(
+				rawVelocityX -
+				smoothVelocityX
+			) *
+			velocitySmoothing;
+
+		smoothVelocityY +=
+			(
+				rawVelocityY -
+				smoothVelocityY
+			) *
+			velocitySmoothing;
+
+		const rawSpeed =
 			Math.sqrt(
-				dx * dx +
-				dy * dy
+				smoothVelocityX *
+					smoothVelocityX +
+				smoothVelocityY *
+					smoothVelocityY
 			);
 
 		/*
-		 * Smooth direction.
+		 * Convert the 2D velocity to normalized screen units.
 		 */
+		velocityX =
+			smoothVelocityX /
+			Math.max(
+				height,
+				1
+			);
 
-		if (
-			movement >
-			0.001
-		) {
-			const rawDirectionX =
-				dx /
-				movement;
-
-			const rawDirectionY =
-				dy /
-				movement;
-
-			const directionBlend =
-				0.28 +
-				mouseSpeed *
-				0.18;
-
-			directionX +=
-				(
-					rawDirectionX -
-					directionX
-				) *
-				directionBlend;
-
-			directionY +=
-				(
-					rawDirectionY -
-					directionY
-				) *
-				directionBlend;
-
-			const directionLength =
-				Math.sqrt(
-					directionX *
-						directionX +
-					directionY *
-						directionY
-				);
-
-			if (
-				directionLength >
-				0.0001
-			) {
-				directionX /=
-					directionLength;
-
-				directionY /=
-					directionLength;
-			}
-		}
+		velocityY =
+			smoothVelocityY /
+			Math.max(
+				height,
+				1
+			);
 
 		/*
-		 * Speed.
+		 * Mouse speed is kept as an actual state value.
+		 *
+		 * This fixes the previous `Cannot find name 'mouseSpeed'`
+		 * error.
 		 */
-
 		const targetSpeed =
 			pointerActive
 				? Math.min(
-						movement /
-							7,
-						1
-					)
+					rawSpeed / 8,
+					1
+				)
 				: 0;
 
 		const speedBlend =
 			targetSpeed >
 			mouseSpeed
-				? 0.32
-				: 0.11;
+				? 0.35
+				: 0.12;
 
 		mouseSpeed +=
 			(
@@ -1066,15 +1143,15 @@
 			) *
 			speedBlend;
 
-		previousMouseX =
+		previousX =
 			mouseX;
 
-		previousMouseY =
+		previousY =
 			mouseY;
 	}
 
 	/* =====================================================
-	   WEBGL
+	   WEBGL INIT
 	   ===================================================== */
 
 	function initializeWebGL() {
@@ -1090,8 +1167,8 @@
 			);
 
 		if (!gl) {
-			console.error(
-				'WebGL is not supported.'
+			console.warn(
+				'WebGL unavailable. Using static background.'
 			);
 
 			return false;
@@ -1188,11 +1265,13 @@
 			gl.LINEAR
 		);
 
+		cacheUniforms();
+
 		return true;
 	}
 
 	/* =====================================================
-	   IMAGE
+	   IMAGE LOADING
 	   ===================================================== */
 
 	function loadImage() {
@@ -1207,32 +1286,33 @@
 
 		image.onload =
 			() => {
+				imageReady =
+					true;
+
 				if (
-					!gl ||
-					!texture ||
-					!image
-				) {
-					return;
-				}
-
-				gl.bindTexture(
-					gl.TEXTURE_2D,
-					texture
-				);
-
-				gl.pixelStorei(
-					gl.UNPACK_FLIP_Y_WEBGL,
-					true
-				);
-
-				gl.texImage2D(
-					gl.TEXTURE_2D,
-					0,
-					gl.RGBA,
-					gl.RGBA,
-					gl.UNSIGNED_BYTE,
+					gl &&
+					texture &&
 					image
-				);
+				) {
+					gl.bindTexture(
+						gl.TEXTURE_2D,
+						texture
+					);
+
+					gl.pixelStorei(
+						gl.UNPACK_FLIP_Y_WEBGL,
+						true
+					);
+
+					gl.texImage2D(
+						gl.TEXTURE_2D,
+						0,
+						gl.RGBA,
+						gl.RGBA,
+						gl.UNSIGNED_BYTE,
+						image
+					);
+				}
 
 				resize();
 
@@ -1245,7 +1325,7 @@
 		image.onerror =
 			() => {
 				console.error(
-					`Unable to load ${src}`
+					`Unable to load background image: ${src}`
 				);
 			};
 	}
@@ -1256,10 +1336,12 @@
 
 	function render() {
 		if (
+			document.hidden ||
 			!gl ||
 			!program ||
 			!texture ||
-			!image
+			!image ||
+			!uniforms
 		) {
 			return;
 		}
@@ -1270,167 +1352,118 @@
 			program
 		);
 
-		const getUniform = (
-			name: string
-		) =>
-			gl!.getUniformLocation(
-				program!,
-				name
-			);
-
-		const mouseNormalizedX =
-			mouseX /
-			Math.max(
-				width,
-				1
-			);
-
-		const mouseNormalizedY =
-			1 -
-			mouseY /
-				Math.max(
-					height,
-					1
-				);
+		/*
+		 * Frame-varying uniforms only.
+		 * Locations are already cached.
+		 */
 
 		gl.uniform2f(
-			getUniform(
-				'u_resolution'
-			),
+			uniforms.resolution,
 			canvas.width,
 			canvas.height
 		);
 
 		gl.uniform2f(
-			getUniform(
-				'u_mouse'
-			),
-			mouseNormalizedX,
-			mouseNormalizedY
+			uniforms.mouse,
+			mouseX /
+				Math.max(
+					width,
+					1
+				),
+			1 -
+				mouseY /
+					Math.max(
+						height,
+						1
+					)
 		);
 
 		gl.uniform2f(
-			getUniform(
-				'u_direction'
-			),
-			directionX,
-			-directionY
+			uniforms.velocity,
+			velocityX,
+			-velocityY
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_speed'
-			),
-			mouseSpeed
-		);
-
-		gl.uniform1f(
-			getUniform(
-				'u_radius'
-			),
+			uniforms.radius,
 			cursorRadius *
-			pixelRatio
+				pixelRatio
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_warpStrength'
-			),
-			warpStrength
+			uniforms.cursorStrength,
+			getCursorStrength()
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_velocityStrength'
-			),
+			uniforms.velocityStrength,
 			velocityStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_cellSize'
-			),
-			cellSize *
-			pixelRatio
+			uniforms.trailStrength,
+			trailStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_dotScale'
-			),
-			dotScale
+			uniforms.radialStrength,
+			radialStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_dotOpacity'
-			),
-			dotOpacity
-		);
-
-		gl.uniform1f(
-			getUniform(
-				'u_darkFloor'
-			),
-			darkFloor
-		);
-
-		gl.uniform1f(
-			getUniform(
-				'u_swirlStrength'
-			),
+			uniforms.swirlStrength,
 			swirlStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_stretchStrength'
-			),
+			uniforms.stretchStrength,
 			stretchStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_radialStrength'
-			),
-			radialStrength
-		);
-
-		/*
-		 * NEW ZOOM UNIFORMS
-		 */
-
-		gl.uniform1f(
-			getUniform(
-				'u_zoomStrength'
-			),
+			uniforms.zoomStrength,
 			zoomStrength
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_zoomRadius'
-			),
+			uniforms.zoomRadius,
 			zoomRadius
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_imageAspect'
-			),
-			image.naturalWidth /
-			image.naturalHeight
+			uniforms.cellSize,
+			cellSize *
+				pixelRatio
 		);
 
 		gl.uniform1f(
-			getUniform(
-				'u_viewportAspect'
-			),
+			uniforms.dotScale,
+			dotScale
+		);
+
+		gl.uniform1f(
+			uniforms.dotOpacity,
+			dotOpacity
+		);
+
+		gl.uniform1f(
+			uniforms.darkFloor,
+			darkFloor
+		);
+
+		gl.uniform1f(
+			uniforms.imageAspect,
+			image.naturalWidth /
+				image.naturalHeight
+		);
+
+		gl.uniform1f(
+			uniforms.viewportAspect,
 			width /
-			Math.max(
-				height,
-				1
-			)
+				Math.max(
+					height,
+					1
+				)
 		);
 
 		gl.activeTexture(
@@ -1443,9 +1476,7 @@
 		);
 
 		gl.uniform1i(
-			getUniform(
-				'u_texture'
-			),
+			uniforms.texture,
 			0
 		);
 
@@ -1462,23 +1493,52 @@
 	}
 
 	/* =====================================================
+	   VISIBILITY
+	   ===================================================== */
+
+	function handleVisibilityChange() {
+		if (
+			document.hidden
+		) {
+			cancelAnimationFrame(
+				animationFrame
+			);
+
+			animationFrame =
+				0;
+
+			return;
+		}
+
+		if (
+			imageReady &&
+			animationFrame === 0
+		) {
+			animationFrame =
+				requestAnimationFrame(
+					render
+				);
+		}
+	}
+
+	/* =====================================================
 	   MOUNT
 	   ===================================================== */
 
 	onMount(() => {
-		if (
-			!initializeWebGL()
-		) {
-			return;
-		}
+		initializeWebGL();
 
 		resize();
 
 		loadImage();
 
-		window.addEventListener(
-			'resize',
-			resize
+		const resizeObserver =
+			new ResizeObserver(
+				resize
+			);
+
+		resizeObserver.observe(
+			canvas
 		);
 
 		window.addEventListener(
@@ -1489,20 +1549,27 @@
 			}
 		);
 
+		document.addEventListener(
+			'visibilitychange',
+			handleVisibilityChange
+		);
+
 		document.documentElement.addEventListener(
 			'pointerleave',
 			handlePointerLeave
 		);
 
 		return () => {
-			window.removeEventListener(
-				'resize',
-				resize
-			);
+			resizeObserver.disconnect();
 
 			window.removeEventListener(
 				'pointermove',
 				handlePointerMove
+			);
+
+			document.removeEventListener(
+				'visibilitychange',
+				handleVisibilityChange
 			);
 
 			document.documentElement.removeEventListener(
@@ -1546,6 +1613,7 @@
 
 <div class="interactive-background">
 	<img
+		bind:this={fallbackImage}
 		class="base-image"
 		src={src}
 		alt=""
@@ -1561,7 +1629,6 @@
 <style>
 	.interactive-background {
 		position: absolute;
-
 		inset: 0;
 
 		z-index: 0;
@@ -1578,7 +1645,6 @@
 
 	.base-image {
 		position: absolute;
-
 		inset: 0;
 
 		width: 100%;
@@ -1591,11 +1657,12 @@
 
 		pointer-events: none;
 		user-select: none;
+
+		opacity: 0;
 	}
 
 	canvas {
 		position: absolute;
-
 		inset: 0;
 
 		width: 100%;
@@ -1605,4 +1672,10 @@
 
 		pointer-events: none;
 	}
+
+	/*
+	 * While WebGL is loading, the static image provides the
+	 * visual fallback. Once the shader is active, the canvas
+	 * becomes the primary renderer.
+	 */
 </style>
