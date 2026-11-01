@@ -8,3 +8,8 @@ dist
 .DS_Store
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+node_modules
+.svelte-kit
+build
+.DS_Store
+ssh-keygen*
