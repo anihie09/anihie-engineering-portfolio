@@ -9,19 +9,19 @@
 		[
 			'STUDENT AT UNIVERSITY OF SOUTHERN CALIFORNIA',
 			'MAJOR : MECHANICAL ENGINEERING',
-			'YEAR : SOPHOMORE',
-			'AFFILIATIONS : ADVANCED ROBOTICS COMBAT'
+			'YEAR : JUNIOR',
+			'AFFILIATIONS : ADVANCED ROBOTIC COMBAT, SOCIETY OF WOMEN ENGINEERS, COLLEGE TRACK'
 		],
-		['ORIGIN : BERKELEY', 'ETHNICITY : VIETNAMESE', 'SEX : F']
+		['ORIGIN : OAKLAND', 'ETHNICITY : VIETNAMESE', 'SEX : F']
 	];
 
 	// level out of 10
 	const skills = [
 		{ label: 'COLLABORATION', level: 9 },
-		{ label: 'FOCUS', level: 8 },
+		{ label: 'FOCUS', level: 9 },
 		{ label: 'CREATIVITY', level: 8 },
-		{ label: 'PROJECT MGMT', level: 7 },
-		{ label: 'OVERTHINKING', level: 5 }
+		{ label: 'PROJECT MANAGEMENT', level: 7 },
+		{ label: 'OVERTHINKING', level: 10 }
 	];
 
 	// software desktop — add `img: '/icons/name.png'` to use your own icon image
@@ -46,7 +46,7 @@
 	// photos in the lower-right collage
 	const collage = [
 		{ src: '/about-photo.png', title: 'NIGHT_01.PNG', pos: '50% 30%' },
-		{ src: '/home-background.png', title: 'VENDING.PNG', pos: '78% 40%' },
+		{ src: '/about-photo.jpeg', title: 'VENDING.PNG', pos: '78% 40%' },
 		{ src: '/images/ani-profile.jpg', title: 'PORTRAIT_02.JPG', pos: '50% 20%' }
 	];
 
@@ -90,7 +90,7 @@
 					cut={22}
 				>
 					<img
-						src="/images/ani-profile.jpg"
+						src="/about-photo.png"
 						alt="Ani Le"
 					/>
 					<div class="face-caption">MECHANICAL ENGINEERING | ROBOTICS</div>
