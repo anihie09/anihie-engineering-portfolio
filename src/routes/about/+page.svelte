@@ -24,11 +24,24 @@
 		{ label: 'OVERTHINKING', level: 5 }
 	];
 
-	const links = [
-		{ label: 'LinkedIn', value: 'ani-le-9612731b6', href: 'https://www.linkedin.com/in/ani-le-9612731b6/' },
-		{ label: 'Email', value: 'ale95199@usc.edu', href: 'mailto:ale95199@usc.edu' },
-		{ label: 'GitHub', value: 'anihie09', href: 'https://github.com/anihie09' }
+	// software desktop — add `img: '/icons/name.png'` to use your own icon image
+	const apps: { name: string; kind: string; glyph: string; href?: string; img?: string }[] = [
+		{ name: 'SOLIDWORKS', kind: 'CAD', glyph: 'cube' },
+		{ name: 'SIEMENS NX', kind: 'CAD / CAM', glyph: 'gear' },
+		{ name: 'ANSYS', kind: 'SIMULATION', glyph: 'mesh' },
+		{ name: 'EXCEL', kind: 'DATA', glyph: 'grid' },
+		{ name: 'WORD', kind: 'DOCS', glyph: 'doc' },
+		{ name: 'GITHUB', kind: 'CODE', glyph: 'branch', href: 'https://github.com/anihie09' }
 	];
+
+	const glyphs: Record<string, string> = {
+		cube: 'M12 2.5 L20.5 7.2 V16.8 L12 21.5 L3.5 16.8 V7.2 Z M12 12 L20.5 7.2 M12 12 L3.5 7.2 M12 12 V21.5',
+		gear: 'M12 2 V5 M12 19 V22 M2 12 H5 M19 12 H22 M4.9 4.9 L7 7 M17 17 L19.1 19.1 M4.9 19.1 L7 17 M17 7 L19.1 4.9 M12 7 A5 5 0 1 0 12.01 7 Z M12 10 A2 2 0 1 0 12.01 10 Z',
+		mesh: 'M3 20 L12 4 L21 20 Z M7.5 12 H16.5 M12 20 L7.5 12 M12 20 L16.5 12 M5.25 16 H9.75 M14.25 16 H18.75',
+		grid: 'M3 4 H21 V20 H3 Z M3 9 H21 M3 14 H21 M9 4 V20 M15 4 V20',
+		doc: 'M6 2 H14 L19 7 V22 H6 Z M14 2 V7 H19 M9 12 H16 M9 15 H16 M9 18 H13',
+		branch: 'M6 3 A2 2 0 1 0 6.01 3 Z M6 17 A2 2 0 1 0 6.01 17 Z M18 5 A2 2 0 1 0 18.01 5 Z M6 7 V17 M18 9 C18 14 6 12 6 17'
+	};
 
 	// photos in the lower-right collage
 	const collage = [
@@ -148,25 +161,53 @@
 		</section>
 
 		<!-- =================================================
-		     CONNECT / COLLAGE
+		     SOFTWARE DESKTOP / COLLAGE
 		     ================================================= -->
 
 		<section class="lower">
-			<div class="lower-left">
-				<div class="connect">
-					<h2 class="section-title small">LET’S CONNECT</h2>
+			<div class="desktop">
+				<HudFrame
+					label="DESKTOP"
+					code={`SOFTWARE / ${String(apps.length).padStart(2, '0')}`}
+				>
+					<div class="desk">
+						<div class="desk-icons">
+							{#each apps as app, n}
+								<svelte:element
+									this={app.href ? 'a' : 'div'}
+									class="app"
+									href={app.href}
+									target={app.href ? '_blank' : undefined}
+									rel={app.href ? 'noopener noreferrer' : undefined}
+									style="--n: {n};"
+								>
+									<span class="app-tile">
+										{#if app.img}
+											<img
+												src={app.img}
+												alt=""
+											/>
+										{:else}
+											<svg
+												viewBox="0 0 24 24"
+												aria-hidden="true"
+											>
+												<path d={glyphs[app.glyph]} />
+											</svg>
+										{/if}
+									</span>
+									<span class="app-name">{app.name}</span>
+									<span class="app-kind">{app.kind}</span>
+								</svelte:element>
+							{/each}
+						</div>
 
-					{#each links as link}
-						<p>
-							{link.label}:
-							<a
-								href={link.href}
-								target="_blank"
-								rel="noopener noreferrer">{link.value}</a
-							>
-						</p>
-					{/each}
-				</div>
+						<div class="desk-bar">
+							<span class="desk-sys">▣ ANIHIE.SYS</span>
+							<span class="desk-count">{apps.length} ITEMS</span>
+						</div>
+					</div>
+				</HudFrame>
 			</div>
 
 			<div
@@ -225,16 +266,18 @@
 
 	.hero {
 		display: grid;
-		grid-template-columns: 1.05fr 0.95fr;
-		gap: clamp(24px, 3vw, 48px);
+		grid-template-columns: 0.8fr 1.2fr;
+		gap: clamp(24px, 3.5vw, 56px);
 		align-items: stretch;
 
 		/* fills the first screen, like the reference */
-		height: clamp(440px, calc(100vh - 186px), 760px);
+		height: clamp(420px, calc(100vh - 200px), 680px);
 	}
 
 	.face {
-		height: 100%;
+		align-self: center;
+
+		height: 86%;
 		min-height: 0;
 
 		opacity: 0;
@@ -308,27 +351,6 @@
 		box-shadow: 0 0 8px var(--pink);
 
 		animation: blink 1s steps(2, start) infinite;
-	}
-
-	/* =====================================================
-	   SECTION TITLES
-	   ===================================================== */
-
-	.section-title {
-		margin: 0 0 18px;
-
-		font-size: clamp(1.1rem, 1.7vw, 1.5rem);
-		font-weight: 700;
-		letter-spacing: 0.24em;
-		text-align: center;
-
-		color: #fff;
-		text-shadow: 0 0 12px rgba(255, 0, 0, 0.45);
-	}
-
-	.section-title.small {
-		margin: 0 0 18px;
-		font-size: clamp(0.9rem, 1.2vw, 1.1rem);
 	}
 
 	/* =====================================================
@@ -467,36 +489,149 @@
 		font-variant-numeric: tabular-nums;
 	}
 
-	/* ---------- connect ---------- */
+	/* ---------- software desktop ---------- */
 
-	.connect {
-		text-align: center;
+	.desktop {
+		height: clamp(300px, 30vw, 360px);
 	}
 
-	.connect p {
-		margin: 0 0 10px;
+	.desk {
+		position: absolute;
+		inset: 0;
 
-		font-size: 0.78rem;
-		letter-spacing: 0.04em;
+		display: flex;
+		flex-direction: column;
+
+		background:
+			radial-gradient(circle, rgba(255, 0, 0, 0.14) 1px, transparent 1.5px) 0 0 / 14px 14px,
+			radial-gradient(ellipse at 50% 40%, rgba(255, 0, 0, 0.08), transparent 65%),
+			#030101;
 	}
 
-	.connect a {
+	.desk-icons {
+		flex: 1;
+
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		align-content: center;
+		gap: clamp(14px, 2.4vh, 24px) 10px;
+
+		padding: 20px 16px 10px;
+	}
+
+	.app {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+
+		padding: 8px 4px;
+
+		border: 1px solid transparent;
+
 		color: var(--light);
-		text-decoration: underline;
-		text-decoration-color: rgba(255, 0, 0, 0.7);
-		text-underline-offset: 3px;
+		text-decoration: none;
 
-		transition: color 250ms ease, text-shadow 250ms ease;
+		opacity: 0;
+		animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(0.2s + var(--n) * 0.06s) forwards;
+
+		transition: background 250ms ease, border-color 250ms ease;
 	}
 
-	.connect a:hover,
-	.connect a:focus-visible {
-		color: var(--pink-bright);
-		text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+	.app:hover,
+	.app:focus-visible {
+		background: rgba(255, 0, 0, 0.08);
+		border-color: rgba(255, 0, 0, 0.35);
 		outline: none;
 	}
 
-	/* ---------- collage ---------- */
+	.app-tile {
+		display: grid;
+		place-items: center;
+
+		width: clamp(44px, 4.2vw, 54px);
+		aspect-ratio: 1;
+		margin-bottom: 4px;
+
+		background:
+			linear-gradient(160deg, rgba(255, 60, 60, 0.35), rgba(60, 0, 0, 0.9));
+		border: 1px solid rgba(255, 80, 80, 0.7);
+
+		clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+		transition: background 250ms ease;
+	}
+
+	.app:hover .app-tile,
+	.app:focus-visible .app-tile {
+		background:
+			linear-gradient(160deg, rgba(255, 90, 90, 0.6), rgba(90, 0, 0, 0.95));
+	}
+
+	.app-tile svg {
+		width: 58%;
+		height: 58%;
+		overflow: visible;
+	}
+
+	.app-tile path {
+		fill: none;
+		stroke: var(--light);
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.app-tile img {
+		width: 70%;
+		height: 70%;
+		object-fit: contain;
+	}
+
+	.app-name {
+		font-family: var(--font-display);
+		font-size: 0.66rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-align: center;
+	}
+
+	.app-kind {
+		font-size: 0.48rem;
+		letter-spacing: 0.14em;
+		color: rgba(255, 225, 225, 0.5);
+	}
+
+	.desk-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		height: 28px;
+		padding: 0 10px;
+
+		background: linear-gradient(180deg, #1c0808, #0b0303);
+		border-top: 1px solid rgba(255, 0, 0, 0.5);
+
+		font-size: 0.55rem;
+		letter-spacing: 0.12em;
+	}
+
+	.desk-sys {
+		padding: 3px 8px;
+
+		background: var(--pink);
+		color: #000;
+		font-weight: 700;
+	}
+
+	.desk-count {
+		color: rgba(255, 225, 225, 0.6);
+	}
+
+	/* ---------- collage (straight, no hover) ---------- */
 
 	.collage {
 		position: relative;
@@ -505,37 +640,27 @@
 
 	.collage-item {
 		position: absolute;
-
-		transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	.collage-item:hover {
-		z-index: 5;
-		transform: translateY(-6px) rotate(0deg);
 	}
 
 	.c1 {
-		left: 6%;
+		left: 4%;
 		top: 0;
 		width: 38%;
-		height: 58%;
-		transform: rotate(-2deg);
+		height: 56%;
 	}
 
 	.c2 {
 		right: 0;
-		top: 10%;
+		top: 8%;
 		width: 46%;
-		height: 46%;
-		transform: rotate(2deg);
+		height: 44%;
 	}
 
 	.c3 {
 		left: 30%;
 		bottom: 0;
 		width: 42%;
-		height: 42%;
-		transform: rotate(-1deg);
+		height: 40%;
 		z-index: 2;
 	}
 
@@ -617,7 +742,6 @@
 	}
 
 	/* display font for headings */
-	.section-title,
 	.skills-head {
 		font-family: var(--font-display);
 	}

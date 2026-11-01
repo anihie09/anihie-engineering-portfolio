@@ -158,7 +158,11 @@
 				<span class="nav-line"></span>
 			</a>
 
-			<a href="/resume">
+			<a
+				href="/resume.pdf"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				<span class="nav-index">
 					03
 				</span>
