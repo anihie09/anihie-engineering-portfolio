@@ -158,7 +158,7 @@
 				<span class="nav-line"></span>
 			</a>
 
-			<a href="/contact">
+			<a href="/resume">
 				<span class="nav-index">
 					03
 				</span>
@@ -168,7 +168,7 @@
 				</span>
 
 				<span class="label">
-					CONTACT
+					RESUME
 				</span>
 
 				<span class="nav-line"></span>
@@ -300,31 +300,23 @@
 	   ===================================================== */
 
 	:global(:root) {
-		--hud-pink: #ff0080;
-		--hud-pink-bright: #ff1493;
-		--hud-pink-soft: rgba(255, 0, 128, 0.68);
-		--hud-pink-muted: rgba(255, 0, 128, 0.42);
-		--hud-pink-faint: rgba(255, 0, 128, 0.2);
+		--hud-pink: #ff0000;
+		--hud-pink-bright: #ff1414;
+		--hud-pink-soft: rgba(255, 0, 0, 0.68);
+		--hud-pink-muted: rgba(255, 0, 0, 0.42);
+		--hud-pink-faint: rgba(255, 0, 0, 0.2);
 	}
 
 	/* =====================================================
 	   GLOBAL
 	   ===================================================== */
 
-	:global(html),
-	:global(body) {
-		margin: 0;
-		padding: 0;
-
-		width: 100%;
-		height: 100%;
-
-		background: #000;
-	}
-
-	:global(body) {
-		overflow: hidden;
-	}
+	/*
+	 * No global overflow/height rules here: Svelte keeps a page's
+	 * styles loaded after you navigate away, so a body lock on the
+	 * home page would stop every other page from scrolling.
+	 * The home layout itself is a fixed 100vh box instead.
+	 */
 
 	:global(*) {
 		box-sizing: border-box;
@@ -337,7 +329,7 @@
 	.home {
 		position: relative;
 
-		width: 100vw;
+		width: 100%;
 		height: 100vh;
 
 		min-height: 600px;
@@ -399,7 +391,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.25);
+			rgba(255, 0, 0, 0.25);
 	}
 
 	.frame-top {
@@ -430,7 +422,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.2);
+			rgba(255, 0, 0, 0.2);
 	}
 
 	.frame-left {
@@ -467,7 +459,7 @@
 
 		box-shadow:
 			0 0 6px
-			rgba(255, 0, 128, 0.25);
+			rgba(255, 0, 0, 0.25);
 	}
 
 	.corner::before {
@@ -614,9 +606,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.status-label {
@@ -832,9 +822,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		font-size:
 			clamp(
@@ -852,7 +840,7 @@
 
 		text-shadow:
 			0 0 6px
-			rgba(255, 0, 128, 0.22),
+			rgba(255, 0, 0, 0.22),
 			0 2px 5px
 			rgba(0, 0, 0, 0.85);
 
@@ -861,8 +849,8 @@
 		pointer-events: auto;
 
 		transition:
-			color 120ms ease,
-			text-shadow 120ms ease;
+			color 300ms ease,
+			text-shadow 300ms ease;
 	}
 
 	.nav-index {
@@ -873,6 +861,8 @@
 
 		letter-spacing:
 			0.12em;
+
+		transition: color 300ms ease;
 	}
 
 	.arrow {
@@ -889,9 +879,9 @@
 			translateX(-7px);
 
 		transition:
-			width 140ms ease,
-			opacity 100ms linear,
-			transform 140ms ease;
+			width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+			opacity 260ms ease,
+			transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.label {
@@ -899,6 +889,8 @@
 			var(--hud-pink);
 
 		white-space: nowrap;
+
+		transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.nav-line {
@@ -907,16 +899,23 @@
 		left: 0;
 		bottom: -7px;
 
-		width: 0;
+		width: 100%;
 		height: 1px;
 
 		background:
-			var(--hud-pink);
+			linear-gradient(
+				90deg,
+				var(--hud-pink),
+				rgba(255, 0, 0, 0.15)
+			);
 
-		opacity: 0.65;
+		opacity: 0.8;
+
+		transform: scaleX(0);
+		transform-origin: left center;
 
 		transition:
-			width 180ms ease;
+			transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.navigation a:hover,
@@ -928,15 +927,14 @@
 
 		text-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.75),
+			rgba(255, 0, 0, 0.75),
 			0 0 16px
-			rgba(255, 0, 128, 0.25);
+			rgba(255, 0, 0, 0.25);
+	}
 
-		animation:
-			nav-glitch
-			270ms
-			steps(2, end)
-			1;
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		transform: translateX(4px);
 	}
 
 	.navigation a:hover .arrow,
@@ -951,7 +949,7 @@
 
 	.navigation a:hover .nav-line,
 	.navigation a:focus-visible .nav-line {
-		width: 100%;
+		transform: scaleX(1);
 	}
 
 	.navigation a:hover .nav-index,
@@ -989,13 +987,11 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		text-shadow:
 			0 0 5px
-			rgba(255, 0, 128, 0.25);
+			rgba(255, 0, 0, 0.25);
 
 		pointer-events: none;
 
@@ -1072,7 +1068,7 @@
 		filter:
 			drop-shadow(
 				0 0 4px
-				rgba(255, 0, 128, 0.2)
+				rgba(255, 0, 0, 0.2)
 			);
 
 		animation:
@@ -1178,9 +1174,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.bottom-data-title {
@@ -1248,9 +1242,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		text-align: center;
 	}
@@ -1324,9 +1316,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.bottom-status-title {
@@ -1413,46 +1403,6 @@
 	/* =====================================================
 	   ANIMATIONS
 	   ===================================================== */
-
-	@keyframes nav-glitch {
-		0% {
-			transform:
-				translate(0, 0);
-		}
-
-		20% {
-			transform:
-				translate(-2px, 0);
-
-			text-shadow:
-				2px 0
-				rgba(255, 0, 128, 0.72);
-		}
-
-		40% {
-			transform:
-				translate(2px, -1px);
-
-			text-shadow:
-				-2px 0
-				rgba(255, 0, 128, 0.5);
-		}
-
-		60% {
-			transform:
-				translate(-1px, 1px);
-		}
-
-		80% {
-			transform:
-				translate(1px, 0);
-		}
-
-		100% {
-			transform:
-				translate(0, 0);
-		}
-	}
 
 	@keyframes data-idle {
 		0%,
@@ -1660,8 +1610,17 @@
 			animation: none;
 		}
 
-		.navigation a {
+		.navigation a,
+		.navigation a .label,
+		.navigation a .arrow,
+		.nav-line {
 			transition: none;
 		}
+	}
+
+	/* display font for the main nav */
+	.navigation a {
+		font-family: var(--font-display);
+		letter-spacing: 0.12em;
 	}
 </style>

@@ -15,7 +15,7 @@
 		intensity = 1,
 		speed = 1,
 		opacity = 1,
-		pink = '#ff0080',
+		pink = '#ff0000',
 		active = true,
 		imageSrc = '',
 		src = ''
@@ -329,12 +329,12 @@
 
 		atmosphere.addColorStop(
 			0,
-			'rgba(255,0,128,0.045)'
+			'rgba(255, 0, 0,0.045)'
 		);
 
 		atmosphere.addColorStop(
 			0.65,
-			'rgba(255,0,128,0.015)'
+			'rgba(255, 0, 0,0.015)'
 		);
 
 		atmosphere.addColorStop(
@@ -862,17 +862,17 @@
 
 			gradient.addColorStop(
 				0,
-				'rgba(255,182,226,0.12)'
+				'rgba(255, 182, 182,0.12)'
 			);
 
 			gradient.addColorStop(
 				0.45,
-				'rgba(255,0,128,0.035)'
+				'rgba(255, 0, 0,0.035)'
 			);
 
 			gradient.addColorStop(
 				1,
-				'rgba(255,0,128,0)'
+				'rgba(255, 0, 0,0)'
 			);
 
 			ctx.globalAlpha =
@@ -1028,7 +1028,7 @@
 
 			ctx.fillStyle =
 				i % 9 === 0
-					? '#ff91d7'
+					? '#ff9191'
 					: pink;
 
 			ctx.fillRect(
@@ -1243,7 +1243,7 @@
 				type < 0.22
 			) {
 				color =
-					'#ff91d7';
+					'#ff9191';
 			}
 
 			ctx.save();
@@ -1496,7 +1496,7 @@
 					7,
 					8 * textScale
 				)
-			}px "Courier New", monospace`;
+			}px "JetBrains Mono", monospace`;
 
 		ctx.fillText(
 			'STREAM WILL BE',
@@ -1507,7 +1507,7 @@
 		);
 
 		ctx.fillStyle =
-			'#ff7cc8';
+			'#ff7c7c';
 
 		ctx.font =
 			`700 ${
@@ -1515,7 +1515,7 @@
 					14,
 					20 * textScale
 				)
-			}px "Courier New", monospace`;
+			}px "JetBrains Mono", monospace`;
 
 		ctx.fillText(
 			title,
@@ -1532,7 +1532,7 @@
 					6,
 					8 * textScale
 				)
-			}px "Courier New", monospace`;
+			}px "JetBrains Mono", monospace`;
 
 		ctx.fillText(
 			subtitle,
@@ -1626,13 +1626,13 @@
 		);
 
 		ctx.fillStyle =
-			'#ff7bc9';
+			'#ff7b7b';
 
 		ctx.textAlign =
 			'center';
 
 		ctx.font =
-			'400 7px "Courier New", monospace';
+			'400 7px "JetBrains Mono", monospace';
 
 		ctx.fillText(
 			'NEW FOLLOWER',
@@ -2219,7 +2219,7 @@
 <style>
 	.glitch-background {
 		--pink:
-			#ff0080;
+			#ff0000;
 
 		position:
 			fixed;
@@ -2295,9 +2295,7 @@
 			none;
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.loading-label {
@@ -2337,12 +2335,8 @@
 			6px;
 
 		color:
-			rgba(
-				255,
-				0,
-				128,
-				0.7
-			);
+			rgba(255, 0, 0,
+				0.7);
 
 		font-size:
 			6px;
@@ -2356,7 +2350,7 @@
 			0 4px;
 
 		color:
-			#ff1493;
+			#ff1414;
 	}
 
 	.loading-progress {
@@ -2378,12 +2372,8 @@
 			3px;
 
 		background:
-			rgba(
-				255,
-				0,
-				128,
-				0.55
-			);
+			rgba(255, 0, 0,
+				0.55);
 
 		animation:
 			progress-pulse

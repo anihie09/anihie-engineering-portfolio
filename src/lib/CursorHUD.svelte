@@ -416,18 +416,10 @@
 		background:
 			radial-gradient(
 				circle,
-				rgba(
-					255,
-					0,
-					128,
-					0.11
-				),
-				rgba(
-					255,
-					0,
-					128,
-					0.025
-				) 38%,
+				rgba(255, 0, 0,
+					0.11),
+				rgba(255, 0, 0,
+					0.025) 38%,
 				transparent 72%
 			);
 
@@ -479,12 +471,8 @@
 		background-image:
 			radial-gradient(
 				circle,
-				rgba(
-					255,
-					0,
-					128,
-					0.32
-				)
+				rgba(255, 0, 0,
+					0.32)
 				1px,
 				transparent 1.55px
 			);
@@ -605,12 +593,8 @@
 
 		border:
 			1px solid
-			rgba(
-				255,
-				0,
-				128,
-				0.65
-			);
+			rgba(255, 0, 0,
+				0.65);
 
 		border-radius: 50%;
 
@@ -642,12 +626,8 @@
 		position: absolute;
 
 		background:
-			rgba(
-				255,
-				0,
-				128,
-				0.62
-			);
+			rgba(255, 0, 0,
+				0.62);
 	}
 
 	.scope-axis.horizontal {
@@ -677,7 +657,7 @@
 		border-radius: 50%;
 
 		background:
-			#ff0080;
+			#ff0000;
 	}
 
 	.scope-node.top {
@@ -753,16 +733,12 @@
 		height: 1px;
 
 		background:
-			#ff0080;
+			#ff0000;
 
 		box-shadow:
 			0 0 5px
-			rgba(
-				255,
-				0,
-				128,
-				0.5
-			);
+			rgba(255, 0, 0,
+				0.5);
 
 		animation:
 			fragment-glitch

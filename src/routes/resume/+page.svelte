@@ -1,38 +1,39 @@
 <script lang="ts">
+	// Put your resume PDF at static/resume.pdf
 	const contacts = [
 		{
-			type: 'LINKEDIN',
-			value: 'linkedin.com/in/ani-le-9612731b6',
-			href: 'https://www.linkedin.com/in/ani-le-9612731b6/',
+			type: 'EDUCATION',
+			value: 'USC Viterbi — B.S. Mechanical Engineering',
+			href: '#',
 			code: '0101 — 0110'
 		},
 		{
-			type: 'EMAIL',
-			value: 'ale95199@usc.edu',
-			href: 'mailto:ale95199@usc.edu',
+			type: 'EXPERIENCE',
+			value: 'RCSV · Spacetime Robotics · Liminal Insights',
+			href: '#',
 			code: '0110 — 1001'
 		},
 		{
-			type: 'EMAIL',
-			value: 'an.hoai.le01gmail.com',
+			type: 'LEADERSHIP',
+			value: 'USC ARC — Drivetrain Lead / Secretary',
 			href: '#',
 			code: '1001 — 0011'
 		},
 		{
-			type: 'GITHUB',
-			value: 'github.com/anihie09',
-			href: 'https://github.com/anihie09',
+			type: 'FULL RESUME',
+			value: 'View / download PDF',
+			href: '/resume.pdf',
 			code: '0011 — 1010'
 		}
 	];
 </script>
 
 <svelte:head>
-	<title>ANIHIE — Contacts</title>
+	<title>ANIHIE — Resume</title>
 
 	<meta
 		name="description"
-		content="Contact ANI Le — LinkedIn, email, and GitHub"
+		content="Resume — An Le, Mechanical Engineering, USC Viterbi"
 	/>
 </svelte:head>
 
@@ -195,8 +196,8 @@
 		<!-- TOP LABEL -->
 
 		<div class="top-label">
-			<span>02</span>
-			<span>CONTACT_SECTION</span>
+			<span>03</span>
+			<span>RESUME_SECTION</span>
 		</div>
 
 		<!-- =================================================
@@ -205,11 +206,11 @@
 
 		<section class="hero">
 			<div class="hero-small">
-				DIVISION 02
+				DIVISION 03
 			</div>
 
 			<div class="hero-subtitle">
-				SECTION_CONTACT
+				SECTION_RESUME
 			</div>
 
 			<h1>ANIHIE</h1>
@@ -217,7 +218,7 @@
 			<div class="hero-code">
 				<span>AN</span>
 				<span>01</span>
-				<span>CONTACTS</span>
+				<span>CV</span>
 			</div>
 		</section>
 
@@ -227,7 +228,7 @@
 
 		<div class="floating-panel floating-panel-left">
 			<div class="floating-panel-title">
-				CONTACT
+				RESUME
 			</div>
 
 			<div class="floating-panel-number">
@@ -242,13 +243,13 @@
 			</div>
 
 			<div class="floating-panel-row">
-				<span>LINK</span>
-				<strong>OPEN</strong>
+				<span>FILE</span>
+				<strong>PDF</strong>
 			</div>
 
 			<div class="floating-panel-row">
 				<span>MODE</span>
-				<strong>DIRECT</strong>
+				<strong>VIEW</strong>
 			</div>
 
 			<div class="floating-panel-bars">
@@ -265,7 +266,7 @@
 
 		<div class="floating-panel floating-panel-right">
 			<div class="floating-panel-title">
-				CHANNEL
+				RECORD
 			</div>
 
 			<div class="floating-panel-number">
@@ -275,17 +276,17 @@
 			<div class="floating-panel-rule"></div>
 
 			<div class="floating-panel-row">
-				<span>MAIL</span>
+				<span>EDU</span>
 				<strong>01</strong>
 			</div>
 
 			<div class="floating-panel-row">
-				<span>SOCIAL</span>
-				<strong>02</strong>
+				<span>EXP</span>
+				<strong>03</strong>
 			</div>
 
 			<div class="floating-panel-row">
-				<span>CODE</span>
+				<span>LEAD</span>
 				<strong>01</strong>
 			</div>
 
@@ -335,7 +336,7 @@
 					</div>
 
 					<div class="card-id">
-						CONTACT SYSTEM / 01
+						RESUME SYSTEM / 01
 					</div>
 
 					<div class="card-status">
@@ -350,11 +351,11 @@
 				<div class="word-panel">
 					<div class="word-panel-top">
 						<span>ANIHIE</span>
-						<span>CONTACT DIRECTORY</span>
+						<span>RESUME FILE</span>
 					</div>
 
 					<h2>
-						CONTACTS
+						RESUME
 					</h2>
 
 					<div class="word-panel-bottom">
@@ -456,11 +457,11 @@
 				<div class="card-bottom">
 					<div>
 						<span>
-							COMMUNICATION CHANNEL
+							DOCUMENT
 						</span>
 
 						<strong>
-							OPEN
+							CURRENT
 						</strong>
 					</div>
 
@@ -546,9 +547,7 @@
 	:global(select),
 	:global(a) {
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	/* =====================================================
@@ -556,24 +555,16 @@
 	   ===================================================== */
 
 	.contact-page {
-		--pink: #ff0080;
-		--pink-bright: #ff1493;
+		--pink: #ff0000;
+		--pink-bright: #ff1414;
 
 		--pink-soft:
-			rgba(
-				255,
-				0,
-				128,
-				0.68
-			);
+			rgba(255, 0, 0,
+				0.68);
 
 		--pink-faint:
-			rgba(
-				255,
-				0,
-				128,
-				0.2
-			);
+			rgba(255, 0, 0,
+				0.2);
 
 		--white-soft:
 			rgba(
@@ -1515,9 +1506,7 @@
 			#fff;
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		font-size:
 			clamp(
@@ -2130,9 +2119,7 @@
 			#fff;
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		font-size:
 			clamp(
@@ -2265,12 +2252,8 @@
 
 	.contact-item:hover {
 		background:
-			rgba(
-				255,
-				0,
-				128,
-				0.055
-			);
+			rgba(255, 0, 0,
+				0.055);
 	}
 
 	.contact-item-static {
@@ -2796,11 +2779,7 @@
 			-2px;
 
 		background:
-			rgba(
-				255,
-				0,
-				128,
-				0.08
-			);
+			rgba(255, 0, 0,
+				0.08);
 	}
 </style>
