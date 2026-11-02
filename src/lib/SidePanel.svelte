@@ -135,6 +135,7 @@
 			linear-gradient(160deg, rgba(20, 20, 20, 0.97), rgba(4, 4, 4, 0.98));
 
 		border: 1px solid rgba(255, 255, 255, 0.28);
+		border-right-color: rgba(223, 54, 124, 0.45);
 
 		clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
 
@@ -154,7 +155,7 @@
 		height: 92px;
 
 		/* leaves room for the signature in the top-left corner */
-		padding: 0 18px 0 clamp(130px, 13vw, 190px);
+		padding: 0 18px 0 clamp(220px, 19vw, 300px);
 
 		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 	}
@@ -175,14 +176,14 @@
 		font-family: var(--font-mono);
 		font-size: 0.6rem;
 		letter-spacing: 0.16em;
-		color: var(--accent);
+		color: var(--petal-rouge);
 	}
 
 	.head-rule {
 		flex: 1;
 		height: 1px;
 
-		background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), transparent);
+		background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), rgba(136, 57, 85, 0.6) 55%, transparent);
 	}
 
 	.close {
@@ -217,8 +218,8 @@
 
 	.close:hover,
 	.close:focus-visible {
-		border-color: var(--accent);
-		background: rgba(255, 255, 255, 0.08);
+		border-color: var(--strawberry);
+		background: rgba(255, 62, 65, 0.1);
 		outline: none;
 	}
 
@@ -243,8 +244,8 @@
 		width: 2px;
 		height: 22%;
 
-		background: linear-gradient(180deg, transparent, var(--accent), transparent);
-		box-shadow: 0 0 10px var(--accent-glow);
+		background: linear-gradient(180deg, transparent, var(--petal-rouge), var(--rose-punch), transparent);
+		box-shadow: 0 0 10px rgba(223, 54, 124, 0.6);
 
 		animation: edge-run 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 	}
@@ -263,7 +264,7 @@
 		}
 
 		.panel-head {
-			padding-left: 110px;
+			padding-left: 150px;
 		}
 	}
 

@@ -9,6 +9,7 @@
 	import CursorHUD from '$lib/CursorHUD.svelte';
 	import LoadingScreen from '$lib/LoadingScreen.svelte';
 	import CyberFrame from '$lib/CyberFrame.svelte';
+	import Signature from '$lib/Signature.svelte';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -101,12 +102,7 @@
 		aria-label="Home"
 		title="Home"
 	>
-		<span class="signature-layer signature-base">
-			<img
-				src="/signature.png"
-				alt="Anihie"
-			/>
-		</span>
+		<Signature />
 	</a>
 
 	<!-- =================================================
@@ -147,7 +143,14 @@
 		--accent-bright: #ffffff;
 		--accent-soft: rgba(230, 238, 243, 0.45);
 		--accent-glow: rgba(214, 232, 245, 0.55);
-		--signal: #ff3b3b;
+		--signal: #ff3e41;
+
+		/* accent palette */
+		--petal-rouge: #ff7099;
+		--rose-punch: #df367c;
+		--strawberry: #ff3e41;
+		--vintage-berry: #883955;
+		--vintage-grape: #4c3549;
 
 		--hud-pink: #f1f1f1;
 		--hud-pink-soft: rgba(241, 241, 241, 0.55);
@@ -178,73 +181,28 @@
 	}
 
 	/* =====================================================
-	   HOME BUTTON
+	   HOME BUTTON (ANI logotype, see $lib/Signature.svelte)
 	   ===================================================== */
 
-	/*
-	 * signature.png is 818x198 but the signature itself only
-	 * fills roughly x 104-407, y 4-163. The box is sized to that
-	 * area and the image is offset so the empty padding sits
-	 * outside it.
-	 */
 	.home-button {
 		position: fixed;
 
 		/* inside the frame's corner bracket, below the top circuit line */
-		left: 62px;
-		top: 58px;
+		left: 52px;
+		top: 46px;
 
 		z-index: 1000;
 
-		width: clamp(85px, 7.5vw, 120px);
-		aspect-ratio: 303 / 159;
+		width: clamp(170px, 15vw, 230px);
+		aspect-ratio: 340 / 150;
 
 		display: block;
 
-		cursor: pointer;
+		color: inherit;
 		text-decoration: none;
 		pointer-events: auto;
 
 		outline: none;
-	}
-
-	.signature-layer {
-		position: absolute;
-		inset: 0;
-
-		display: block;
-		pointer-events: none;
-	}
-
-	.signature-layer img {
-		position: absolute;
-
-		left: -34.3%;
-		top: -2.5%;
-
-		width: 270%;
-		height: auto;
-
-		max-width: none;
-		display: block;
-
-		filter:
-			drop-shadow(0 0 3px rgba(255, 42, 42, 0.25));
-
-		transition: filter 350ms ease;
-	}
-
-	/* =====================================================
-	   HOME HOVER — just lights up
-	   ===================================================== */
-
-	.home-button:hover .signature-layer img,
-	.home-button:focus-visible .signature-layer img {
-		filter:
-			brightness(1.35)
-			drop-shadow(0 0 2px rgba(255, 120, 120, 0.95))
-			drop-shadow(0 0 8px rgba(255, 42, 42, 0.75))
-			drop-shadow(0 0 18px rgba(255, 42, 42, 0.4));
 	}
 
 	/* =====================================================
@@ -253,23 +211,20 @@
 
 	@media (max-width: 900px) {
 		.home-button {
-			left: 56px;
-			top: 54px;
-			width: 95px;
+			left: 48px;
+			top: 44px;
+			width: 160px;
 		}
 	}
 
 	@media (max-width: 650px) {
 		.home-button {
-			left: 40px;
-			top: 42px;
-			width: 72px;
+			left: 30px;
+			top: 30px;
+			width: 124px;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.signature-layer img {
-			transition: none;
-		}
 	}
 </style>

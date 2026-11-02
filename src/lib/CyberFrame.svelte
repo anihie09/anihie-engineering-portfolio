@@ -258,7 +258,7 @@
 	}
 
 	.comet-2 {
-		stroke: #fefefe;
+		stroke: var(--petal-rouge);
 		stroke-width: 1.5;
 		stroke-dasharray: 30 970;
 		animation-duration: 14s;
@@ -279,7 +279,7 @@
 	}
 
 	.accent {
-		stroke: #f4f4f4;
+		stroke: var(--rose-punch);
 		stroke-width: 2.5;
 		animation:
 			draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) both,

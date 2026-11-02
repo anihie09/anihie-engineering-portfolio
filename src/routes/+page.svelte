@@ -50,6 +50,28 @@
 		paused={panel !== null}
 	/>
 
+	<!-- accent sparkles -->
+	<div
+		class="sparkles"
+		aria-hidden="true"
+	>
+		{#each [
+			{ x: '64%', y: '30%', s: '14px', c: 'var(--petal-rouge)', t: '4.2s', d: '0s' },
+			{ x: '86%', y: '66%', s: '10px', c: 'var(--strawberry)', t: '3.6s', d: '-1.2s' },
+			{ x: '58%', y: '74%', s: '9px', c: 'var(--rose-punch)', t: '5s', d: '-2.4s' },
+			{ x: '24%', y: '18%', s: '11px', c: '#f4f6f8', t: '4.6s', d: '-0.8s' },
+			{ x: '93%', y: '24%', s: '8px', c: 'var(--petal-rouge)', t: '3.2s', d: '-1.8s' }
+		] as sp}
+			<svg
+				class="sparkle"
+				viewBox="0 0 24 24"
+				style="left: {sp.x}; top: {sp.y}; --s: {sp.s}; --c: {sp.c}; --t: {sp.t}; --d: {sp.d};"
+			>
+				<path d="M12 0 Q13.2 10.8 24 12 Q13.2 13.2 12 24 Q10.8 13.2 0 12 Q10.8 10.8 12 0 Z" />
+			</svg>
+		{/each}
+	</div>
+
 	<!-- =====================================================
 	     HUD
 	     ===================================================== -->
@@ -147,6 +169,7 @@
 			<a
 				id="about"
 				href="#about"
+				aria-label="About"
 				aria-haspopup="dialog"
 				onclick={(e) => openPanel('about', e)}
 			>
@@ -159,7 +182,15 @@
 				</span>
 
 				<span class="label">
-					ABOUT
+					<span
+						class="word"
+						aria-hidden="true">ABOUT</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
@@ -168,6 +199,7 @@
 			<a
 				id="projects"
 				href="#projects"
+				aria-label="Projects"
 				aria-haspopup="dialog"
 				onclick={(e) => openPanel('projects', e)}
 			>
@@ -180,7 +212,15 @@
 				</span>
 
 				<span class="label">
-					PROJECTS
+					<span
+						class="word"
+						aria-hidden="true">PROJECTS</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
@@ -190,6 +230,7 @@
 				href="/resume.pdf"
 				target="_blank"
 				rel="noopener noreferrer"
+				aria-label="Resume (PDF, opens in a new tab)"
 			>
 				<span class="nav-index">
 					03
@@ -200,7 +241,15 @@
 				</span>
 
 				<span class="label">
-					RESUME
+					<span
+						class="word"
+						aria-hidden="true">RESUME</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
@@ -1677,5 +1726,129 @@
 	.navigation a {
 		font-family: var(--font-display);
 		letter-spacing: 0.12em;
+	}
+
+	/* =====================================================
+	   NAV LABELS
+	   tech display font + an accent star each
+	   ===================================================== */
+
+	.navigation {
+		gap: 8px;
+	}
+
+	.navigation a {
+		min-height: 34px;
+		grid-template-columns: 30px 22px auto;
+	}
+
+	.label {
+		position: relative;
+
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+
+		color: #f6f7f9;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+
+		transition:
+			color 320ms ease,
+			text-shadow 320ms ease,
+			transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.word {
+		font-family: var(--font-display);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		line-height: 1;
+	}
+
+	/* accent symbols */
+	.sym {
+		width: 11px;
+		height: 11px;
+		flex: none;
+
+		fill: none;
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+
+		opacity: 0.9;
+
+		transition:
+			transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+			filter 320ms ease,
+			opacity 320ms ease;
+	}
+
+	.sym-star { stroke: none; fill: var(--petal-rouge); }
+
+	/* hover: the word turns Strawberry Red, its symbol lights up */
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		color: var(--strawberry);
+		text-shadow:
+			0 0 10px rgba(255, 62, 65, 0.55),
+			0 0 24px rgba(223, 54, 124, 0.3),
+			0 2px 8px rgba(0, 0, 0, 0.8);
+	}
+
+	.navigation a:hover .sym,
+	.navigation a:focus-visible .sym {
+		opacity: 1;
+		transform: rotate(90deg) scale(1.2);
+		filter: drop-shadow(0 0 5px rgba(255, 112, 153, 0.9));
+	}
+
+	.navigation a:hover .arrow,
+	.navigation a:focus-visible .arrow,
+	.navigation a:hover .nav-index,
+	.navigation a:focus-visible .nav-index {
+		color: var(--petal-rouge);
+	}
+
+	.nav-line {
+		bottom: -4px;
+		background: linear-gradient(90deg, var(--rose-punch), rgba(136, 57, 85, 0.15));
+	}
+
+	/* =====================================================
+	   SPARKLES (accent symbols scattered on the home screen)
+	   ===================================================== */
+
+	.sparkles {
+		position: absolute;
+		inset: 0;
+		z-index: 15;
+
+		pointer-events: none;
+	}
+
+	.sparkle {
+		position: absolute;
+
+		width: var(--s, 12px);
+		height: var(--s, 12px);
+
+		fill: var(--c, var(--petal-rouge));
+		filter: drop-shadow(0 0 6px var(--c, var(--petal-rouge)));
+
+		animation: twinkle var(--t, 4s) ease-in-out var(--d, 0s) infinite;
+	}
+
+	@keyframes twinkle {
+		0%,
+		100% { opacity: 0.25; transform: scale(0.75) rotate(0deg); }
+		50% { opacity: 1; transform: scale(1) rotate(45deg); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sparkle {
+			animation: none;
+			opacity: 0.7;
+		}
 	}
 </style>

@@ -82,7 +82,7 @@
 	.doc-name {
 		padding: 4px 10px;
 
-		border-left: 3px solid var(--accent);
+		border-left: 3px solid var(--rose-punch);
 		background: rgba(255, 255, 255, 0.08);
 
 		font-weight: 700;
@@ -107,8 +107,8 @@
 
 	.doc-open:hover,
 	.doc-open:focus-visible {
-		border-color: var(--accent);
-		color: var(--accent-bright);
+		border-color: var(--strawberry);
+		color: var(--petal-rouge);
 		outline: none;
 	}
 
@@ -159,7 +159,7 @@
 	}
 
 	.blink {
-		color: var(--accent);
+		color: var(--strawberry);
 		animation: blink 1s steps(2, start) infinite;
 	}
 

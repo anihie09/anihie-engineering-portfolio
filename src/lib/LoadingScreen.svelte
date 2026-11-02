@@ -77,6 +77,7 @@
 				<span
 					class="stripe"
 					class:on={i < filled}
+					class:head={i === filled - 1 && !done}
 				></span>
 			{/each}
 		</div>
@@ -133,7 +134,7 @@
 		left: calc(var(--i) * (100% / var(--n)) - 1px);
 		width: calc(100% / var(--n) + 2px);
 
-		background: #030405;
+		background: #060406;
 
 		transform: skewX(-28deg) scaleX(1);
 		transform-origin: right center;
@@ -149,11 +150,17 @@
 
 		width: 2px;
 
-		background: #f2f7fa;
-		box-shadow: 0 0 14px rgba(220, 238, 250, 0.9);
+		background: var(--edge, #f2f7fa);
+		box-shadow: 0 0 14px var(--edge, rgba(220, 238, 250, 0.9));
 
 		opacity: 0;
 	}
+
+	/* slat edges cycle through the palette */
+	.slats span:nth-child(4n + 1) { --edge: #f2f7fa; }
+	.slats span:nth-child(4n + 2) { --edge: var(--petal-rouge); }
+	.slats span:nth-child(4n + 3) { --edge: var(--strawberry); }
+	.slats span:nth-child(4n + 4) { --edge: var(--rose-punch); }
 
 	.leaving .slats span {
 		animation: slat-open 0.7s cubic-bezier(0.76, 0, 0.24, 1) calc(0.38s + var(--i) * 0.06s) forwards;
@@ -172,6 +179,8 @@
 		background:
 			repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px),
 			radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.05), transparent 55%),
+			radial-gradient(ellipse 60% 45% at 18% 85%, rgba(136, 57, 85, 0.22), transparent 70%),
+			radial-gradient(ellipse 55% 40% at 85% 12%, rgba(76, 53, 73, 0.35), transparent 70%),
 			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.08'/></svg>");
 
 		transition: opacity 0.4s ease;
@@ -249,6 +258,8 @@
 		font-weight: 600;
 		letter-spacing: 0.12em;
 		font-variant-numeric: tabular-nums;
+
+		color: var(--petal-rouge);
 	}
 
 	/* ---------- the tape ---------- */
@@ -288,6 +299,16 @@
 
 	.stripe.on::before {
 		transform: scaleX(1);
+	}
+
+	/* the stripe that just filled glows in the palette */
+	.stripe.head::before {
+		background: linear-gradient(90deg, var(--petal-rouge), #ffffff 60%, var(--rose-punch));
+	}
+
+	.stripe.head {
+		box-shadow: 0 0 14px rgba(255, 112, 153, 0.6);
+		border-color: var(--petal-rouge);
 	}
 
 	.stripe::after {
@@ -375,7 +396,7 @@
 
 	@keyframes flash {
 		0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-		30% { box-shadow: 0 0 22px rgba(240, 248, 255, 0.95); }
+		30% { box-shadow: 0 0 22px rgba(255, 112, 153, 0.95), 0 0 40px rgba(223, 54, 124, 0.5); }
 		100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
 	}
 

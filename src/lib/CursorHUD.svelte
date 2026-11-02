@@ -112,8 +112,8 @@
 
 	.cursor:global(.active) .ring {
 		transform: translate(-50%, -50%) scale(1.5);
-		border-color: var(--accent);
-		background: rgba(255, 255, 255, 0.06);
+		border-color: var(--petal-rouge);
+		background: rgba(255, 112, 153, 0.08);
 	}
 
 	.cursor:global(.pressed) .ring {

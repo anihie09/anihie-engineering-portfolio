@@ -160,11 +160,11 @@
 	}
 
 	.pulse {
-		stroke: var(--accent-bright);
+		stroke: var(--petal-rouge);
 		stroke-width: 1.6;
 		stroke-dasharray: 70 930;
 
-		filter: drop-shadow(0 0 3px var(--accent-glow));
+		filter: drop-shadow(0 0 3px rgba(255, 112, 153, 0.7));
 
 		animation: orbit 9s linear infinite;
 	}
@@ -178,10 +178,10 @@
 	}
 
 	.chamfer {
-		stroke: var(--accent);
+		stroke: var(--rose-punch);
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 3px var(--accent-glow));
+		filter: drop-shadow(0 0 3px rgba(223, 54, 124, 0.7));
 		animation: glow 3.6s ease-in-out 1.8s infinite;
 	}
 
@@ -214,7 +214,7 @@
 
 	.code {
 		right: 34px;
-		color: var(--accent-bright);
+		color: var(--petal-rouge);
 	}
 
 	@keyframes orbit {
