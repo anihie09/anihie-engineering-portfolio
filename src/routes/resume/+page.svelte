@@ -555,15 +555,15 @@
 	   ===================================================== */
 
 	.contact-page {
-		--pink: #ff0000;
-		--pink-bright: #ff1414;
+		--pink: #f1f1f1;
+		--pink-bright: #f2f2f2;
 
 		--pink-soft:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.68);
 
 		--pink-faint:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.2);
 
 		--white-soft:
@@ -2252,7 +2252,7 @@
 
 	.contact-item:hover {
 		background:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.055);
 	}
 
@@ -2779,7 +2779,7 @@
 			-2px;
 
 		background:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.08);
 	}
 </style>

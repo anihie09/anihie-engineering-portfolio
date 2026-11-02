@@ -31,7 +31,7 @@
 			window.setTimeout(() => {
 				booting = false;
 				bootExiting = false;
-			}, 950);
+			}, 1500);
 		}, 3000);
 
 		return () => {
@@ -71,7 +71,7 @@
 			window.setTimeout(() => {
 				transitioning = false;
 				transitionLeaving = false;
-			}, 950);
+			}, 1500);
 		}, 1000);
 	});
 </script>
@@ -142,9 +142,16 @@
 		--font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 		--font-display: 'Chakra Petch', 'JetBrains Mono', system-ui, sans-serif;
 
-		--hud-pink: #ff0000;
-		--hud-pink-soft: rgba(255, 0, 0, 0.55);
-		--hud-pink-faint: rgba(255, 0, 0, 0.2);
+		/* theme: clean cyber white; red is only a tiny signal colour */
+		--accent: #e6eef3;
+		--accent-bright: #ffffff;
+		--accent-soft: rgba(230, 238, 243, 0.45);
+		--accent-glow: rgba(214, 232, 245, 0.55);
+		--signal: #ff3b3b;
+
+		--hud-pink: #f1f1f1;
+		--hud-pink-soft: rgba(241, 241, 241, 0.55);
+		--hud-pink-faint: rgba(241, 241, 241, 0.2);
 	}
 
 	:global(html),
@@ -222,7 +229,7 @@
 		display: block;
 
 		filter:
-			drop-shadow(0 0 3px rgba(255, 0, 0, 0.2));
+			drop-shadow(0 0 3px rgba(255, 42, 42, 0.25));
 
 		transition: filter 350ms ease;
 	}
@@ -236,8 +243,8 @@
 		filter:
 			brightness(1.35)
 			drop-shadow(0 0 2px rgba(255, 120, 120, 0.95))
-			drop-shadow(0 0 8px rgba(255, 0, 0, 0.75))
-			drop-shadow(0 0 18px rgba(255, 0, 0, 0.4));
+			drop-shadow(0 0 8px rgba(255, 42, 42, 0.75))
+			drop-shadow(0 0 18px rgba(255, 42, 42, 0.4));
 	}
 
 	/* =====================================================

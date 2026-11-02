@@ -30,7 +30,7 @@
 		src,
 		alt = '',
 		characters = ' .:-=+*#%@',
-		color = '#ff0000',
+		color = '#f1f1f1',
 		background = '#000000',
 		cellSize = 6,
 		cursorRadius = 145,
@@ -520,17 +520,17 @@
 
 			gradient.addColorStop(
 				0,
-				'rgba(255, 0, 0, 0.055)'
+				'rgba(241, 241, 241, 0.055)'
 			);
 
 			gradient.addColorStop(
 				0.45,
-				'rgba(255, 0, 0, 0.018)'
+				'rgba(241, 241, 241, 0.018)'
 			);
 
 			gradient.addColorStop(
 				1,
-				'rgba(255, 0, 0, 0)'
+				'rgba(241, 241, 241, 0)'
 			);
 
 			ctx.save();

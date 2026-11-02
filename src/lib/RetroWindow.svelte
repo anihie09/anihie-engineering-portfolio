@@ -104,7 +104,7 @@
 		--chrome: #c9c9d0;
 		--chrome-lo: #7c7c86;
 		--chrome-dark: #3a3a42;
-		--pink: #ff0000;
+		--pink: #f1f1f1;
 
 		position: relative;
 
@@ -131,9 +131,9 @@
 		box-shadow:
 			inset 1px 1px 0 #fff,
 			inset -1px -1px 0 var(--chrome-lo),
-			0 0 0 1px rgba(255, 0, 0, 0.35),
+			0 0 0 1px rgba(241, 241, 241, 0.35),
 			0 10px 30px rgba(0, 0, 0, 0.6),
-			0 0 22px rgba(255, 0, 0, 0.18);
+			0 0 22px rgba(241, 241, 241, 0.18);
 
 		font-family: var(--font-mono);
 
@@ -161,8 +161,8 @@
 		background:
 			linear-gradient(
 				90deg,
-				#2a0000,
-				#8a0000 55%,
+				#171717,
+				#7f7f7f 55%,
 				var(--pink)
 			);
 
@@ -223,7 +223,7 @@
 	}
 
 	.controls button:hover {
-		background: #ffd1d1;
+		background: #fefefe;
 	}
 
 	.controls button.close:hover {
@@ -304,7 +304,7 @@
 
 		overflow: hidden;
 
-		background: #050202;
+		background: #040404;
 
 		border: 1px solid;
 		border-color: var(--chrome-lo) var(--chrome-hi) var(--chrome-hi) var(--chrome-lo);

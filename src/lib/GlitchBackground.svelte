@@ -15,7 +15,7 @@
 		intensity = 1,
 		speed = 1,
 		opacity = 1,
-		pink = '#ff0000',
+		pink = '#f1f1f1',
 		active = true,
 		imageSrc = '',
 		src = ''
@@ -329,12 +329,12 @@
 
 		atmosphere.addColorStop(
 			0,
-			'rgba(255, 0, 0,0.045)'
+			'rgba(241, 241, 241,0.045)'
 		);
 
 		atmosphere.addColorStop(
 			0.65,
-			'rgba(255, 0, 0,0.015)'
+			'rgba(241, 241, 241,0.015)'
 		);
 
 		atmosphere.addColorStop(
@@ -862,17 +862,17 @@
 
 			gradient.addColorStop(
 				0,
-				'rgba(255, 182, 182,0.12)'
+				'rgba(252, 252, 252,0.12)'
 			);
 
 			gradient.addColorStop(
 				0.45,
-				'rgba(255, 0, 0,0.035)'
+				'rgba(241, 241, 241,0.035)'
 			);
 
 			gradient.addColorStop(
 				1,
-				'rgba(255, 0, 0,0)'
+				'rgba(241, 241, 241,0)'
 			);
 
 			ctx.globalAlpha =
@@ -1028,7 +1028,7 @@
 
 			ctx.fillStyle =
 				i % 9 === 0
-					? '#ff9191'
+					? '#fafafa'
 					: pink;
 
 			ctx.fillRect(
@@ -1243,7 +1243,7 @@
 				type < 0.22
 			) {
 				color =
-					'#ff9191';
+					'#fafafa';
 			}
 
 			ctx.save();
@@ -1507,7 +1507,7 @@
 		);
 
 		ctx.fillStyle =
-			'#ff7c7c';
+			'#f9f9f9';
 
 		ctx.font =
 			`700 ${
@@ -1626,7 +1626,7 @@
 		);
 
 		ctx.fillStyle =
-			'#ff7b7b';
+			'#f9f9f9';
 
 		ctx.textAlign =
 			'center';
@@ -2219,7 +2219,7 @@
 <style>
 	.glitch-background {
 		--pink:
-			#ff0000;
+			#f1f1f1;
 
 		position:
 			fixed;
@@ -2335,7 +2335,7 @@
 			6px;
 
 		color:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.7);
 
 		font-size:
@@ -2350,7 +2350,7 @@
 			0 4px;
 
 		color:
-			#ff1414;
+			#f2f2f2;
 	}
 
 	.loading-progress {
@@ -2372,7 +2372,7 @@
 			3px;
 
 		background:
-			rgba(255, 0, 0,
+			rgba(241, 241, 241,
 				0.55);
 
 		animation:

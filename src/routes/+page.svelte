@@ -1,5 +1,35 @@
 <script lang="ts">
-	import InteractiveBackground from '$lib/InteractiveBackground.svelte';
+	import { onMount } from 'svelte';
+	import MotionBackground from '$lib/MotionBackground.svelte';
+	import SidePanel from '$lib/SidePanel.svelte';
+	import AboutContent from '$lib/AboutContent.svelte';
+	import ProjectsDoc from '$lib/ProjectsDoc.svelte';
+
+	/* About / Projects open as side panels; the URL hash keeps it linkable (/#about, /#projects) */
+	type Panel = 'about' | 'projects' | null;
+	let panel = $state<Panel>(null);
+
+	function openPanel(name: Exclude<Panel, null>, e?: Event) {
+		e?.preventDefault();
+		panel = name;
+		history.replaceState(history.state, '', `#${name}`);
+	}
+
+	function closePanel() {
+		panel = null;
+		history.replaceState(history.state, '', location.pathname + location.search);
+	}
+
+	function readHash() {
+		const h = location.hash.slice(1);
+		panel = h === 'about' || h === 'projects' ? h : null;
+	}
+
+	onMount(() => {
+		readHash();
+		window.addEventListener('hashchange', readHash);
+		return () => window.removeEventListener('hashchange', readHash);
+	});
 </script>
 
 <svelte:head>
@@ -15,21 +45,9 @@
 	     INTERACTIVE BACKGROUND
 	     ===================================================== -->
 
-	<InteractiveBackground
+	<MotionBackground
 		src="/home-background.png"
-		cellSize={6}
-		dotScale={0.42}
-		dotOpacity={0.55}
-		cursorRadius={250}
-		warpStrength={0.018}
-		smoothing={0.62}
-		velocityStrength={1.05}
-		darkFloor={0.12}
-		swirlStrength={0.75}
-		stretchStrength={1.0}
-		radialStrength={0.55}
-		zoomStrength={0.045}
-		zoomRadius={0.9}
+		paused={panel !== null}
 	/>
 
 	<!-- =====================================================
@@ -126,7 +144,12 @@
 			class="navigation"
 			aria-label="Main navigation"
 		>
-			<a href="/about">
+			<a
+				id="about"
+				href="#about"
+				aria-haspopup="dialog"
+				onclick={(e) => openPanel('about', e)}
+			>
 				<span class="nav-index">
 					01
 				</span>
@@ -142,7 +165,12 @@
 				<span class="nav-line"></span>
 			</a>
 
-			<a href="/projects">
+			<a
+				id="projects"
+				href="#projects"
+				aria-haspopup="dialog"
+				onclick={(e) => openPanel('projects', e)}
+			>
 				<span class="nav-index">
 					02
 				</span>
@@ -296,6 +324,29 @@
 			<span></span>
 		</div>
 	</div>
+
+	<!-- =====================================================
+	     SIDE PANELS
+	     ===================================================== -->
+
+	<SidePanel
+		open={panel === 'about'}
+		title="ABOUT"
+		index="01"
+		onclose={closePanel}
+	>
+		<AboutContent />
+	</SidePanel>
+
+	<SidePanel
+		open={panel === 'projects'}
+		title="PROJECTS"
+		index="02"
+		width="980px"
+		onclose={closePanel}
+	>
+		<ProjectsDoc />
+	</SidePanel>
 </div>
 
 <style>
@@ -304,11 +355,11 @@
 	   ===================================================== */
 
 	:global(:root) {
-		--hud-pink: #ff0000;
-		--hud-pink-bright: #ff1414;
-		--hud-pink-soft: rgba(255, 0, 0, 0.68);
-		--hud-pink-muted: rgba(255, 0, 0, 0.42);
-		--hud-pink-faint: rgba(255, 0, 0, 0.2);
+		--hud-pink: #f1f1f1;
+		--hud-pink-bright: #f2f2f2;
+		--hud-pink-soft: rgba(241, 241, 241, 0.68);
+		--hud-pink-muted: rgba(241, 241, 241, 0.42);
+		--hud-pink-faint: rgba(241, 241, 241, 0.2);
 	}
 
 	/* =====================================================
@@ -395,7 +446,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 0, 0.25);
+			rgba(241, 241, 241, 0.25);
 	}
 
 	.frame-top {
@@ -426,7 +477,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 0, 0.2);
+			rgba(241, 241, 241, 0.2);
 	}
 
 	.frame-left {
@@ -463,7 +514,7 @@
 
 		box-shadow:
 			0 0 6px
-			rgba(255, 0, 0, 0.25);
+			rgba(241, 241, 241, 0.25);
 	}
 
 	.corner::before {
@@ -640,7 +691,7 @@
 		height: 5px;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 	}
 
 	.status-text {
@@ -751,7 +802,7 @@
 
 		border:
 			1px solid
-			var(--hud-pink);
+			var(--accent);
 
 		border-radius: 50%;
 
@@ -774,7 +825,7 @@
 		border-radius: 50%;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 
 		transform:
 			translate(
@@ -844,7 +895,7 @@
 
 		text-shadow:
 			0 0 6px
-			rgba(255, 0, 0, 0.22),
+			rgba(241, 241, 241, 0.22),
 			0 2px 5px
 			rgba(0, 0, 0, 0.85);
 
@@ -859,7 +910,7 @@
 
 	.nav-index {
 		color:
-			var(--hud-pink-soft);
+			var(--accent-soft);
 
 		font-size: 7px;
 
@@ -871,7 +922,7 @@
 
 	.arrow {
 		color:
-			var(--hud-pink);
+			var(--accent);
 
 		width: 0;
 
@@ -909,8 +960,8 @@
 		background:
 			linear-gradient(
 				90deg,
-				var(--hud-pink),
-				rgba(255, 0, 0, 0.15)
+				var(--accent),
+				rgba(241, 241, 241, 0.15)
 			);
 
 		opacity: 0.8;
@@ -931,9 +982,9 @@
 
 		text-shadow:
 			0 0 8px
-			rgba(255, 0, 0, 0.75),
+			rgba(241, 241, 241, 0.75),
 			0 0 16px
-			rgba(255, 0, 0, 0.25);
+			rgba(241, 241, 241, 0.25);
 	}
 
 	.navigation a:hover .label,
@@ -995,7 +1046,7 @@
 
 		text-shadow:
 			0 0 5px
-			rgba(255, 0, 0, 0.25);
+			rgba(241, 241, 241, 0.25);
 
 		pointer-events: none;
 
@@ -1072,7 +1123,7 @@
 		filter:
 			drop-shadow(
 				0 0 4px
-				rgba(255, 0, 0, 0.2)
+				rgba(241, 241, 241, 0.2)
 			);
 
 		animation:
@@ -1149,7 +1200,7 @@
 		height: 3px;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 
 		border-radius: 50%;
 
@@ -1212,7 +1263,7 @@
 	.bottom-bars span:nth-child(3),
 	.bottom-bars span:nth-child(4) {
 		background:
-			var(--hud-pink);
+			var(--accent);
 	}
 
 	.bottom-data-status {

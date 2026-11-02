@@ -112,8 +112,8 @@
 		>
 			<defs>
 				<linearGradient id="cf-bottom-glow" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0" stop-color="#ff0000" stop-opacity="0" />
-					<stop offset="1" stop-color="#ff0000" stop-opacity="0.16" />
+					<stop offset="0" stop-color="#f1f1f1" stop-opacity="0" />
+					<stop offset="1" stop-color="#f1f1f1" stop-opacity="0.16" />
 				</linearGradient>
 
 				<filter id="cf-glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -244,21 +244,21 @@
 	}
 
 	.outer {
-		stroke: rgba(255, 0, 0, 0.6);
+		stroke: rgba(241, 241, 241, 0.32);
 		stroke-width: 1.2;
 		stroke-dasharray: 1000;
 		animation: draw-long 1.8s cubic-bezier(0.65, 0, 0.35, 1) both;
 	}
 
 	.comet {
-		stroke: #ff5a5a;
+		stroke: #f7f7f7;
 		stroke-width: 2;
 		stroke-dasharray: 60 940;
 		animation: orbit 14s linear infinite;
 	}
 
 	.comet-2 {
-		stroke: #ffd6d6;
+		stroke: #fefefe;
 		stroke-width: 1.5;
 		stroke-dasharray: 30 970;
 		animation-duration: 14s;
@@ -266,12 +266,12 @@
 	}
 
 	.inner {
-		stroke: rgba(255, 0, 0, 0.42);
+		stroke: rgba(241, 241, 241, 0.42);
 		stroke-width: 1;
 	}
 
 	.inner-run {
-		stroke: #ff6f6f;
+		stroke: #f8f8f8;
 		stroke-width: 1.4;
 		stroke-dasharray: 14 86;
 		opacity: 0;
@@ -279,7 +279,7 @@
 	}
 
 	.accent {
-		stroke: #ff2f2f;
+		stroke: #f4f4f4;
 		stroke-width: 2.5;
 		animation:
 			draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) both,
@@ -287,28 +287,28 @@
 	}
 
 	.dash {
-		stroke: rgba(255, 230, 230, 0.7);
+		stroke: rgba(255, 255, 255, 0.7);
 		stroke-width: 1.5;
 	}
 
 	.notch {
-		stroke: rgba(255, 0, 0, 0.7);
+		stroke: rgba(241, 241, 241, 0.7);
 		stroke-width: 1;
 	}
 
 	.diamond {
-		fill: #ff0000;
+		fill: var(--signal);
 		stroke: none;
 		animation: pulse 2.4s ease-in-out infinite;
 	}
 
 	.guide {
-		stroke: rgba(255, 0, 0, 0.22);
+		stroke: rgba(241, 241, 241, 0.22);
 		stroke-width: 1;
 	}
 
 	.side-bar {
-		stroke: #ff2f2f;
+		stroke: #f4f4f4;
 		stroke-width: 2;
 		animation:
 			draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) both,
@@ -316,13 +316,13 @@
 	}
 
 	.tick {
-		stroke: rgba(255, 235, 235, 0.85);
+		stroke: rgba(255, 255, 255, 0.85);
 		stroke-width: 1.6;
 		animation: tick 2.8s ease-in-out infinite;
 	}
 
 	.corner {
-		stroke: #ffe1e1;
+		stroke: #ffffff;
 		stroke-width: 2.5;
 		animation:
 			draw 1.2s cubic-bezier(0.65, 0, 0.35, 1) both,

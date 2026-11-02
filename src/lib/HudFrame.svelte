@@ -128,7 +128,7 @@
 
 		overflow: hidden;
 
-		background: #050202;
+		background: #040404;
 
 		clip-path: polygon(
 			calc(var(--cut) - var(--pad) * 0.6) 0,
@@ -155,38 +155,38 @@
 	}
 
 	.outline {
-		stroke: rgba(255, 0, 0, 0.6);
+		stroke: rgba(241, 241, 241, 0.45);
 		stroke-width: 1;
 	}
 
 	.pulse {
-		stroke: #ff6f6f;
+		stroke: var(--accent-bright);
 		stroke-width: 1.6;
 		stroke-dasharray: 70 930;
 
-		filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.9));
+		filter: drop-shadow(0 0 3px var(--accent-glow));
 
 		animation: orbit 9s linear infinite;
 	}
 
 	.corner {
-		stroke: #ffe1e1;
+		stroke: #ffffff;
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.7));
+		filter: drop-shadow(0 0 3px rgba(241, 241, 241, 0.7));
 		animation: glow 3.6s ease-in-out infinite;
 	}
 
 	.chamfer {
-		stroke: #ff2f2f;
+		stroke: var(--accent);
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.8));
+		filter: drop-shadow(0 0 3px var(--accent-glow));
 		animation: glow 3.6s ease-in-out 1.8s infinite;
 	}
 
 	.tick {
-		stroke: rgba(255, 235, 235, 0.85);
+		stroke: rgba(255, 255, 255, 0.85);
 		stroke-width: 1.4;
 	}
 
@@ -209,12 +209,12 @@
 
 	.label {
 		left: calc(var(--cut) + 14px);
-		color: #ffe1e1;
+		color: #ffffff;
 	}
 
 	.code {
 		right: 34px;
-		color: #ff4f4f;
+		color: var(--accent-bright);
 	}
 
 	@keyframes orbit {
