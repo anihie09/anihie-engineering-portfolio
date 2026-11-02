@@ -146,11 +146,15 @@
 		--signal: #ff3e41;
 
 		/* accent palette */
-		--petal-rouge: #ff7099;
-		--rose-punch: #df367c;
+		--petal-rouge: #d61f2c;
+		--rose-punch: #a8141f;
 		--strawberry: #ff3e41;
-		--vintage-berry: #883955;
-		--vintage-grape: #4c3549;
+		--vintage-berry: #6b1219;
+		--vintage-grape: #3a0f14;
+
+		/* accented text: a mix of hot pink and red */
+		--hot-red: #ff1a36;
+		--hot-red-glow: rgba(255, 26, 54, 0.55);
 
 		--hud-pink: #f1f1f1;
 		--hud-pink-soft: rgba(241, 241, 241, 0.55);

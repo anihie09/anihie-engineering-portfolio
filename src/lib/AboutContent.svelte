@@ -102,7 +102,7 @@
 					<span class="sk-corner br" aria-hidden="true"></span>
 
 					<div class="skills-head">
-						<span>SKILLS</span>
+						<span class="head-title">SKILLS</span>
 						<span class="skills-code">LVL / 10</span>
 					</div>
 
@@ -153,7 +153,7 @@
 				<span class="sk-corner br" aria-hidden="true"></span>
 
 				<div class="skills-head">
-					<span>INTRODUCTION</span>
+					<span class="head-title">INTRODUCTION</span>
 					<span class="skills-code">README.TXT</span>
 				</div>
 
@@ -285,8 +285,8 @@
 	}
 
 	.caret-mark {
-		color: var(--rose-punch);
-		text-shadow: 0 0 8px rgba(223, 54, 124, 0.55);
+		color: var(--hot-red);
+		text-shadow: 0 0 8px var(--hot-red-glow);
 	}
 
 	.cursor {
@@ -345,7 +345,7 @@
 
 		font-size: 10px;
 		line-height: 1;
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 	}
 
 	.sk-corner.tl { left: -6px; top: -6px; border-left-width: 2px; border-top-width: 2px; }
@@ -434,7 +434,7 @@
 		font-size: 0.68rem;
 		font-weight: 700;
 		text-align: right;
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -539,7 +539,7 @@
 	@keyframes edge-pulse {
 		0%,
 		100% { box-shadow: 0 0 6px rgba(241, 241, 241, 0.5); }
-		50% { box-shadow: 0 0 14px rgba(255, 112, 153, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
+		50% { box-shadow: 0 0 14px rgba(214, 31, 44, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
 	}
 
 	/* =====================================================
@@ -598,5 +598,16 @@
 	/* display font for headings */
 	.skills-head {
 		font-family: var(--font-display);
+	}
+
+	/* section headings: same tech style, heavier than body text */
+	.head-title {
+		font-family: var(--font-display);
+		font-size: 0.9rem;
+		font-weight: 700;
+		letter-spacing: 0.22em;
+
+		color: #ffffff;
+		text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 	}
 </style>

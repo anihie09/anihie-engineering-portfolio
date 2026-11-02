@@ -26,8 +26,8 @@
 		<defs>
 			<linearGradient id="sig-caps-{id}" x1="0" y1="0" x2="1" y2="1">
 				<stop offset="0" style="stop-color: var(--strawberry, #ff3e41)" />
-				<stop offset="0.55" style="stop-color: var(--rose-punch, #df367c)" />
-				<stop offset="1" style="stop-color: var(--petal-rouge, #ff7099)" />
+				<stop offset="0.55" style="stop-color: var(--hot-red, #ff1a36)" />
+				<stop offset="1" style="stop-color: #d0142c" />
 			</linearGradient>
 		</defs>
 
@@ -133,8 +133,8 @@
 
 	.base .caps {
 		filter:
-			drop-shadow(0 0 6px rgba(255, 62, 65, 0.55))
-			drop-shadow(0 0 16px rgba(223, 54, 124, 0.35));
+			drop-shadow(0 0 6px rgba(255, 26, 54, 0.55))
+			drop-shadow(0 0 16px rgba(255, 62, 65, 0.35));
 	}
 
 	.script {
@@ -149,8 +149,8 @@
 		fill: #fff6fb;
 		filter:
 			drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
-			drop-shadow(0 0 7px rgba(255, 112, 153, 0.85))
-			drop-shadow(0 0 16px rgba(223, 54, 124, 0.55));
+			drop-shadow(0 0 7px rgba(255, 26, 54, 0.85))
+			drop-shadow(0 0 16px rgba(255, 62, 65, 0.5));
 	}
 
 	.caption {

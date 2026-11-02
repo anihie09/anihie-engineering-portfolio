@@ -179,8 +179,8 @@
 		background:
 			repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px),
 			radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.05), transparent 55%),
-			radial-gradient(ellipse 60% 45% at 18% 85%, rgba(136, 57, 85, 0.22), transparent 70%),
-			radial-gradient(ellipse 55% 40% at 85% 12%, rgba(76, 53, 73, 0.35), transparent 70%),
+			radial-gradient(ellipse 60% 45% at 18% 85%, rgba(107, 18, 25, 0.22), transparent 70%),
+			radial-gradient(ellipse 55% 40% at 85% 12%, rgba(58, 15, 20, 0.35), transparent 70%),
 			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.08'/></svg>");
 
 		transition: opacity 0.4s ease;
@@ -259,7 +259,7 @@
 		letter-spacing: 0.12em;
 		font-variant-numeric: tabular-nums;
 
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 	}
 
 	/* ---------- the tape ---------- */
@@ -307,7 +307,7 @@
 	}
 
 	.stripe.head {
-		box-shadow: 0 0 14px rgba(255, 112, 153, 0.6);
+		box-shadow: 0 0 14px rgba(214, 31, 44, 0.6);
 		border-color: var(--petal-rouge);
 	}
 
@@ -396,7 +396,7 @@
 
 	@keyframes flash {
 		0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-		30% { box-shadow: 0 0 22px rgba(255, 112, 153, 0.95), 0 0 40px rgba(223, 54, 124, 0.5); }
+		30% { box-shadow: 0 0 22px rgba(214, 31, 44, 0.95), 0 0 40px rgba(168, 20, 31, 0.5); }
 		100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
 	}
 

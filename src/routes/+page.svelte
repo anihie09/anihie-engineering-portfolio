@@ -1784,15 +1784,15 @@
 			opacity 320ms ease;
 	}
 
-	.sym-star { stroke: none; fill: var(--petal-rouge); }
+	.sym-star { stroke: none; fill: var(--hot-red); }
 
 	/* hover: the word turns Strawberry Red, its symbol lights up */
 	.navigation a:hover .label,
 	.navigation a:focus-visible .label {
-		color: var(--strawberry);
+		color: var(--hot-red);
 		text-shadow:
-			0 0 10px rgba(255, 62, 65, 0.55),
-			0 0 24px rgba(223, 54, 124, 0.3),
+			0 0 10px var(--hot-red-glow),
+			0 0 24px rgba(255, 26, 54, 0.25),
 			0 2px 8px rgba(0, 0, 0, 0.8);
 	}
 
@@ -1800,19 +1800,19 @@
 	.navigation a:focus-visible .sym {
 		opacity: 1;
 		transform: rotate(90deg) scale(1.2);
-		filter: drop-shadow(0 0 5px rgba(255, 112, 153, 0.9));
+		filter: drop-shadow(0 0 5px var(--hot-red-glow));
 	}
 
 	.navigation a:hover .arrow,
 	.navigation a:focus-visible .arrow,
 	.navigation a:hover .nav-index,
 	.navigation a:focus-visible .nav-index {
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 	}
 
 	.nav-line {
 		bottom: -4px;
-		background: linear-gradient(90deg, var(--rose-punch), rgba(136, 57, 85, 0.15));
+		background: linear-gradient(90deg, var(--rose-punch), rgba(107, 18, 25, 0.15));
 	}
 
 	/* =====================================================

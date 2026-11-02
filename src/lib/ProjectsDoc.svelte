@@ -108,7 +108,7 @@
 	.doc-open:hover,
 	.doc-open:focus-visible {
 		border-color: var(--strawberry);
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 		outline: none;
 	}
 
@@ -159,7 +159,7 @@
 	}
 
 	.blink {
-		color: var(--strawberry);
+		color: var(--hot-red);
 		animation: blink 1s steps(2, start) infinite;
 	}
 

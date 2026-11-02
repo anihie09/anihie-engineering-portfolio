@@ -164,7 +164,7 @@
 		stroke-width: 1.6;
 		stroke-dasharray: 70 930;
 
-		filter: drop-shadow(0 0 3px rgba(255, 112, 153, 0.7));
+		filter: drop-shadow(0 0 3px rgba(214, 31, 44, 0.7));
 
 		animation: orbit 9s linear infinite;
 	}
@@ -181,7 +181,7 @@
 		stroke: var(--rose-punch);
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 3px rgba(223, 54, 124, 0.7));
+		filter: drop-shadow(0 0 3px rgba(168, 20, 31, 0.7));
 		animation: glow 3.6s ease-in-out 1.8s infinite;
 	}
 
@@ -214,7 +214,7 @@
 
 	.code {
 		right: 34px;
-		color: var(--petal-rouge);
+		color: var(--hot-red);
 	}
 
 	@keyframes orbit {
