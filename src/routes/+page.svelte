@@ -4,6 +4,9 @@
 	import SidePanel from '$lib/SidePanel.svelte';
 	import AboutContent from '$lib/AboutContent.svelte';
 	import ProjectFolders from '$lib/ProjectFolders.svelte';
+	import Orb from '$lib/Orb.svelte';
+
+	let orbHover = $state(false);
 
 	/* About / Projects open as side panels; the URL hash keeps it linkable (/#about, /#projects) */
 	type Panel = 'about' | 'projects' | null;
@@ -373,6 +376,26 @@
 			<span></span>
 		</div>
 	</div>
+
+	<!-- =====================================================
+	     ARCHIVE ORB (bottom right)
+	     ===================================================== -->
+
+	<a
+		class="orb-link"
+		href="/archive"
+		aria-label="Archive"
+		onpointerenter={() => (orbHover = true)}
+		onpointerleave={() => (orbHover = false)}
+		onfocus={() => (orbHover = true)}
+		onblur={() => (orbHover = false)}
+	>
+		<Orb
+			size={112}
+			bright={orbHover}
+		/>
+		<span class="orb-label">ARCHIVE</span>
+	</a>
 
 	<!-- =====================================================
 	     SIDE PANELS
@@ -1853,26 +1876,108 @@
 	}
 
 	/* =====================================================
-	   GRADIENT HOVER (red -> pink -> purple)
+	   NAV HOVER
+	   white box, black text, gradient outline; the star stays pink
 	   ===================================================== */
 
+	.navigation a {
+		padding: 6px 12px 6px 6px;
+		margin-left: -6px;
+
+		/* transparent border at rest so nothing shifts on hover */
+		border: 1.5px solid transparent;
+
+		transition:
+			background 260ms ease,
+			box-shadow 260ms ease;
+	}
+
+	.navigation a:hover,
+	.navigation a:focus-visible {
+		background:
+			linear-gradient(#ffffff, #ffffff) padding-box,
+			var(--accent-grad) border-box;
+
+		box-shadow:
+			0 0 14px rgba(255, 45, 149, 0.35),
+			0 0 28px rgba(164, 61, 255, 0.2);
+	}
+
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label,
 	.navigation a:hover .word,
-	.navigation a:focus-visible .word {
-		background: var(--accent-grad);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+	.navigation a:focus-visible .word,
+	.navigation a:hover .arrow,
+	.navigation a:focus-visible .arrow,
+	.navigation a:hover .nav-index,
+	.navigation a:focus-visible .nav-index {
+		color: #000000;
+		background: none;
+		text-shadow: none;
+		filter: none;
+	}
+
+	/* the box replaces the underline and the nudge */
+	.navigation a:hover .nav-line,
+	.navigation a:focus-visible .nav-line {
+		transform: scaleX(0);
 	}
 
 	.navigation a:hover .label,
 	.navigation a:focus-visible .label {
-		text-shadow: none;
-		filter:
-			drop-shadow(0 0 8px rgba(255, 45, 149, 0.45))
-			drop-shadow(0 0 16px rgba(164, 61, 255, 0.25));
+		transform: none;
 	}
 
-	.nav-line {
-		background: var(--accent-grad);
+	/* star keeps its pink */
+	.navigation a:hover .sym-star,
+	.navigation a:focus-visible .sym-star {
+		fill: var(--hot-red);
+	}
+
+	/* =====================================================
+	   ARCHIVE ORB
+	   ===================================================== */
+
+	.orb-link {
+		position: absolute;
+		right: clamp(70px, 6vw, 110px);
+		bottom: clamp(90px, 13vh, 130px);
+		z-index: 40;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+
+		color: #f4f6f8;
+		text-decoration: none;
+
+		outline: none;
+	}
+
+	.orb-label {
+		font-family: var(--font-display);
+		font-size: 0.6rem;
+		font-weight: 700;
+		letter-spacing: 0.3em;
+
+		opacity: 0;
+		transform: translateY(-4px);
+
+		transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1), color 300ms ease;
+	}
+
+	.orb-link:hover .orb-label,
+	.orb-link:focus-visible .orb-label {
+		opacity: 1;
+		transform: none;
+		color: var(--hot-red);
+	}
+
+	@media (max-width: 760px) {
+		.orb-link {
+			right: 34px;
+			bottom: 96px;
+		}
 	}
 </style>

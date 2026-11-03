@@ -1,16 +1,9 @@
-<script module lang="ts">
-	let frameCount = 0;
-</script>
-
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	// each frame needs its own gradient id
-	const gid = `hud-grad-${++frameCount}`;
-
 	/*
 	 * Frame in the same style as the site border (CyberFrame):
-	 * chamfered outline and corner brackets in a red -> pink -> purple gradient,
+	 * chamfered white outline, white corner brackets,
 	 * // ticks, and a light pulse travelling around the edge.
 	 * Content is clipped to the chamfered shape.
 	 */
@@ -69,25 +62,9 @@
 			viewBox="0 0 {w} {h}"
 			aria-hidden="true"
 		>
-			<defs>
-				<linearGradient
-					id={gid}
-					gradientUnits="userSpaceOnUse"
-					x1="0"
-					y1="0"
-					x2={w}
-					y2={h}
-				>
-					<stop offset="0" style="stop-color: var(--strawberry, #ff2a3d)" />
-					<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2d95)" />
-					<stop offset="1" style="stop-color: var(--rose-punch, #a43dff)" />
-				</linearGradient>
-			</defs>
-
 			<path
 				class="outline"
 				d={outline}
-				stroke="url(#{gid})"
 			/>
 			<path
 				class="pulse"
@@ -99,7 +76,6 @@
 				<path
 					class="corner"
 					{d}
-					stroke="url(#{gid})"
 				/>
 			{/each}
 
@@ -179,8 +155,8 @@
 	}
 
 	.outline {
+		stroke: rgba(255, 255, 255, 0.6);
 		stroke-width: 1.2;
-		opacity: 0.9;
 	}
 
 	.pulse {
@@ -194,17 +170,18 @@
 	}
 
 	.corner {
+		stroke: #ffffff;
 		stroke-width: 2.2;
 
-		filter: drop-shadow(0 0 4px rgba(255, 45, 149, 0.55));
+		filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
 		animation: glow 3.6s ease-in-out infinite;
 	}
 
 	.chamfer {
-		stroke: var(--rose-punch);
+		stroke: #ffffff;
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 3px rgba(168, 20, 99, 0.7));
+		filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
 		animation: glow 3.6s ease-in-out 1.8s infinite;
 	}
 

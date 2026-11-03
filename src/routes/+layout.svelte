@@ -5,6 +5,7 @@
 		afterNavigate
 	} from '$app/navigation';
 	import type { Snippet } from 'svelte';
+	import { page } from '$app/state';
 
 	import CursorHUD from '$lib/CursorHUD.svelte';
 	import LoadingScreen from '$lib/LoadingScreen.svelte';
@@ -13,7 +14,10 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	let booting = $state(true);
+	// the archive has its own loading screen, so it skips the regular one
+	const isArchive = (path: string) => path === '/archive' || path.startsWith('/archive/');
+
+	let booting = $state(!isArchive(page.url.pathname));
 	let bootExiting = $state(false);
 
 	let transitioning = $state(false);
@@ -26,6 +30,8 @@
 	   ===================================================== */
 
 	onMount(() => {
+		if (!booting) return;
+
 		const timer = window.setTimeout(() => {
 			bootExiting = true;
 
@@ -46,6 +52,11 @@
 
 	onNavigate((navigation) => {
 		if (!navigation.from) {
+			return;
+		}
+
+		// going to the archive: it plays its own loading screen
+		if (navigation.to && isArchive(navigation.to.url.pathname)) {
 			return;
 		}
 

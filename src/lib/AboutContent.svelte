@@ -33,9 +33,9 @@
 
 	// photos in the lower-right collage
 	const collage = [
-		{ src: '/about-photo.png', title: 'NIGHT_01.PNG', pos: '50% 30%' },
-		{ src: '/about-photo.jpeg', title: 'VENDING.PNG', pos: '78% 40%' },
-		{ src: '/images/ani-profile.jpg', title: 'PORTRAIT_02.JPG', pos: '50% 20%' }
+		{ src: '/about-photo.png', title: 'PIC_01', pos: '50% 30%' },
+		{ src: '/about-photo.jpeg', title: 'PIC_02', pos: '78% 40%' },
+		{ src: '/images/ani-profile.jpg', title: 'PIC_03', pos: '50% 20%' }
 	];
 
 	let skillsInView = $state(false);

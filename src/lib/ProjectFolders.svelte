@@ -256,7 +256,7 @@
 		padding: 26px 16px 22px;
 
 		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid rgba(255, 255, 255, 0.16);
+		border: 1.5px solid rgba(255, 255, 255, 0.16);
 
 		color: #f4f4f4;
 		font: inherit;
@@ -536,5 +536,58 @@
 			animation: none;
 			opacity: 1;
 		}
+	}
+
+	/* hover: the whole box turns white, folder + text go black */
+	.folder:hover,
+	.folder:focus-visible {
+		background:
+			linear-gradient(#ffffff, #ffffff) padding-box,
+			var(--accent-grad) border-box;
+		border: 1.5px solid transparent;
+
+		box-shadow:
+			0 0 16px rgba(255, 45, 149, 0.35),
+			0 0 32px rgba(164, 61, 255, 0.2);
+	}
+
+	.folder:hover .name,
+	.folder:focus-visible .name {
+		background: none;
+		-webkit-background-clip: border-box;
+		background-clip: border-box;
+		color: #000000;
+	}
+
+	.folder:hover .index,
+	.folder:focus-visible .index {
+		color: #000000;
+	}
+
+	.folder:hover .icon,
+	.folder:focus-visible .icon {
+		filter: none;
+	}
+
+	.folder:hover .icon .flap-back,
+	.folder:focus-visible .icon .flap-back {
+		fill: #000000;
+		stroke: #000000;
+	}
+
+	.folder:hover .icon .front,
+	.folder:focus-visible .icon .front {
+		fill: #000000;
+		stroke: #000000;
+	}
+
+	.folder:hover .icon .paper,
+	.folder:focus-visible .icon .paper {
+		fill: #ffffff;
+		opacity: 1;
+	}
+
+	.folder::after {
+		display: none;
 	}
 </style>
