@@ -3,7 +3,7 @@
 	import MotionBackground from '$lib/MotionBackground.svelte';
 	import SidePanel from '$lib/SidePanel.svelte';
 	import AboutContent from '$lib/AboutContent.svelte';
-	import ProjectsDoc from '$lib/ProjectsDoc.svelte';
+	import ProjectFolders from '$lib/ProjectFolders.svelte';
 
 	/* About / Projects open as side panels; the URL hash keeps it linkable (/#about, /#projects) */
 	type Panel = 'about' | 'projects' | null;
@@ -22,7 +22,7 @@
 
 	function readHash() {
 		const h = location.hash.slice(1);
-		panel = h === 'about' || h === 'projects' ? h : null;
+		panel = h === 'about' ? 'about' : h === 'projects' || h.startsWith('projects/') ? 'projects' : null;
 	}
 
 	onMount(() => {
@@ -394,7 +394,7 @@
 		width="980px"
 		onclose={closePanel}
 	>
-		<ProjectsDoc />
+		<ProjectFolders />
 	</SidePanel>
 </div>
 
@@ -1792,7 +1792,7 @@
 		color: var(--hot-red);
 		text-shadow:
 			0 0 10px var(--hot-red-glow),
-			0 0 24px rgba(255, 26, 54, 0.25),
+			0 0 24px rgba(255, 26, 148, 0.25),
 			0 2px 8px rgba(0, 0, 0, 0.8);
 	}
 
@@ -1812,7 +1812,7 @@
 
 	.nav-line {
 		bottom: -4px;
-		background: linear-gradient(90deg, var(--rose-punch), rgba(107, 18, 25, 0.15));
+		background: linear-gradient(90deg, var(--rose-punch), rgba(107, 18, 65, 0.15));
 	}
 
 	/* =====================================================
@@ -1850,5 +1850,29 @@
 			animation: none;
 			opacity: 0.7;
 		}
+	}
+
+	/* =====================================================
+	   GRADIENT HOVER (red -> pink -> purple)
+	   ===================================================== */
+
+	.navigation a:hover .word,
+	.navigation a:focus-visible .word {
+		background: var(--accent-grad);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		text-shadow: none;
+		filter:
+			drop-shadow(0 0 8px rgba(255, 45, 149, 0.45))
+			drop-shadow(0 0 16px rgba(164, 61, 255, 0.25));
+	}
+
+	.nav-line {
+		background: var(--accent-grad);
 	}
 </style>

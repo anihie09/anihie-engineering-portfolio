@@ -25,9 +25,9 @@
 	>
 		<defs>
 			<linearGradient id="sig-caps-{id}" x1="0" y1="0" x2="1" y2="1">
-				<stop offset="0" style="stop-color: var(--strawberry, #ff3e41)" />
-				<stop offset="0.55" style="stop-color: var(--hot-red, #ff1a36)" />
-				<stop offset="1" style="stop-color: #d0142c" />
+				<stop offset="0" style="stop-color: var(--strawberry, #ff2a3d)" />
+				<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2d95)" />
+				<stop offset="1" style="stop-color: var(--rose-punch, #a43dff)" />
 			</linearGradient>
 		</defs>
 
@@ -84,7 +84,7 @@
 		display: block;
 
 		color: #f6f2f8;
-		--accent-ink: var(--signal, #ff3e41);
+		--accent-ink: var(--signal, #ff3ea5);
 	}
 
 	.layer :global(svg) {
@@ -100,8 +100,8 @@
 	}
 
 	.red {
-		color: var(--signal, #ff3e41);
-		--accent-ink: var(--signal, #ff3e41);
+		color: var(--signal, #ff3ea5);
+		--accent-ink: var(--signal, #ff3ea5);
 		mix-blend-mode: screen;
 	}
 
@@ -133,8 +133,8 @@
 
 	.base .caps {
 		filter:
-			drop-shadow(0 0 6px rgba(255, 26, 54, 0.55))
-			drop-shadow(0 0 16px rgba(255, 62, 65, 0.35));
+			drop-shadow(0 0 6px rgba(255, 45, 149, 0.5))
+			drop-shadow(0 0 16px rgba(164, 61, 255, 0.35));
 	}
 
 	.script {
@@ -149,8 +149,8 @@
 		fill: #fff6fb;
 		filter:
 			drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
-			drop-shadow(0 0 7px rgba(255, 26, 54, 0.85))
-			drop-shadow(0 0 16px rgba(255, 62, 65, 0.5));
+			drop-shadow(0 0 7px rgba(255, 26, 148, 0.85))
+			drop-shadow(0 0 16px rgba(255, 62, 165, 0.5));
 	}
 
 	.caption {

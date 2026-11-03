@@ -143,18 +143,19 @@
 		--accent-bright: #ffffff;
 		--accent-soft: rgba(230, 238, 243, 0.45);
 		--accent-glow: rgba(214, 232, 245, 0.55);
-		--signal: #ff3e41;
+		--signal: #ff2a3d;
 
-		/* accent palette */
-		--petal-rouge: #d61f2c;
-		--rose-punch: #a8141f;
-		--strawberry: #ff3e41;
-		--vintage-berry: #6b1219;
-		--vintage-grape: #3a0f14;
+		/* accent palette: red -> pink -> purple (accents only) */
+		--strawberry: #ff2a3d;   /* red */
+		--petal-rouge: #ff2d95;  /* hot pink */
+		--rose-punch: #a43dff;   /* purple */
+		--vintage-berry: #5c1a86;
+		--vintage-grape: #2a0d3d;
+		--accent-grad: linear-gradient(90deg, #ff2a3d 0%, #ff2d95 50%, #a43dff 100%);
 
-		/* accented text: a mix of hot pink and red */
-		--hot-red: #ff1a36;
-		--hot-red-glow: rgba(255, 26, 54, 0.55);
+		/* accented text: hot pink */
+		--hot-red: #ff1a94;
+		--hot-red-glow: rgba(255, 26, 148, 0.55);
 
 		--hud-pink: #f1f1f1;
 		--hud-pink-soft: rgba(241, 241, 241, 0.55);

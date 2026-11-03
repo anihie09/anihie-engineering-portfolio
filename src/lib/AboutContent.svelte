@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HudFrame from '$lib/HudFrame.svelte';
+	import SkillRadar from '$lib/SkillRadar.svelte';
 
 	/* ---------------------------------------------------------
 	   CONTENT — edit the text here
@@ -37,12 +38,15 @@
 		{ src: '/images/ani-profile.jpg', title: 'PORTRAIT_02.JPG', pos: '50% 20%' }
 	];
 
+	let skillsInView = $state(false);
+
 	/* start the skill bars when they scroll into view */
-	function reveal(node: HTMLElement) {
+	function reveal(node: HTMLElement, onShow?: () => void) {
 		const io = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
 					node.classList.add('in-view');
+					onShow?.();
 					io.disconnect();
 				}
 			},
@@ -94,7 +98,7 @@
 
 				<div
 					class="skills"
-					use:reveal
+					use:reveal={() => (skillsInView = true)}
 				>
 					<span class="sk-corner tl" aria-hidden="true"></span>
 					<span class="sk-corner tr" aria-hidden="true"></span>
@@ -106,34 +110,12 @@
 						<span class="skills-code">LVL / 10</span>
 					</div>
 
-					{#each skills as skill, s}
-						<div
-							class="skill-row"
-							style="--s: {s};"
-						>
-							<span class="skill-name">{skill.label}</span>
-
-							<div
-								class="cells"
-								role="meter"
-								aria-label={skill.label}
-								aria-valuemin={0}
-								aria-valuemax={10}
-								aria-valuenow={skill.level}
-							>
-								{#each Array(20) as _, k}
-									<span
-										class="cell"
-										class:on={k < skill.level * 2}
-										class:edge={k === skill.level * 2 - 1}
-										style="--k: {k};"
-									></span>
-								{/each}
-							</div>
-
-							<span class="skill-value">{String(skill.level).padStart(2, '0')}</span>
-						</div>
-					{/each}
+					<div class="radar-wrap">
+						<SkillRadar
+							{skills}
+							active={skillsInView}
+						/>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -224,9 +206,9 @@
 	}
 
 	.face {
-		align-self: center;
+		align-self: stretch;
 
-		height: 86%;
+		height: 100%;
 		min-height: 0;
 
 		opacity: 0;
@@ -258,7 +240,10 @@
 		flex-direction: column;
 
 		min-height: 0;
-		padding-top: 4px;
+		padding-top: 0;
+
+		/* first line's cap height sits on the photo's top edge */
+		margin-top: -0.4em;
 	}
 
 	.facts ul {
@@ -297,7 +282,7 @@
 		margin-top: 4px;
 
 		background: var(--strawberry);
-		box-shadow: 0 0 8px rgba(255, 62, 65, 0.6);
+		box-shadow: 0 0 8px rgba(255, 62, 165, 0.6);
 
 		animation: blink 1s steps(2, start) infinite;
 	}
@@ -309,8 +294,8 @@
 	.lower {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: clamp(28px, 4vw, 60px);
-		align-items: center;
+		gap: clamp(24px, 3.5vw, 56px);
+		align-items: stretch;
 
 		margin-top: clamp(48px, 8vh, 80px);
 	}
@@ -382,62 +367,6 @@
 		color: rgba(255, 255, 255, 0.55);
 	}
 
-	.skill-row {
-		display: grid;
-		grid-template-columns: minmax(84px, 0.32fr) 1fr 22px;
-		gap: 12px;
-		align-items: center;
-
-		margin-top: 8px;
-	}
-
-	.skill-name {
-		font-size: 0.6rem;
-		letter-spacing: 0.1em;
-		white-space: nowrap;
-
-		color: rgba(255, 255, 255, 0.8);
-	}
-
-	.cells {
-		display: grid;
-		grid-template-columns: repeat(20, 1fr);
-		gap: 2px;
-	}
-
-	.cell {
-		height: clamp(8px, 1.3vh, 11px);
-
-		border: 1px solid rgba(241, 241, 241, 0.35);
-		background: transparent;
-
-		transition:
-			background 220ms ease,
-			box-shadow 220ms ease,
-			border-color 220ms ease;
-
-		/* fills left to right, each row a beat after the last */
-		transition-delay: calc(0.3s + var(--s) * 0.18s + var(--k) * 0.035s);
-	}
-
-	:global(.in-view) .cell.on {
-		background: var(--pink);
-		border-color: var(--pink-bright);
-		box-shadow: 0 0 6px rgba(241, 241, 241, 0.5);
-	}
-
-	:global(.in-view) .cell.edge {
-		animation: edge-pulse 1.8s ease-in-out calc(1.6s + var(--s) * 0.2s) infinite;
-	}
-
-	.skill-value {
-		font-size: 0.68rem;
-		font-weight: 700;
-		text-align: right;
-		color: var(--hot-red);
-		font-variant-numeric: tabular-nums;
-	}
-
 	/* ---------- introduction ---------- */
 
 	.intro {
@@ -482,34 +411,32 @@
 	/* ---------- collage (straight, no hover) ---------- */
 
 	.collage {
-		position: relative;
-		height: clamp(380px, 38vw, 470px);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: repeat(2, minmax(0, 1fr));
+		gap: 24px;
+
+		height: clamp(380px, 36vw, 460px);
 	}
 
 	.collage-item {
-		position: absolute;
+		position: relative;
+		min-height: 0;
 	}
 
 	.c1 {
-		left: 4%;
-		top: 0;
-		width: 38%;
-		height: 56%;
+		grid-column: 1;
+		grid-row: 1 / 3;
 	}
 
 	.c2 {
-		right: 0;
-		top: 8%;
-		width: 46%;
-		height: 44%;
+		grid-column: 2;
+		grid-row: 1;
 	}
 
 	.c3 {
-		left: 30%;
-		bottom: 0;
-		width: 42%;
-		height: 40%;
-		z-index: 2;
+		grid-column: 2;
+		grid-row: 2;
 	}
 
 	/* =====================================================
@@ -539,7 +466,7 @@
 	@keyframes edge-pulse {
 		0%,
 		100% { box-shadow: 0 0 6px rgba(241, 241, 241, 0.5); }
-		50% { box-shadow: 0 0 14px rgba(214, 31, 44, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
+		50% { box-shadow: 0 0 14px rgba(214, 31, 129, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
 	}
 
 	/* =====================================================
@@ -580,24 +507,31 @@
 			clip-path: none;
 		}
 
-		.cell {
-			transition: none;
-		}
-
 		.intro p {
 			transition: none;
 			opacity: 1;
 			transform: none;
-		}
-
-		.cursor {
-			animation: none;
 		}
 	}
 
 	/* display font for headings */
 	.skills-head {
 		font-family: var(--font-display);
+	}
+
+	/* the chart shrinks to fit, so the box still ends on the photo's bottom edge */
+	.skills {
+		display: flex;
+		flex-direction: column;
+		flex: 0 1 auto;
+		min-height: 0;
+	}
+
+	.radar-wrap {
+		flex: 1 1 auto;
+		height: clamp(150px, 30vh, 250px);
+		min-height: 130px;
+		margin-top: 2px;
 	}
 
 	/* section headings: same tech style, heavier than body text */

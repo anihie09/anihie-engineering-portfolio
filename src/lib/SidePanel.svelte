@@ -114,8 +114,8 @@
 		inset: 0;
 		z-index: 60;
 
-		background: rgba(0, 0, 0, 0.35);
-		backdrop-filter: blur(2px);
+		background: rgba(0, 0, 0, 0.25);
+		backdrop-filter: blur(1px);
 	}
 
 	.panel {
@@ -131,12 +131,10 @@
 		flex-direction: column;
 
 		/* frosted white glass: the home page shows through, blurred */
-		background:
-			radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1.5px) 0 0 / 14px 14px,
-			linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.03));
+		background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025) 55%, rgba(255, 255, 255, 0.015));
 
-		-webkit-backdrop-filter: blur(18px) brightness(0.5) saturate(0.8);
-		backdrop-filter: blur(18px) brightness(0.5) saturate(0.8);
+		-webkit-backdrop-filter: blur(14px) brightness(0.62) saturate(0.9);
+		backdrop-filter: blur(14px) brightness(0.62) saturate(0.9);
 
 		border: 1px solid rgba(255, 255, 255, 0.35);
 
@@ -250,8 +248,8 @@
 		width: 2px;
 		height: 22%;
 
-		background: linear-gradient(180deg, transparent, #ffffff, transparent);
-		box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+		background: linear-gradient(180deg, transparent, var(--strawberry), var(--petal-rouge), var(--rose-punch), transparent);
+		box-shadow: 0 0 10px rgba(255, 45, 149, 0.6);
 
 		animation: edge-run 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 	}
