@@ -4,9 +4,6 @@
 	import SidePanel from '$lib/SidePanel.svelte';
 	import AboutContent from '$lib/AboutContent.svelte';
 	import ProjectIndex from '$lib/ProjectIndex.svelte';
-	import Orb from '$lib/Orb.svelte';
-
-	let orbHover = $state(false);
 
 	/* About / Projects open as side panels; the URL hash keeps it linkable (/#about, /#projects) */
 	type Panel = 'about' | 'projects' | null;
@@ -376,26 +373,6 @@
 			<span></span>
 		</div>
 	</div>
-
-	<!-- =====================================================
-	     ARCHIVE ORB (bottom right)
-	     ===================================================== -->
-
-	<a
-		class="orb-link"
-		href="/archive"
-		aria-label="Archive"
-		onpointerenter={() => (orbHover = true)}
-		onpointerleave={() => (orbHover = false)}
-		onfocus={() => (orbHover = true)}
-		onblur={() => (orbHover = false)}
-	>
-		<Orb
-			size={112}
-			bright={orbHover}
-		/>
-		<span class="orb-label">ARCHIVE</span>
-	</a>
 
 	<!-- =====================================================
 	     SIDE PANELS
@@ -2015,50 +1992,4 @@
 		}
 	}
 
-	/* =====================================================
-	   ARCHIVE ORB
-	   ===================================================== */
-
-	.orb-link {
-		position: absolute;
-		right: clamp(70px, 6vw, 110px);
-		bottom: clamp(90px, 13vh, 130px);
-		z-index: 40;
-
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 8px;
-
-		color: #f4f6f8;
-		text-decoration: none;
-
-		outline: none;
-	}
-
-	.orb-label {
-		font-family: var(--font-display);
-		font-size: 0.6rem;
-		font-weight: 700;
-		letter-spacing: 0.3em;
-
-		opacity: 0;
-		transform: translateY(-4px);
-
-		transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1), color 300ms ease;
-	}
-
-	.orb-link:hover .orb-label,
-	.orb-link:focus-visible .orb-label {
-		opacity: 1;
-		transform: none;
-		color: var(--hot-red);
-	}
-
-	@media (max-width: 760px) {
-		.orb-link {
-			right: 34px;
-			bottom: 96px;
-		}
-	}
 </style>
