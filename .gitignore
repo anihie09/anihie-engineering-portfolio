@@ -1,0 +1,16 @@
+node_modules
+.svelte-kit
+build
+dist
+.env
+.env.*
+!.env.example
+.DS_Store
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+node_modules
+.svelte-kit
+build
+.DS_Store
+ssh-keygen*
+.vercel

@@ -1,5 +1,35 @@
 <script lang="ts">
-	import InteractiveBackground from '$lib/InteractiveBackground.svelte';
+	import { onMount } from 'svelte';
+	import MotionBackground from '$lib/MotionBackground.svelte';
+	import SidePanel from '$lib/SidePanel.svelte';
+	import AboutContent from '$lib/AboutContent.svelte';
+	import ProjectIndex from '$lib/ProjectIndex.svelte';
+
+	/* About / Projects open as side panels; the URL hash keeps it linkable (/#about, /#projects) */
+	type Panel = 'about' | 'projects' | null;
+	let panel = $state<Panel>(null);
+
+	function openPanel(name: Exclude<Panel, null>, e?: Event) {
+		e?.preventDefault();
+		panel = name;
+		history.replaceState(history.state, '', `#${name}`);
+	}
+
+	function closePanel() {
+		panel = null;
+		history.replaceState(history.state, '', location.pathname + location.search);
+	}
+
+	function readHash() {
+		const h = location.hash.slice(1);
+		panel = h === 'about' ? 'about' : h === 'projects' || h.startsWith('projects/') ? 'projects' : null;
+	}
+
+	onMount(() => {
+		readHash();
+		window.addEventListener('hashchange', readHash);
+		return () => window.removeEventListener('hashchange', readHash);
+	});
 </script>
 
 <svelte:head>
@@ -15,22 +45,32 @@
 	     INTERACTIVE BACKGROUND
 	     ===================================================== -->
 
-	<InteractiveBackground
+	<MotionBackground
 		src="/home-background.png"
-		cellSize={6}
-		dotScale={0.42}
-		dotOpacity={0.55}
-		cursorRadius={250}
-		warpStrength={0.018}
-		smoothing={0.62}
-		velocityStrength={1.05}
-		darkFloor={0.12}
-		swirlStrength={0.75}
-		stretchStrength={1.0}
-		radialStrength={0.55}
-		zoomStrength={0.045}
-		zoomRadius={0.9}
+		paused={panel !== null}
 	/>
+
+	<!-- accent sparkles -->
+	<div
+		class="sparkles"
+		aria-hidden="true"
+	>
+		{#each [
+			{ x: '64%', y: '30%', s: '14px', c: 'var(--petal-rouge)', t: '4.2s', d: '0s' },
+			{ x: '86%', y: '66%', s: '10px', c: 'var(--strawberry)', t: '3.6s', d: '-1.2s' },
+			{ x: '58%', y: '74%', s: '9px', c: 'var(--rose-punch)', t: '5s', d: '-2.4s' },
+			{ x: '24%', y: '18%', s: '11px', c: '#f4f6f8', t: '4.6s', d: '-0.8s' },
+			{ x: '93%', y: '24%', s: '8px', c: 'var(--petal-rouge)', t: '3.2s', d: '-1.8s' }
+		] as sp}
+			<svg
+				class="sparkle"
+				viewBox="0 0 24 24"
+				style="left: {sp.x}; top: {sp.y}; --s: {sp.s}; --c: {sp.c}; --t: {sp.t}; --d: {sp.d};"
+			>
+				<path d="M12 0 Q13.2 10.8 24 12 Q13.2 13.2 12 24 Q10.8 13.2 0 12 Q10.8 10.8 12 0 Z" />
+			</svg>
+		{/each}
+	</div>
 
 	<!-- =====================================================
 	     HUD
@@ -126,7 +166,13 @@
 			class="navigation"
 			aria-label="Main navigation"
 		>
-			<a href="/about">
+			<a
+				id="about"
+				href="#about"
+				aria-label="About"
+				aria-haspopup="dialog"
+				onclick={(e) => openPanel('about', e)}
+			>
 				<span class="nav-index">
 					01
 				</span>
@@ -136,13 +182,27 @@
 				</span>
 
 				<span class="label">
-					ABOUT
+					<span
+						class="word"
+						aria-hidden="true">ABOUT</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
 			</a>
 
-			<a href="/projects">
+			<a
+				id="projects"
+				href="#projects"
+				aria-label="Projects"
+				aria-haspopup="dialog"
+				onclick={(e) => openPanel('projects', e)}
+			>
 				<span class="nav-index">
 					02
 				</span>
@@ -152,13 +212,26 @@
 				</span>
 
 				<span class="label">
-					PROJECTS
+					<span
+						class="word"
+						aria-hidden="true">PROJECTS</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
 			</a>
 
-			<a href="/contact">
+			<a
+				href="/resume.pdf"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="Resume (PDF, opens in a new tab)"
+			>
 				<span class="nav-index">
 					03
 				</span>
@@ -168,7 +241,15 @@
 				</span>
 
 				<span class="label">
-					CONTACT
+					<span
+						class="word"
+						aria-hidden="true">RESUME</span
+					>
+					<svg
+						class="sym sym-star"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					><path d="M12 2 Q13 11 22 12 Q13 13 12 22 Q11 13 2 12 Q11 11 12 2 Z" /></svg>
 				</span>
 
 				<span class="nav-line"></span>
@@ -292,6 +373,29 @@
 			<span></span>
 		</div>
 	</div>
+
+	<!-- =====================================================
+	     SIDE PANELS
+	     ===================================================== -->
+
+	<SidePanel
+		open={panel === 'about'}
+		title="ABOUT"
+		index="01"
+		onclose={closePanel}
+	>
+		<AboutContent />
+	</SidePanel>
+
+	<SidePanel
+		open={panel === 'projects'}
+		title="PROJECTS"
+		index="02"
+		width="980px"
+		onclose={closePanel}
+	>
+		<ProjectIndex />
+	</SidePanel>
 </div>
 
 <style>
@@ -300,31 +404,23 @@
 	   ===================================================== */
 
 	:global(:root) {
-		--hud-pink: #ff0080;
-		--hud-pink-bright: #ff1493;
-		--hud-pink-soft: rgba(255, 0, 128, 0.68);
-		--hud-pink-muted: rgba(255, 0, 128, 0.42);
-		--hud-pink-faint: rgba(255, 0, 128, 0.2);
+		--hud-pink: #f1f1f1;
+		--hud-pink-bright: #f2f2f2;
+		--hud-pink-soft: rgba(241, 241, 241, 0.68);
+		--hud-pink-muted: rgba(241, 241, 241, 0.42);
+		--hud-pink-faint: rgba(241, 241, 241, 0.2);
 	}
 
 	/* =====================================================
 	   GLOBAL
 	   ===================================================== */
 
-	:global(html),
-	:global(body) {
-		margin: 0;
-		padding: 0;
-
-		width: 100%;
-		height: 100%;
-
-		background: #000;
-	}
-
-	:global(body) {
-		overflow: hidden;
-	}
+	/*
+	 * No global overflow/height rules here: Svelte keeps a page's
+	 * styles loaded after you navigate away, so a body lock on the
+	 * home page would stop every other page from scrolling.
+	 * The home layout itself is a fixed 100vh box instead.
+	 */
 
 	:global(*) {
 		box-sizing: border-box;
@@ -337,7 +433,7 @@
 	.home {
 		position: relative;
 
-		width: 100vw;
+		width: 100%;
 		height: 100vh;
 
 		min-height: 600px;
@@ -399,7 +495,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.25);
+			rgba(241, 241, 241, 0.25);
 	}
 
 	.frame-top {
@@ -430,7 +526,7 @@
 
 		box-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.2);
+			rgba(241, 241, 241, 0.2);
 	}
 
 	.frame-left {
@@ -467,7 +563,7 @@
 
 		box-shadow:
 			0 0 6px
-			rgba(255, 0, 128, 0.25);
+			rgba(241, 241, 241, 0.25);
 	}
 
 	.corner::before {
@@ -614,9 +710,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.status-label {
@@ -646,7 +740,7 @@
 		height: 5px;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 	}
 
 	.status-text {
@@ -757,7 +851,7 @@
 
 		border:
 			1px solid
-			var(--hud-pink);
+			var(--accent);
 
 		border-radius: 50%;
 
@@ -780,7 +874,7 @@
 		border-radius: 50%;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 
 		transform:
 			translate(
@@ -832,9 +926,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		font-size:
 			clamp(
@@ -852,7 +944,7 @@
 
 		text-shadow:
 			0 0 6px
-			rgba(255, 0, 128, 0.22),
+			rgba(241, 241, 241, 0.22),
 			0 2px 5px
 			rgba(0, 0, 0, 0.85);
 
@@ -861,23 +953,25 @@
 		pointer-events: auto;
 
 		transition:
-			color 120ms ease,
-			text-shadow 120ms ease;
+			color 300ms ease,
+			text-shadow 300ms ease;
 	}
 
 	.nav-index {
 		color:
-			var(--hud-pink-soft);
+			var(--accent-soft);
 
 		font-size: 7px;
 
 		letter-spacing:
 			0.12em;
+
+		transition: color 300ms ease;
 	}
 
 	.arrow {
 		color:
-			var(--hud-pink);
+			var(--accent);
 
 		width: 0;
 
@@ -889,9 +983,9 @@
 			translateX(-7px);
 
 		transition:
-			width 140ms ease,
-			opacity 100ms linear,
-			transform 140ms ease;
+			width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+			opacity 260ms ease,
+			transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.label {
@@ -899,6 +993,8 @@
 			var(--hud-pink);
 
 		white-space: nowrap;
+
+		transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.nav-line {
@@ -907,16 +1003,23 @@
 		left: 0;
 		bottom: -7px;
 
-		width: 0;
+		width: 100%;
 		height: 1px;
 
 		background:
-			var(--hud-pink);
+			linear-gradient(
+				90deg,
+				var(--accent),
+				rgba(241, 241, 241, 0.15)
+			);
 
-		opacity: 0.65;
+		opacity: 0.8;
+
+		transform: scaleX(0);
+		transform-origin: left center;
 
 		transition:
-			width 180ms ease;
+			transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.navigation a:hover,
@@ -928,15 +1031,14 @@
 
 		text-shadow:
 			0 0 8px
-			rgba(255, 0, 128, 0.75),
+			rgba(241, 241, 241, 0.75),
 			0 0 16px
-			rgba(255, 0, 128, 0.25);
+			rgba(241, 241, 241, 0.25);
+	}
 
-		animation:
-			nav-glitch
-			270ms
-			steps(2, end)
-			1;
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		transform: translateX(4px);
 	}
 
 	.navigation a:hover .arrow,
@@ -951,7 +1053,7 @@
 
 	.navigation a:hover .nav-line,
 	.navigation a:focus-visible .nav-line {
-		width: 100%;
+		transform: scaleX(1);
 	}
 
 	.navigation a:hover .nav-index,
@@ -989,13 +1091,11 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		text-shadow:
 			0 0 5px
-			rgba(255, 0, 128, 0.25);
+			rgba(241, 241, 241, 0.25);
 
 		pointer-events: none;
 
@@ -1072,7 +1172,7 @@
 		filter:
 			drop-shadow(
 				0 0 4px
-				rgba(255, 0, 128, 0.2)
+				rgba(241, 241, 241, 0.2)
 			);
 
 		animation:
@@ -1149,7 +1249,7 @@
 		height: 3px;
 
 		background:
-			var(--hud-pink);
+			var(--accent);
 
 		border-radius: 50%;
 
@@ -1178,9 +1278,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.bottom-data-title {
@@ -1214,7 +1312,7 @@
 	.bottom-bars span:nth-child(3),
 	.bottom-bars span:nth-child(4) {
 		background:
-			var(--hud-pink);
+			var(--accent);
 	}
 
 	.bottom-data-status {
@@ -1248,9 +1346,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 
 		text-align: center;
 	}
@@ -1324,9 +1420,7 @@
 			var(--hud-pink);
 
 		font-family:
-			'Courier New',
-			Courier,
-			monospace;
+			var(--font-mono);
 	}
 
 	.bottom-status-title {
@@ -1413,46 +1507,6 @@
 	/* =====================================================
 	   ANIMATIONS
 	   ===================================================== */
-
-	@keyframes nav-glitch {
-		0% {
-			transform:
-				translate(0, 0);
-		}
-
-		20% {
-			transform:
-				translate(-2px, 0);
-
-			text-shadow:
-				2px 0
-				rgba(255, 0, 128, 0.72);
-		}
-
-		40% {
-			transform:
-				translate(2px, -1px);
-
-			text-shadow:
-				-2px 0
-				rgba(255, 0, 128, 0.5);
-		}
-
-		60% {
-			transform:
-				translate(-1px, 1px);
-		}
-
-		80% {
-			transform:
-				translate(1px, 0);
-		}
-
-		100% {
-			transform:
-				translate(0, 0);
-		}
-	}
 
 	@keyframes data-idle {
 		0%,
@@ -1660,8 +1714,282 @@
 			animation: none;
 		}
 
-		.navigation a {
+		.navigation a,
+		.navigation a .label,
+		.navigation a .arrow,
+		.nav-line {
 			transition: none;
 		}
 	}
+
+	/* display font for the main nav */
+	.navigation a {
+		font-family: var(--font-display);
+		letter-spacing: 0.12em;
+	}
+
+	/* =====================================================
+	   NAV LABELS
+	   tech display font + an accent star each
+	   ===================================================== */
+
+	.navigation {
+		gap: 8px;
+	}
+
+	.navigation a {
+		min-height: 34px;
+		grid-template-columns: 30px 22px auto;
+	}
+
+	.label {
+		position: relative;
+
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+
+		color: #f6f7f9;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+
+		transition:
+			color 320ms ease,
+			text-shadow 320ms ease,
+			transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.word {
+		font-family: var(--font-display);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		line-height: 1;
+	}
+
+	/* accent symbols */
+	.sym {
+		width: 11px;
+		height: 11px;
+		flex: none;
+
+		fill: none;
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+
+		opacity: 0.9;
+
+		transition:
+			transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+			filter 320ms ease,
+			opacity 320ms ease;
+	}
+
+	.sym-star { stroke: none; fill: var(--hot-red); }
+
+	/* hover: the word turns Strawberry Red, its symbol lights up */
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		color: var(--hot-red);
+		text-shadow:
+			0 0 10px var(--hot-red-glow),
+			0 0 24px rgba(255, 61, 138, 0.25),
+			0 2px 8px rgba(0, 0, 0, 0.8);
+	}
+
+	.navigation a:hover .sym,
+	.navigation a:focus-visible .sym {
+		opacity: 1;
+		transform: rotate(90deg) scale(1.2);
+		filter: drop-shadow(0 0 5px var(--hot-red-glow));
+	}
+
+	.navigation a:hover .arrow,
+	.navigation a:focus-visible .arrow,
+	.navigation a:hover .nav-index,
+	.navigation a:focus-visible .nav-index {
+		color: var(--hot-red);
+	}
+
+	.nav-line {
+		bottom: -4px;
+		background: linear-gradient(90deg, var(--rose-punch), rgba(122, 10, 44, 0.15));
+	}
+
+	/* =====================================================
+	   SPARKLES (accent symbols scattered on the home screen)
+	   ===================================================== */
+
+	.sparkles {
+		position: absolute;
+		inset: 0;
+		z-index: 15;
+
+		pointer-events: none;
+	}
+
+	.sparkle {
+		position: absolute;
+
+		width: var(--s, 12px);
+		height: var(--s, 12px);
+
+		fill: var(--c, var(--petal-rouge));
+		filter: drop-shadow(0 0 6px var(--c, var(--petal-rouge)));
+
+		animation: twinkle var(--t, 4s) ease-in-out var(--d, 0s) infinite;
+	}
+
+	@keyframes twinkle {
+		0%,
+		100% { opacity: 0.25; transform: scale(0.75) rotate(0deg); }
+		50% { opacity: 1; transform: scale(1) rotate(45deg); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sparkle {
+			animation: none;
+			opacity: 0.7;
+		}
+	}
+
+	/* =====================================================
+	   NAV HOVER: neon glass
+	   faint crimson tint, gradient outline with cut corners,
+	   blush text with a neon glow, a light streak on entry
+	   ===================================================== */
+
+	.navigation a {
+		--cut: 9px;
+
+		padding: 6px 12px 6px 6px;
+		margin-left: -6px;
+
+		isolation: isolate;
+		overflow: hidden;
+
+		clip-path: polygon(
+			var(--cut) 0,
+			100% 0,
+			100% calc(100% - var(--cut)),
+			calc(100% - var(--cut)) 100%,
+			0 100%,
+			0 var(--cut)
+		);
+
+		transition: background 320ms ease;
+	}
+
+	/* gradient outline (drawn as a ring, so the inside stays see-through) */
+	.navigation a::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		padding: 1.5px;
+		background: var(--accent-grad);
+
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+
+		opacity: 0;
+		transition: opacity 320ms ease;
+		pointer-events: none;
+	}
+
+	/* light streak that sweeps across on hover */
+	.navigation a::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: -1;
+
+		width: 40%;
+
+		background: linear-gradient(100deg, transparent, rgba(255, 217, 230, 0.35), transparent);
+
+		transform: translateX(-140%) skewX(-20deg);
+		pointer-events: none;
+	}
+
+	.navigation a:hover,
+	.navigation a:focus-visible {
+		background: linear-gradient(
+			100deg,
+			rgba(232, 19, 47, 0.18),
+			rgba(255, 42, 127, 0.12) 60%,
+			rgba(255, 90, 42, 0.06)
+		);
+	}
+
+	.navigation a:hover::before,
+	.navigation a:focus-visible::before {
+		opacity: 1;
+	}
+
+	.navigation a:hover::after,
+	.navigation a:focus-visible::after {
+		animation: streak 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@keyframes streak {
+		to { transform: translateX(360%) skewX(-20deg); }
+	}
+
+	/* blush text with a neon glow */
+	.navigation a:hover .word,
+	.navigation a:focus-visible .word {
+		color: var(--blush);
+		background: none;
+		text-shadow:
+			0 0 6px rgba(255, 61, 138, 0.9),
+			0 0 16px rgba(232, 19, 47, 0.55);
+	}
+
+	.navigation a:hover .label,
+	.navigation a:focus-visible .label {
+		color: var(--blush);
+		text-shadow: none;
+		filter: none;
+		transform: none;
+	}
+
+	.navigation a:hover .arrow,
+	.navigation a:focus-visible .arrow,
+	.navigation a:hover .nav-index,
+	.navigation a:focus-visible .nav-index {
+		color: var(--hot-red);
+		text-shadow: 0 0 8px var(--hot-red-glow);
+	}
+
+	/* the box replaces the underline */
+	.navigation a:hover .nav-line,
+	.navigation a:focus-visible .nav-line {
+		transform: scaleX(0);
+	}
+
+	/* the star flares */
+	.navigation a:hover .sym-star,
+	.navigation a:focus-visible .sym-star {
+		fill: var(--hot-red);
+		filter:
+			drop-shadow(0 0 4px rgba(255, 61, 138, 1))
+			drop-shadow(0 0 10px rgba(255, 90, 42, 0.7));
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.navigation a:hover::after,
+		.navigation a:focus-visible::after {
+			animation: none;
+		}
+	}
+
 </style>
