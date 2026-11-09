@@ -25,9 +25,9 @@
 	>
 		<defs>
 			<linearGradient id="sig-caps-{id}" x1="0" y1="0" x2="1" y2="1">
-				<stop offset="0" style="stop-color: var(--strawberry, #ff2a3d)" />
-				<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2d95)" />
-				<stop offset="1" style="stop-color: var(--rose-punch, #a43dff)" />
+				<stop offset="0" style="stop-color: var(--strawberry, #e8132f)" />
+				<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2a7f)" />
+				<stop offset="1" style="stop-color: var(--rose-punch, #c2187a)" />
 			</linearGradient>
 		</defs>
 
@@ -83,8 +83,8 @@
 		inset: 0;
 		display: block;
 
-		color: #f6f2f8;
-		--accent-ink: var(--signal, #ff3ea5);
+		color: #fbeff3;
+		--accent-ink: var(--signal, #ff3347);
 	}
 
 	.layer :global(svg) {
@@ -100,8 +100,8 @@
 	}
 
 	.red {
-		color: var(--signal, #ff3ea5);
-		--accent-ink: var(--signal, #ff3ea5);
+		color: var(--signal, #ff3347);
+		--accent-ink: var(--signal, #ff3347);
 		mix-blend-mode: screen;
 	}
 
@@ -133,8 +133,8 @@
 
 	.base .caps {
 		filter:
-			drop-shadow(0 0 6px rgba(255, 45, 149, 0.5))
-			drop-shadow(0 0 16px rgba(164, 61, 255, 0.35));
+			drop-shadow(0 0 6px rgba(255, 42, 127, 0.5))
+			drop-shadow(0 0 16px rgba(194, 24, 122, 0.35));
 	}
 
 	.script {
@@ -146,11 +146,11 @@
 
 	/* neon glow on the script */
 	.base .script {
-		fill: #fff6fb;
+		fill: #fff3f7;
 		filter:
 			drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
-			drop-shadow(0 0 7px rgba(255, 26, 148, 0.85))
-			drop-shadow(0 0 16px rgba(255, 62, 165, 0.5));
+			drop-shadow(0 0 7px rgba(255, 61, 138, 0.85))
+			drop-shadow(0 0 16px rgba(255, 51, 71, 0.5));
 	}
 
 	.caption {

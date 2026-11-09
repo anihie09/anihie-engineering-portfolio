@@ -3,7 +3,7 @@
 	import MotionBackground from '$lib/MotionBackground.svelte';
 	import SidePanel from '$lib/SidePanel.svelte';
 	import AboutContent from '$lib/AboutContent.svelte';
-	import ProjectFolders from '$lib/ProjectFolders.svelte';
+	import ProjectIndex from '$lib/ProjectIndex.svelte';
 	import Orb from '$lib/Orb.svelte';
 
 	let orbHover = $state(false);
@@ -417,7 +417,7 @@
 		width="980px"
 		onclose={closePanel}
 	>
-		<ProjectFolders />
+		<ProjectIndex />
 	</SidePanel>
 </div>
 
@@ -1815,7 +1815,7 @@
 		color: var(--hot-red);
 		text-shadow:
 			0 0 10px var(--hot-red-glow),
-			0 0 24px rgba(255, 26, 148, 0.25),
+			0 0 24px rgba(255, 61, 138, 0.25),
 			0 2px 8px rgba(0, 0, 0, 0.8);
 	}
 
@@ -1835,7 +1835,7 @@
 
 	.nav-line {
 		bottom: -4px;
-		background: linear-gradient(90deg, var(--rose-punch), rgba(107, 18, 65, 0.15));
+		background: linear-gradient(90deg, var(--rose-punch), rgba(122, 10, 44, 0.15));
 	}
 
 	/* =====================================================
@@ -1876,62 +1876,143 @@
 	}
 
 	/* =====================================================
-	   NAV HOVER
-	   white box, black text, gradient outline; the star stays pink
+	   NAV HOVER: neon glass
+	   faint crimson tint, gradient outline with cut corners,
+	   blush text with a neon glow, a light streak on entry
 	   ===================================================== */
 
 	.navigation a {
+		--cut: 9px;
+
 		padding: 6px 12px 6px 6px;
 		margin-left: -6px;
 
-		/* transparent border at rest so nothing shifts on hover */
-		border: 1.5px solid transparent;
+		isolation: isolate;
+		overflow: hidden;
 
-		transition:
-			background 260ms ease,
-			box-shadow 260ms ease;
+		clip-path: polygon(
+			var(--cut) 0,
+			100% 0,
+			100% calc(100% - var(--cut)),
+			calc(100% - var(--cut)) 100%,
+			0 100%,
+			0 var(--cut)
+		);
+
+		transition: background 320ms ease;
+	}
+
+	/* gradient outline (drawn as a ring, so the inside stays see-through) */
+	.navigation a::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		padding: 1.5px;
+		background: var(--accent-grad);
+
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+
+		opacity: 0;
+		transition: opacity 320ms ease;
+		pointer-events: none;
+	}
+
+	/* light streak that sweeps across on hover */
+	.navigation a::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: -1;
+
+		width: 40%;
+
+		background: linear-gradient(100deg, transparent, rgba(255, 217, 230, 0.35), transparent);
+
+		transform: translateX(-140%) skewX(-20deg);
+		pointer-events: none;
 	}
 
 	.navigation a:hover,
 	.navigation a:focus-visible {
-		background:
-			linear-gradient(#ffffff, #ffffff) padding-box,
-			var(--accent-grad) border-box;
+		background: linear-gradient(
+			100deg,
+			rgba(232, 19, 47, 0.18),
+			rgba(255, 42, 127, 0.12) 60%,
+			rgba(255, 90, 42, 0.06)
+		);
+	}
 
-		box-shadow:
-			0 0 14px rgba(255, 45, 149, 0.35),
-			0 0 28px rgba(164, 61, 255, 0.2);
+	.navigation a:hover::before,
+	.navigation a:focus-visible::before {
+		opacity: 1;
+	}
+
+	.navigation a:hover::after,
+	.navigation a:focus-visible::after {
+		animation: streak 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@keyframes streak {
+		to { transform: translateX(360%) skewX(-20deg); }
+	}
+
+	/* blush text with a neon glow */
+	.navigation a:hover .word,
+	.navigation a:focus-visible .word {
+		color: var(--blush);
+		background: none;
+		text-shadow:
+			0 0 6px rgba(255, 61, 138, 0.9),
+			0 0 16px rgba(232, 19, 47, 0.55);
 	}
 
 	.navigation a:hover .label,
-	.navigation a:focus-visible .label,
-	.navigation a:hover .word,
-	.navigation a:focus-visible .word,
+	.navigation a:focus-visible .label {
+		color: var(--blush);
+		text-shadow: none;
+		filter: none;
+		transform: none;
+	}
+
 	.navigation a:hover .arrow,
 	.navigation a:focus-visible .arrow,
 	.navigation a:hover .nav-index,
 	.navigation a:focus-visible .nav-index {
-		color: #000000;
-		background: none;
-		text-shadow: none;
-		filter: none;
+		color: var(--hot-red);
+		text-shadow: 0 0 8px var(--hot-red-glow);
 	}
 
-	/* the box replaces the underline and the nudge */
+	/* the box replaces the underline */
 	.navigation a:hover .nav-line,
 	.navigation a:focus-visible .nav-line {
 		transform: scaleX(0);
 	}
 
-	.navigation a:hover .label,
-	.navigation a:focus-visible .label {
-		transform: none;
-	}
-
-	/* star keeps its pink */
+	/* the star flares */
 	.navigation a:hover .sym-star,
 	.navigation a:focus-visible .sym-star {
 		fill: var(--hot-red);
+		filter:
+			drop-shadow(0 0 4px rgba(255, 61, 138, 1))
+			drop-shadow(0 0 10px rgba(255, 90, 42, 0.7));
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.navigation a:hover::after,
+		.navigation a:focus-visible::after {
+			animation: none;
+		}
 	}
 
 	/* =====================================================

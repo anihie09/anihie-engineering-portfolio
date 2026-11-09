@@ -92,8 +92,8 @@
 
 <style>
 	.orb {
-		--pink: #ff5aa8;
-		--pink-hot: var(--hot-red, #ff1a94);
+		--pink: #ff4d8f;
+		--pink-hot: var(--hot-red, #ff3d8a);
 
 		position: relative;
 
@@ -101,17 +101,17 @@
 		height: var(--size);
 
 		filter:
-			drop-shadow(0 0 4px rgba(255, 90, 168, 0.8))
-			drop-shadow(0 0 12px rgba(255, 45, 149, 0.45));
+			drop-shadow(0 0 4px rgba(255, 77, 143, 0.8))
+			drop-shadow(0 0 12px rgba(255, 42, 127, 0.45));
 
 		transition: filter 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.orb.bright {
 		filter:
-			drop-shadow(0 0 6px rgba(255, 140, 200, 1))
-			drop-shadow(0 0 18px rgba(255, 45, 149, 0.85))
-			drop-shadow(0 0 40px rgba(164, 61, 255, 0.45));
+			drop-shadow(0 0 6px rgba(255, 150, 185, 1))
+			drop-shadow(0 0 18px rgba(255, 42, 127, 0.85))
+			drop-shadow(0 0 40px rgba(194, 24, 122, 0.45));
 		transform: scale(1.08);
 	}
 
@@ -120,7 +120,7 @@
 		inset: 18%;
 
 		border-radius: 50%;
-		background: radial-gradient(circle, rgba(255, 90, 168, 0.35), rgba(255, 45, 149, 0.08) 55%, transparent 72%);
+		background: radial-gradient(circle, rgba(255, 77, 143, 0.35), rgba(255, 42, 127, 0.08) 55%, transparent 72%);
 
 		transition: opacity 400ms ease;
 		opacity: 0.7;
@@ -177,13 +177,13 @@
 	}
 
 	.core polygon {
-		fill: rgba(255, 90, 168, 0.55);
-		stroke: #ffc2e0;
+		fill: rgba(255, 77, 143, 0.55);
+		stroke: #ffc6da;
 	}
 
 	.core circle {
-		fill: rgba(255, 26, 148, 0.6);
-		stroke: #ffd6ea;
+		fill: rgba(255, 61, 138, 0.6);
+		stroke: #ffd9e6;
 	}
 
 	.flat {
@@ -216,7 +216,7 @@
 	.dash-long {
 		stroke-width: 2.2;
 		stroke-dasharray: 22 9;
-		stroke: #ff7ab9;
+		stroke: #ff7aa8;
 	}
 
 	.spark {

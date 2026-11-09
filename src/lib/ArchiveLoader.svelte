@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Orb from '$lib/Orb.svelte';
+	import Embers from '$lib/Embers.svelte';
 
 	/*
 	 * Loading screen for the archive.
@@ -48,7 +49,9 @@
 		class:leaving
 		aria-hidden="true"
 	>
+		<div class="haze-img"></div>
 		<div class="haze"></div>
+		<Embers count={30} />
 
 		<div class="center">
 			<svg
@@ -93,10 +96,10 @@
 		display: grid;
 		place-items: center;
 
-		background: #060307;
+		background: #070205;
 
 		font-family: var(--font-mono);
-		color: #f6f2f8;
+		color: #fbeff3;
 
 		/* the screen opens outward from the centre when leaving */
 		clip-path: circle(150% at 50% 50%);
@@ -111,8 +114,23 @@
 		inset: 0;
 
 		background:
-			radial-gradient(circle at 50% 50%, rgba(255, 45, 149, 0.16), transparent 45%),
-			radial-gradient(circle at 50% 50%, rgba(164, 61, 255, 0.1), transparent 70%);
+			radial-gradient(circle at 50% 50%, rgba(255, 42, 127, 0.16), transparent 45%),
+			radial-gradient(circle at 50% 50%, rgba(194, 24, 122, 0.1), transparent 70%);
+	}
+
+	.haze-img {
+		position: absolute;
+		inset: -4%;
+
+		background: url('/textures/firestarter-haze.jpg') center / cover no-repeat;
+		opacity: 0.45;
+
+		animation: haze-drift 14s ease-in-out infinite alternate;
+	}
+
+	@keyframes haze-drift {
+		from { transform: scale(1.05) translate3d(0, 0, 0); }
+		to { transform: scale(1.12) translate3d(1.5%, -1%, 0); }
 	}
 
 	.center {
@@ -140,11 +158,11 @@
 
 	.bar {
 		fill: none;
-		stroke: var(--petal-rouge, #ff2d95);
+		stroke: var(--petal-rouge, #ff2a7f);
 		stroke-width: 2;
 		stroke-linecap: round;
 
-		filter: drop-shadow(0 0 6px rgba(255, 45, 149, 0.8));
+		filter: drop-shadow(0 0 6px rgba(255, 42, 127, 0.8));
 		transition: stroke-dashoffset 120ms linear;
 	}
 
@@ -179,7 +197,7 @@
 	.pct {
 		font-size: 0.75rem;
 		letter-spacing: 0.2em;
-		color: var(--hot-red, #ff1a94);
+		color: var(--hot-red, #ff3d8a);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -192,12 +210,12 @@
 		width: 10px;
 		height: 10px;
 
-		border: 2px solid var(--petal-rouge, #ff2d95);
+		border: 2px solid var(--petal-rouge, #ff2a7f);
 		border-radius: 50%;
 
 		box-shadow:
-			0 0 18px rgba(255, 45, 149, 0.9),
-			inset 0 0 18px rgba(164, 61, 255, 0.6);
+			0 0 18px rgba(255, 42, 127, 0.9),
+			inset 0 0 18px rgba(194, 24, 122, 0.6);
 
 		transform: translate(-50%, -50%) scale(0);
 		opacity: 0;

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import Embers from '$lib/Embers.svelte';
 
 	/*
 	 * Loading screen inspired by a "magnetic tape" caution readout:
@@ -55,6 +56,8 @@
 		{/each}
 	</div>
 
+	<div class="haze-img"></div>
+	<Embers count={24} />
 	<div class="texture"></div>
 
 	<div class="readout">
@@ -110,7 +113,7 @@
 		pointer-events: none;
 
 		font-family: var(--font-mono);
-		color: #eef3f6;
+		color: #fbe9f0;
 
 		animation: fade-in 0.45s ease both;
 	}
@@ -150,17 +153,17 @@
 
 		width: 2px;
 
-		background: var(--edge, #f2f7fa);
-		box-shadow: 0 0 14px var(--edge, rgba(220, 238, 250, 0.9));
+		background: var(--edge, #ffeef4);
+		box-shadow: 0 0 14px var(--edge, rgba(255, 214, 229, 0.9));
 
 		opacity: 0;
 	}
 
 	/* slat edges cycle through the palette */
-	.slats span:nth-child(4n + 1) { --edge: #f2f7fa; }
-	.slats span:nth-child(4n + 2) { --edge: var(--petal-rouge); }
+	.slats span:nth-child(4n + 1) { --edge: var(--blush); }
+	.slats span:nth-child(4n + 2) { --edge: var(--ember); }
 	.slats span:nth-child(4n + 3) { --edge: var(--strawberry); }
-	.slats span:nth-child(4n + 4) { --edge: var(--rose-punch); }
+	.slats span:nth-child(4n + 4) { --edge: var(--petal-rouge); }
 
 	.leaving .slats span {
 		animation: slat-open 0.7s cubic-bezier(0.76, 0, 0.24, 1) calc(0.38s + var(--i) * 0.06s) forwards;
@@ -168,6 +171,28 @@
 
 	.leaving .slats span::after {
 		animation: edge 0.7s ease calc(0.38s + var(--i) * 0.06s) forwards;
+	}
+
+	/* ---------- FIRESTARTER smoke (static/textures/firestarter-haze.jpg) ---------- */
+
+	.haze-img {
+		position: absolute;
+		inset: -4%;
+
+		background: url('/textures/firestarter-haze.jpg') center / cover no-repeat;
+		opacity: 0.55;
+
+		animation: haze-drift 14s ease-in-out infinite alternate;
+		transition: opacity 0.4s ease;
+	}
+
+	.leaving .haze-img {
+		opacity: 0;
+	}
+
+	@keyframes haze-drift {
+		from { transform: scale(1) translate3d(0, 0, 0); }
+		to { transform: scale(1.08) translate3d(-1.5%, -1%, 0); }
 	}
 
 	/* ---------- texture ---------- */
@@ -179,8 +204,8 @@
 		background:
 			repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px),
 			radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.05), transparent 55%),
-			radial-gradient(ellipse 60% 45% at 18% 85%, rgba(107, 18, 65, 0.22), transparent 70%),
-			radial-gradient(ellipse 55% 40% at 85% 12%, rgba(58, 15, 38, 0.35), transparent 70%),
+			radial-gradient(ellipse 60% 45% at 18% 85%, rgba(122, 10, 44, 0.22), transparent 70%),
+			radial-gradient(ellipse 55% 40% at 85% 12%, rgba(43, 7, 22, 0.35), transparent 70%),
 			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.08'/></svg>");
 
 		transition: opacity 0.4s ease;
@@ -202,7 +227,7 @@
 		transform: translate(-50%, -50%);
 
 		/* soft bloom like an old monitor */
-		filter: drop-shadow(0 0 6px rgba(220, 238, 250, 0.35));
+		filter: drop-shadow(0 0 6px rgba(255, 214, 229, 0.35));
 
 		transition:
 			transform 0.5s cubic-bezier(0.65, 0, 0.35, 1) 0.15s,
@@ -213,7 +238,7 @@
 	.leaving .readout {
 		transform: translate(-50%, -50%) scale(1.08);
 		opacity: 0;
-		filter: drop-shadow(0 0 14px rgba(220, 238, 250, 0.8)) blur(4px);
+		filter: drop-shadow(0 0 14px rgba(255, 214, 229, 0.8)) blur(4px);
 	}
 
 	.head,
@@ -226,8 +251,8 @@
 	.tag {
 		padding: 3px 9px;
 
-		border: 1.5px solid #eef3f6;
-		background: rgba(238, 243, 246, 0.9);
+		border: 1.5px solid #fbe9f0;
+		background: rgba(251, 233, 240, 0.9);
 		color: #050607;
 
 		font-family: var(--font-display);
@@ -247,7 +272,7 @@
 	}
 
 	.dim {
-		color: rgba(238, 243, 246, 0.55);
+		color: rgba(251, 233, 240, 0.55);
 	}
 
 	.pct {
@@ -277,7 +302,7 @@
 	.stripe {
 		position: relative;
 
-		border: 1px solid rgba(238, 243, 246, 0.16);
+		border: 1px solid rgba(251, 233, 240, 0.16);
 		transform: skewX(-38deg);
 
 		overflow: hidden;
@@ -289,7 +314,7 @@
 		position: absolute;
 		inset: 0;
 
-		background: linear-gradient(90deg, #dfe8ee, #ffffff 55%, #cfd9df);
+		background: linear-gradient(90deg, #f7d9e4, #ffffff 55%, #cfd9df);
 
 		transform: scaleX(0);
 		transform-origin: left center;
@@ -307,7 +332,7 @@
 	}
 
 	.stripe.head {
-		box-shadow: 0 0 14px rgba(214, 31, 129, 0.6);
+		box-shadow: 0 0 14px rgba(232, 19, 95, 0.6);
 		border-color: var(--petal-rouge);
 	}
 
@@ -340,7 +365,7 @@
 	.code {
 		font-size: 0.55rem;
 		letter-spacing: 0.14em;
-		color: rgba(238, 243, 246, 0.45);
+		color: rgba(251, 233, 240, 0.45);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -353,7 +378,7 @@
 
 		font-size: 0.55rem;
 		letter-spacing: 0.2em;
-		color: rgba(238, 243, 246, 0.6);
+		color: rgba(251, 233, 240, 0.6);
 	}
 
 	.rec-dot {
@@ -396,7 +421,7 @@
 
 	@keyframes flash {
 		0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-		30% { box-shadow: 0 0 22px rgba(214, 31, 129, 0.95), 0 0 40px rgba(168, 20, 99, 0.5); }
+		30% { box-shadow: 0 0 22px rgba(232, 19, 95, 0.95), 0 0 40px rgba(194, 24, 122, 0.5); }
 		100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
 	}
 

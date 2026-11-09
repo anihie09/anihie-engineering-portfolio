@@ -139,9 +139,9 @@
 			// light picks up the photo's brightness so it stays part of the image
 			float lum = dot(refr, vec3(0.299, 0.587, 0.114));
 			vec3 light =
-				vec3(0.92, 0.97, 1.0) * (ring * 0.16 + flare * 0.1 + streak * 0.42 + vstreak * 0.14) +
+				vec3(1.0, 0.9, 0.94) * (ring * 0.16 + flare * 0.1 + streak * 0.42 + vstreak * 0.14) +
 				vec3(1.0, 0.3, 0.68) * ring * 0.08 * max(0.0, dir.x) +
-				vec3(0.35, 0.9, 1.0) * ring * 0.08 * max(0.0, -dir.x);
+				vec3(1.0, 0.55, 0.25) * ring * 0.08 * max(0.0, -dir.x);
 
 			col += light * inf * (0.3 + lum);
 

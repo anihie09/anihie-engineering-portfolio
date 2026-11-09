@@ -249,7 +249,7 @@
 		height: 22%;
 
 		background: linear-gradient(180deg, transparent, var(--strawberry), var(--petal-rouge), var(--rose-punch), transparent);
-		box-shadow: 0 0 10px rgba(255, 45, 149, 0.6);
+		box-shadow: 0 0 10px rgba(255, 42, 127, 0.6);
 
 		animation: edge-run 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 	}

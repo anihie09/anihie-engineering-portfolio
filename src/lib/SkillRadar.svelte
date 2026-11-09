@@ -53,9 +53,9 @@
 >
 	<defs>
 		<linearGradient id="radar-grad" x1="0" y1="0" x2="1" y2="1">
-			<stop offset="0" style="stop-color: var(--strawberry, #ff2a3d)" />
-			<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2d95)" />
-			<stop offset="1" style="stop-color: var(--rose-punch, #a43dff)" />
+			<stop offset="0" style="stop-color: var(--strawberry, #e8132f)" />
+			<stop offset="0.5" style="stop-color: var(--petal-rouge, #ff2a7f)" />
+			<stop offset="1" style="stop-color: var(--rose-punch, #c2187a)" />
 		</linearGradient>
 	</defs>
 
@@ -183,15 +183,15 @@
 		stroke-width: 2;
 		stroke-linejoin: round;
 
-		filter: drop-shadow(0 0 6px rgba(255, 45, 149, 0.6));
+		filter: drop-shadow(0 0 6px rgba(255, 42, 127, 0.6));
 	}
 
 	.dot {
 		fill: #ffffff;
-		stroke: var(--hot-red, #ff1a94);
+		stroke: var(--hot-red, #ff3d8a);
 		stroke-width: 2;
 
-		filter: drop-shadow(0 0 4px var(--hot-red-glow, rgba(255, 26, 148, 0.6)));
+		filter: drop-shadow(0 0 4px var(--hot-red-glow, rgba(255, 61, 138, 0.6)));
 
 		transform-box: fill-box;
 		transform-origin: center;
@@ -210,7 +210,7 @@
 
 	.value {
 		font-weight: 700;
-		fill: var(--hot-red, #ff1a94);
+		fill: var(--hot-red, #ff3d8a);
 	}
 
 	@keyframes dot-pulse {

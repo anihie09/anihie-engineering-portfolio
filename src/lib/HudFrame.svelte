@@ -164,7 +164,7 @@
 		stroke-width: 1.6;
 		stroke-dasharray: 70 930;
 
-		filter: drop-shadow(0 0 3px rgba(214, 31, 129, 0.7));
+		filter: drop-shadow(0 0 3px rgba(232, 19, 95, 0.7));
 
 		animation: orbit 9s linear infinite;
 	}

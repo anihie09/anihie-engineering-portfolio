@@ -150,23 +150,25 @@
 		--font-display: 'Chakra Petch', 'JetBrains Mono', system-ui, sans-serif;
 
 		/* theme: clean cyber white; red is only a tiny signal colour */
-		--accent: #e6eef3;
+		--accent: #fde6ee;
 		--accent-bright: #ffffff;
-		--accent-soft: rgba(230, 238, 243, 0.45);
-		--accent-glow: rgba(214, 232, 245, 0.55);
-		--signal: #ff2a3d;
+		--accent-soft: rgba(253, 230, 238, 0.45);
+		--accent-glow: rgba(255, 205, 224, 0.55);
+		--signal: #e8132f;
 
-		/* accent palette: red -> pink -> purple (accents only) */
-		--strawberry: #ff2a3d;   /* red */
-		--petal-rouge: #ff2d95;  /* hot pink */
-		--rose-punch: #a43dff;   /* purple */
-		--vintage-berry: #5c1a86;
-		--vintage-grape: #2a0d3d;
-		--accent-grad: linear-gradient(90deg, #ff2a3d 0%, #ff2d95 50%, #a43dff 100%);
+		/* accent palette, from K/DA FIRESTARTER (accents only) */
+		--ember: #ff5a2a;        /* fire orange */
+		--strawberry: #e8132f;   /* crimson red */
+		--petal-rouge: #ff2a7f;  /* hot magenta-pink */
+		--rose-punch: #c2187a;   /* deep magenta */
+		--vintage-berry: #7a0a2c;
+		--vintage-grape: #2b0716;
+		--blush: #ffd9e6;        /* glowing title white */
+		--accent-grad: linear-gradient(90deg, #ff5a2a 0%, #e8132f 32%, #ff2a7f 68%, #ff9cc2 100%);
 
-		/* accented text: hot pink */
-		--hot-red: #ff1a94;
-		--hot-red-glow: rgba(255, 26, 148, 0.55);
+		/* accented text: neon pink */
+		--hot-red: #ff3d8a;
+		--hot-red-glow: rgba(255, 61, 138, 0.55);
 
 		--hud-pink: #f1f1f1;
 		--hud-pink-soft: rgba(241, 241, 241, 0.55);
@@ -179,7 +181,7 @@
 		padding: 0;
 		min-width: 100%;
 		min-height: 100%;
-		background: #000;
+		background: #070205;
 		color: #fff;
 
 		font-family: var(--font-mono);
@@ -193,7 +195,7 @@
 		position: relative;
 		width: 100%;
 		min-height: 100vh;
-		background: #000;
+		background: #070205;
 	}
 
 	/* =====================================================

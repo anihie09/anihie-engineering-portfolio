@@ -282,7 +282,7 @@
 		margin-top: 4px;
 
 		background: var(--strawberry);
-		box-shadow: 0 0 8px rgba(255, 62, 165, 0.6);
+		box-shadow: 0 0 8px rgba(255, 51, 71, 0.6);
 
 		animation: blink 1s steps(2, start) infinite;
 	}
@@ -466,7 +466,7 @@
 	@keyframes edge-pulse {
 		0%,
 		100% { box-shadow: 0 0 6px rgba(241, 241, 241, 0.5); }
-		50% { box-shadow: 0 0 14px rgba(214, 31, 129, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
+		50% { box-shadow: 0 0 14px rgba(232, 19, 95, 0.8); background: var(--petal-rouge); border-color: var(--petal-rouge); }
 	}
 
 	/* =====================================================
